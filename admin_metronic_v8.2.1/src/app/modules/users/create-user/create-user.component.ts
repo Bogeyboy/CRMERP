@@ -54,40 +54,43 @@ export class CreateUserComponent {
     reader.onloadend = () => this.imagen_previzualiza = reader.result;
   }
   store(){
+    //Validaciones de existencia de campos
+    //Validfación de nombre
     if(!this.name){
       this.toast.error("Validación","El nombre del usuario es requerido");
       return false;
     }
-    
-    if((!this.type_document || !this.document)){
-      this.toast.error("Validación","Es requerido el tipo de documento , junto con el numero del documento");
+    //Validfación de de tipo de documento y número
+    if(!this.type_document || !this.document){
+      this.toast.error("Validación","El tipo y número de documento son requeridos");
       return false;
     }
-
+    //Validfación de teléfono
     if(!this.phone){
       this.toast.error("Validación","El número es requerido");
       return false;
     }
+    //Validación de género
     if(!this.gender){
       this.toast.error("Validación","El género es requerido");
       return false;
     }
-
+    //Validación de rol
     if(!this.rol_id){
       this.toast.error("Validación","El rol es requerido");
       return false;
     }
-
+    //Validación de contraseña
     if(!this.password){
       this.toast.error("Validación","La contraseña es requerida");
       return false;
     }
-
+    //Validación de coincidencia de las contraseñas.
     if(this.password && this.password != this.password_repit){
       this.toast.error("Validación","La contraseñas no son iguales");
       return false;
     }
-
+    //Transformamos los datos antes de enviarlos
    let formData = new FormData();
    formData.append("name",this.name);
    formData.append("surname",this.surname);
@@ -102,6 +105,7 @@ export class CreateUserComponent {
    }
    
    formData.append("password",this.password);
+   //Se llama iimagen porque en el backend se llama imagen
    formData.append("imagen",this.file_name);
 
     this.usersService.registerUser(formData).subscribe((resp:any) => {

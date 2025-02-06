@@ -71,17 +71,7 @@ class UserAccessController extends Controller
                 'message_text' => 'El correo electrónico ya se encuentra registrado, con lo que el usuario ya existe',
             ]);
         }
-        //Comprobación de la contraseña
-        /* if($request->password != $request->password_confirmation)
-        {
-            // return response()->json([
-            //    'message' => 'Las contraseñas no coinciden',
-            //], 403); 
-            return response()->json([
-                'message' => 403,
-                'message_text' => 'Las contraseñas no coinciden',
-            ]);
-        } */
+        
        //Seteamos la contraseña
        if($request->password)
        {
