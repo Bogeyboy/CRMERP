@@ -20,10 +20,10 @@ export class EditUserComponent {
   surname:string = '';
   email:string = '';
   phone:string = '';
-  role_id:string = '';
+  rol_id:string = '';
   gender:string = '';
   type_document:string = 'DNI';
-  n_document:string = '';
+  document:string = '';
   address:string = '';
 
   file_name:any;
@@ -46,13 +46,14 @@ export class EditUserComponent {
     this.surname = this.USER_SELECTED.surname
     this.email = this.USER_SELECTED.email
     this.phone = this.USER_SELECTED.phone
-    this.role_id = this.USER_SELECTED.role_id
+    this.rol_id = this.USER_SELECTED.rol_id
     this.gender = this.USER_SELECTED.gender
     this.type_document = this.USER_SELECTED.type_document
-    this.n_document = this.USER_SELECTED.n_document
+    this.document = this.USER_SELECTED.document
     this.address = this.USER_SELECTED.address
     this.imagen_previzualiza = this.USER_SELECTED.avatar
   }
+  //Se procesa la imagen que se va a enviar
   processFile($event:any){
     if($event.target.files[0].type.indexOf("image") < 0){
       this.toast.warning("WARN","El archivo no es una imagen");
@@ -64,59 +65,61 @@ export class EditUserComponent {
     reader.onloadend = () => this.imagen_previzualiza = reader.result;
   }
   store(){
+    //Validación del nombre
     if(!this.name){
       this.toast.error("Validación","El nombre es requerido");
       return false;
     }
-    
-    
-    if((!this.type_document || !this.n_document)){
-      this.toast.error("Validación","Es requerido el tipo de documento , junto con el numero del documento");
+    //Validación del tipo y número de documento
+    if((!this.type_document || !this.document)){
+      this.toast.error("Validación","El tipo y número de documento son requeridos");
       return false;
     }
-
+    //Validación del número de teléfono
     if(!this.phone){
-      this.toast.error("Validación","El nombre es requerido");
+      this.toast.error("Validación","El teléfono es requerido");
       return false;
     }
+    //Validación del género
     if(!this.gender){
-      this.toast.error("Validación","El nombre es requerido");
+      this.toast.error("Validación","El género es requerido");
       return false;
     }
-
-    if(!this.role_id){
+    //Validación del ROL
+    if(!this.rol_id){
       this.toast.error("Validación","El rol es requerido");
       return false;
     }
-
+    //Validación de igualdad de las contraseñas en caso de que se vayan a cambiar
     if(this.password && this.password != this.password_repit){
       this.toast.error("Validación","La contraseña no son iguales");
       return false;
     }
 
-   let formData = new FormData();
-   formData.append("name",this.name);
-   formData.append("surname",this.surname);
-   formData.append("email",this.email);
-   formData.append("phone",this.phone);
-   formData.append("role_id",this.role_id);
-   formData.append("gender",this.gender);
-   formData.append("type_document",this.type_document);
-   formData.append("n_document",this.n_document);
-   if(this.address){
-     formData.append("address",this.address);
-   }
+    let formData = new FormData();
+    formData.append("name",this.name);
+    formData.append("surname",this.surname);
+    formData.append("email",this.email);
+    formData.append("phone",this.phone);
+    formData.append("rol_id",this.rol_id);
+    formData.append("gender",this.gender);
+    formData.append("type_document",this.type_document);
+    formData.append("document",this.document);
+    formData.append('_method','PUT');
+    
+    if(this.address){
+      formData.append("address",this.address);
+    }
 
-   if(this.password){
-     formData.append("password",this.password);
-   }
+    if(this.password){
+      formData.append("password",this.password);
+    }
     if(this.file_name){
       formData.append("imagen",this.file_name);
     }
-   
-
+    
     this.usersService.updateUser(this.USER_SELECTED.id,formData).subscribe((resp:any) => {
-      console.log(resp);
+      //console.log(resp);
       if(resp.message == 403){
         this.toast.error("Validación",resp.message_text);
       }else{
@@ -126,6 +129,4 @@ export class EditUserComponent {
       }
     })
   }
-
-
 }

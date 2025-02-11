@@ -56,7 +56,7 @@
                             class="form-control form-select-solid fw-bolder"
                             name="role_selected"
                             placeholder="Selec. Rol"
-                            [(ngModel)]="role_id"
+                            [(ngModel)]="rol_id"
                         >
                          <option value="">Selec. Rol</option>
                         <ng-container *ngFor="let rol of roles">
@@ -108,7 +108,7 @@
                     </div>
                     <div class="col-6">
                         <label class="required fw-bold fs-6 mb-2">N° de documento: </label>
-                        <input type="number" [(ngModel)]="n_document" name="n_document" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="99999999" />
+                        <input type="text" [(ngModel)]="document" name="document-form" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="99999999" />
                     </div>
                 </div>
 

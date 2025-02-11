@@ -38,7 +38,16 @@ export class UsersService {
     );
   }
   //Actualización de usuarios
-  updateUser(ID_USER:string,data:any) {
+  /* updateUser(ID_USER:string,data:any) {
+    this.isLoadingSubject.next(true);
+    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    let URL = URL_SERVICIOS+"/users/"+ID_USER;
+    return this.http.post(URL,data,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  } */
+ //URL_SERVICIOS: 'http://127.0.0.1:8000/api',
+ updateUser(ID_USER:string,data:any) {
     this.isLoadingSubject.next(true);
     let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     let URL = URL_SERVICIOS+"/users/"+ID_USER;

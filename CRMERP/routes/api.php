@@ -45,4 +45,5 @@ Route::group([
     Route::post('/login/{id}', [UserAccessController::class, 'update']);
     Route::get('/users/config', [UserAccessController::class, 'config']);
     Route::resource("users", UserAccessController::class);
+    //Route::post('/users/{user}', [UserAccessController::class, 'update']);
 });
