@@ -2,15 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Controller;
 use App\Models\User;
-//use Illuminate\Auth\Access\Gate;
-
-use Illuminate\Support\Facades\Gate;
-use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Controllers\Controller;
+//use Illuminate\Auth\Access\Gate;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Traits\HasRoles;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+//use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Validator;
 //use Validator;
 
 
@@ -135,6 +138,15 @@ class AuthController extends \Illuminate\Routing\Controller
      */
     protected function respondWithToken($token)
     {
+        $permissions = Auth::user()->getAllPermissions()->map(function($perm){
+            return $perm->name;
+        });
+
+        /* $user = Auth::user();
+        $permissions = $user->permission->map(function ($perm) {
+            return $perm->name;
+        }); */
+
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
@@ -144,6 +156,9 @@ class AuthController extends \Illuminate\Routing\Controller
             'user' =>[
                 'name' => Auth::user()->name . ' ' . Auth::user()->surname,
                 'email' => Auth::user()->email,
+                'avatar' => Auth::user()->avatar ? env('APP_URL') . 'storage/' . Auth::user()->avatar : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+                'rol_name' => Auth::user()->rol->name,
+                'permissions' => $permissions
                 /* 'name' => auth("api")->user()->name,
                 'email' => auth("api")->user()->email  */
             ]

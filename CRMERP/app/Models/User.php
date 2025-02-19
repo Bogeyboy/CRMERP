@@ -2,13 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable implements JWTSubject
@@ -17,6 +17,7 @@ class User extends Authenticatable implements JWTSubject
     /* use HasApiTokens, HasFactory, Notifiable; */
     use HasApiTokens,HasFactory, Notifiable;
     use HasRoles;
+    use SoftDeletes;
     /**
      * The attributes that are mass assignable.
      *
@@ -35,6 +36,7 @@ class User extends Authenticatable implements JWTSubject
         'gender',
         'rol_id',
         'sucursal_id',
+        'deleted_at',
     ];
 
     /**

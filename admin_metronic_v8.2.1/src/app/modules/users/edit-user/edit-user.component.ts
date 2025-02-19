@@ -105,7 +105,7 @@ export class EditUserComponent {
     formData.append("gender",this.gender);
     formData.append("type_document",this.type_document);
     formData.append("document",this.document);
-    formData.append('_method','PUT');
+    formData.append('_method','PUT');//Se envía el método PUT para poder actuar con las fotos
     
     if(this.address){
       formData.append("address",this.address);
