@@ -11,11 +11,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthService } from './modules/auth/services/auth.service';
 import { environment } from 'src/environments/environment';
+
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 // #fake-start#
 import { FakeAPIService } from './_fake/fake-api.service';
 import { ToastrModule } from 'ngx-toastr';
+import { RouterModule } from '@angular/router';
 // #fake-end#
 
 function appInitializer(authService: AuthService) {
@@ -32,6 +34,7 @@ function appInitializer(authService: AuthService) {
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    RouterModule.forRoot([]),
     TranslateModule.forRoot(),
     HttpClientModule,
     ClipboardModule,
