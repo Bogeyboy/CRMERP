@@ -26,6 +26,7 @@ class Sucursale extends Model
     public function setUpdatedAtAttribute($value)
     {
         date_default_timezone_set('Europe/Madrid');
-        $this->attributes['deleted_at'] = Carbon::now();
+        /* $this->attributes['deleted_at'] = Carbon::now(); */
+        $this->attributes['updated_at'] = Carbon::now();
     }
 }

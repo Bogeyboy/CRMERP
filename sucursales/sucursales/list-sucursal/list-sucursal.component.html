@@ -106,7 +106,7 @@
                                 </td>
                                 <!-- Cammpo de fecha de creación de la sucursal-->
                                 <td >
-                                      {{ SUCURSAL.created_at }}
+                                    {{ SUCURSAL.created_at | date: 'dd/MM/yyyy HH:mm:ss' }}
                                 </td>
                                 <!-- Botones de edición y eliminación -->
                                 <td class="">

@@ -41,9 +41,7 @@ export class SucursalService {
   updateSucursal(ID_SUCURSAL:string,data:any) {
     this.isLoadingSubject.next(true);
     let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    //console.log(data);
     let URL = URL_SERVICIOS+"/sucursales/"+ID_SUCURSAL;
-    //console.log(URL);
     return this.http.put(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );

@@ -57,40 +57,40 @@ export class ListSucursalComponent {
       });
     }
     //Edición de sucursal
-    editSucursal(SUCURSAL:any)
+    editSucursal(ROL:any)
     {
       const modalRef = this.modalService.open(EditSucursalComponent,{centered:true,size:'md'});
   
-      modalRef.componentInstance.SUCURSAL_SELECTED = SUCURSAL;
+      modalRef.componentInstance.ROL_SELECTED = ROL;
   
       //Recibimos los datos del componente hijo
-      modalRef.componentInstance.SucursalE.subscribe((sucursal:any) => {
-        //console.log(sucursal);
-        let INDEX = this.SUCURSALES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
-        console.log(INDEX);
+      modalRef.componentInstance.RoleE.subscribe((rol:any) => {
+        //this.ROLES.push(rol);//Se agrega al final del listado
+        //this.ROLES.unshift(rol);//Se agrega al principio del listado
+        /* let INDEX = this.ROLES.findIndex((rol:any) => rol.id == ROL.id);
         if(INDEX!=-1)
         {
-          this.SUCURSALES[INDEX] = sucursal;
-        }
+          this.ROLES[INDEX] = rol;
+        } */
       });
     }
     //Eliminación de sucursal
-    deleteSucursal(SUCURSAL:any)
+    deleteSucursal(ROL:any)
     {
       const modalRef = this.modalService.open(DeleteSucursalComponent,{centered:true,size:'md'});
 
-      modalRef.componentInstance.SUCURSAL_SELECTED = SUCURSAL;
+      modalRef.componentInstance.ROL_SELECTED = ROL;
 
       //Recibimos los datos del componente hijo
-      modalRef.componentInstance.SucursalD.subscribe((sucursal:any) => {
+      modalRef.componentInstance.RoleD.subscribe((rol:any) => {
         //this.ROLES.push(rol);//Se agrega al final del listado
         //this.ROLES.unshift(rol);//Se agrega al principio del listado
-        let INDEX = this.SUCURSALES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
+        /* let INDEX = this.ROLES.findIndex((rol:any) => rol.id == ROL.id);
         if(INDEX!=-1)
         {
           //this.ROLES[INDEX] = rol;
-          this.SUCURSALES.splice(INDEX,1); //para eliminar un rol
-        }
+          this.ROLES.splice(INDEX,1); //para eliminar un rol
+        } */
       });
     }
   

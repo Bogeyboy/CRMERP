@@ -17,7 +17,7 @@ return new class extends Migration
             $table->boolean('state')->default(1);
             $table->string('address')->nullable();
             $table->timestamps();
-            $table->string('deleted_at')->nullable();
+            $table->string('deleted_at')->nullable()->default(null);
         });
     }
 

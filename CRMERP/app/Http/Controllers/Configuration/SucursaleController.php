@@ -2,21 +2,24 @@
 
 namespace App\Http\Controllers\Configuration;
 
+//use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\Configuration\Sucursale;
 
 class SucursaleController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Aquí mostramos todos los registros de la tabla
      */
+
     public function index(Request $request)
     {
         $search = $request->get('search');
 
-        $sucursales = Sucursale::where('name', 'like', "%$search%")
-            ->orWhere('address', 'like', "%$search%")
+        $sucursales = Sucursale::where('name', 'like', "%".$search."%")
+            //->orWhere('address', 'like', "%" . $search . "%")
             ->orderBy('id', 'desc')
             ->paginate(25);
         
@@ -28,13 +31,13 @@ class SucursaleController extends Controller
                     'name' => $sucursal->name,
                     'state' => $sucursal->state,
                     'address' => $sucursal->address,
-                    'created_at' => $sucursal->created_at->format('Y-m-d H:i:s'),
+                    'created_at' => $sucursal->created_at->format('d-m-Y H:i:s'),
                 ];
             })
         ]);
     }
     /**
-     * Store a newly created resource in storage.
+     * Almacenamos los registros de la tabla
      */
     public function store(Request $request)
     {
@@ -42,7 +45,7 @@ class SucursaleController extends Controller
         if($if_exists_sucursal){
             return response()->json([
                 'message' => 403,
-                'message_text' => 'Ya existe una sucursal con ese nombre',
+                'message_text' => 'Ya existe una sucursal con ese nombre.',
             ]);
         }
         $sucursal = Sucursale::create($request->all());
@@ -51,9 +54,9 @@ class SucursaleController extends Controller
             'sucursal' => [
                 'id' => $sucursal->id,
                 'name' => $sucursal->name,
-                'state' => $sucursal->state,
+                'state' => $sucursal->state ?? 1,
                 'address' => $sucursal->address,
-                'created_at' => $sucursal->created_at->format('Y-m-d H:i:s'),
+                'created_at' => $sucursal->created_at->format('d-m-Y H:i:s'),
             ],
             'message_text' => 'La sucursal se ha creado correctamente'
         ]);
@@ -68,7 +71,7 @@ class SucursaleController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Actuialización de los registros de la tabla
      */
     public function update(Request $request, string $id)
     {
@@ -80,8 +83,18 @@ class SucursaleController extends Controller
                 'message' => 403,
                 'message_text' => 'Ya existe una sucursal con ese nombre',
             ]);
-        }
+        };
+        //DB::enableQueryLog();
         $sucursal = Sucursale::findOrFail('id');
+        //dd(DB::getQueryLog());
+        //$sucursal = Sucursale::find('id');
+        /* if (!$sucursal) {
+            return response()->json([
+                'message' => 404,
+                'message_text' => 'La sucursal no existe',
+            ]);
+        }; */
+
         $sucursal->update($request->all());
 
         return response()->json([
@@ -98,7 +111,7 @@ class SucursaleController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Eliminación de los registros de la tabla
      */
     public function destroy(string $id)
     {
