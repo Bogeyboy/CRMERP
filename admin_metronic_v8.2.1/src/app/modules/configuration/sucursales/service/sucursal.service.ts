@@ -42,7 +42,7 @@ export class SucursalService {
     this.isLoadingSubject.next(true);
     let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     //console.log(data);
-    let URL = URL_SERVICIOS+"/sucursales/"+ID_SUCURSAL;
+    let URL = URL_SERVICIOS + '/sucursales/' + ID_SUCURSAL;
     //console.log(URL);
     return this.http.put(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
@@ -52,7 +52,7 @@ export class SucursalService {
   deleteSucursal(ID_SUCURSAL:string) {
     this.isLoadingSubject.next(true);
     let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/sucursales/"+ID_SUCURSAL;
+    let URL = URL_SERVICIOS + '/sucursales/' + ID_SUCURSAL;
     return this.http.delete(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );

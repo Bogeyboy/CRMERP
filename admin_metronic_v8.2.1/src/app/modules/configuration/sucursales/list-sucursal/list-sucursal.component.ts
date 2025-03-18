@@ -65,9 +65,8 @@ export class ListSucursalComponent {
   
       //Recibimos los datos del componente hijo
       modalRef.componentInstance.SucursalE.subscribe((sucursal:any) => {
-        //console.log(sucursal);
         let INDEX = this.SUCURSALES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
-        console.log(INDEX);
+        //console.log(INDEX);
         if(INDEX!=-1)
         {
           this.SUCURSALES[INDEX] = sucursal;
@@ -83,8 +82,6 @@ export class ListSucursalComponent {
 
       //Recibimos los datos del componente hijo
       modalRef.componentInstance.SucursalD.subscribe((sucursal:any) => {
-        //this.ROLES.push(rol);//Se agrega al final del listado
-        //this.ROLES.unshift(rol);//Se agrega al principio del listado
         let INDEX = this.SUCURSALES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
         if(INDEX!=-1)
         {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { ConfigurationRoutingModule } from './configuration-routing.module';
 import { SucursalesModule } from './sucursales/sucursales.module';
+import { WarehousesModule } from './warehouses/warehouses.module';
 
 
 @NgModule({
@@ -10,7 +11,8 @@ import { SucursalesModule } from './sucursales/sucursales.module';
   imports: [
     CommonModule,
     ConfigurationRoutingModule,
-    SucursalesModule
+    SucursalesModule,
+    WarehousesModule,
   ]
 })
 export class ConfigurationModule { }

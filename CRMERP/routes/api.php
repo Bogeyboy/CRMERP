@@ -3,9 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Configuration\SucursaleController;
-use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserAccessController;
+use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\Configuration\SucursaleController;
+use App\Http\Controllers\Configuration\WarehouseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,4 +50,8 @@ Route::group([
     //Route::post('/users/{user}', [UserAccessController::class, 'update']);
 
     Route::resource("sucursales", SucursaleController::class);
+
+    Route::get('/warehouses/config', [WarehouseController::class, 'config']);
+
+    Route::resource("warehouses", WarehouseController::class);
 });

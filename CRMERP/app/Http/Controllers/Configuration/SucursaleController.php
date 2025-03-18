@@ -85,16 +85,7 @@ class SucursaleController extends Controller
             ]);
         };
         //DB::enableQueryLog();
-        $sucursal = Sucursale::findOrFail('id');
-        //dd(DB::getQueryLog());
-        //$sucursal = Sucursale::find('id');
-        /* if (!$sucursal) {
-            return response()->json([
-                'message' => 404,
-                'message_text' => 'La sucursal no existe',
-            ]);
-        }; */
-
+        $sucursal = Sucursale::findOrFail($id);
         $sucursal->update($request->all());
 
         return response()->json([
@@ -115,7 +106,7 @@ class SucursaleController extends Controller
      */
     public function destroy(string $id)
     {
-        $sucursal = Sucursale::findOrFail('id');
+        $sucursal = Sucursale::findOrFail($id);
         //VALIDACIÓN POR PROFORMA
         $sucursal->delete();
         return response()->json([

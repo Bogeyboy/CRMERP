@@ -60,7 +60,6 @@ export class EditSucursalComponent {
   
       this.sucursalService.updateSucursal(this.SUCURSAL_SELECTED.id, data).subscribe((resp:any) => {
         console.log(resp);
-        console.log(this.SUCURSAL_SELECTED.id);
         if(resp.message == 403)
         {
           this.toast.error("Validación",resp.message_text);
