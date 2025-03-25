@@ -22,6 +22,7 @@ import { WarehousesComponent } from './warehouses.component';
     ListWarehouseComponent
   ],
   imports: [
+
     CommonModule,
     WarehousesRoutingModule,
     HttpClientModule,
@@ -30,7 +31,6 @@ import { WarehousesComponent } from './warehouses.component';
     ReactiveFormsModule,
     InlineSVGModule,
     NgbModalModule,
-
 
     NgbPaginationModule,
   ]

@@ -21,6 +21,7 @@ class WarehouseController extends Controller
             //->orWhere('address', 'like', "%" . $search . "%")
             ->orderBy('id', 'desc')
             ->paginate(25);
+        $sucursales = Sucursale::where('state', 1)->orderBy('id', 'desc')->get();
 
         return response()->json([
             'total' => $warehouses->total(),
@@ -34,7 +35,13 @@ class WarehouseController extends Controller
                     'sucursale' => $warehouse->sucursale,
                     'created_at' => $warehouse->created_at->format('d-m-Y H:i:s'),
                 ];
-            })
+            }),
+            "sucursales" => $sucursales->map(function ($sucursal) {
+                return [
+                    'id' => $sucursal->id,
+                    'name' => $sucursal->name,
+                ];
+            }),
         ]);
     }
 

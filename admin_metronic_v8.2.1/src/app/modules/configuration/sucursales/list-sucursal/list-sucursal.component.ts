@@ -12,7 +12,7 @@ import { DeleteSucursalComponent } from '../delete-sucursal/delete-sucursal.comp
   styleUrls: ['./list-sucursal.component.scss']
 })
 export class ListSucursalComponent {
-  search:string = '';
+    search:string = '';
     SUCURSALES:any[];
     isLoading$:any;
   
