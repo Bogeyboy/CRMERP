@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Configuration\SucursalDeliverieController;
 use App\Http\Controllers\UserAccessController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\Configuration\SucursaleController;
@@ -51,7 +52,7 @@ Route::group([
 
     Route::resource("sucursales", SucursaleController::class);
 
-    //Route::get('/warehouses/config', [WarehouseController::class, 'config']);
-
     Route::resource("warehouses", WarehouseController::class);
+
+    Route::resource("sucursal_deliveries", SucursalDeliverieController::class);
 });
