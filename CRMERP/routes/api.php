@@ -3,11 +3,12 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Configuration\SucursalDeliverieController;
 use App\Http\Controllers\UserAccessController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\Configuration\SucursaleController;
 use App\Http\Controllers\Configuration\WarehouseController;
+use App\Http\Controllers\Configuration\MethodPaymentController;
+use App\Http\Controllers\Configuration\SucursalDeliverieController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,4 +56,6 @@ Route::group([
     Route::resource("warehouses", WarehouseController::class);
 
     Route::resource("sucursal_deliveries", SucursalDeliverieController::class);
+
+    Route::resource("method_payments", MethodPaymentController::class);
 });

@@ -27,6 +27,12 @@ import { SucursalDeliveriesComponent } from './sucursal-deliveries.component';
     CommonModule,
     SucursalDeliveriesRoutingModule,
 
+    /* SucursalDeliveriesComponent,
+    CreateSucursalDeliverieComponent,
+    EditSucursalDeliverieComponent,
+    ListSucursalDeliverieComponent,
+    DeleteSucursalDeliverieComponent, */
+
     HttpClientModule,
     FormsModule,
     NgbModule,

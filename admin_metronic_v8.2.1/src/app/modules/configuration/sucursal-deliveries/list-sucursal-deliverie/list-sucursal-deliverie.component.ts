@@ -13,7 +13,7 @@ import { SucursalDeliverieService } from '../service/sucursal-deliverie.service'
 })
 export class ListSucursalDeliverieComponent {
   search:string = '';
-      SUCURSALES_DELIVERIES:any[];
+      SUCURSALES_DELIVERIES:any [] = [];
       isLoading$:any;
     
       totalPages:number = 0;
@@ -49,12 +49,26 @@ export class ListSucursalDeliverieComponent {
       //PARA LISTAR LAS SUCURSALES_DELIVERIES
       listSucursalDeliverie(page = 1)
       {
-        this.sucursalDeliverieService.listSucursalDeliverie(page,this.search).subscribe((resp:any) => {
+        /* this.sucursalDeliverieService.listSucursalDeliverie(page,this.search).subscribe((resp:any) => {
           console.log(resp);
           this.SUCURSALES_DELIVERIES = resp.sucursal_deliverie;
           this.totalPages = resp.total;
           this.currentPage = page;
-        });
+        }); */
+        this.sucursalDeliverieService.listSucursalDeliverie(page, this.search).subscribe((resp: any) => {
+              console.log('Respuesta del servicio:', resp);
+              if (resp && resp.sucursal_deliveries) {
+                this.SUCURSALES_DELIVERIES = resp.sucursal_deliveries;
+                this.totalPages = resp.total;
+                this.currentPage = page;
+              } else {
+                console.warn('No se recibieron sucursales correctamente');
+              }
+            },
+            (error) => {
+              console.error('Error al listar sucursales:', error);
+            }
+          );
       }
       //Edición de sucursal
       editSucursalDeliverie(SUCURSAL:any)
