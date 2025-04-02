@@ -15,6 +15,7 @@ class MethodPayment extends Model
         'name',
         'method_payment_id',
         'address',
+        'state'
     ];
 
     public function setCreatedAtAttribute($value)

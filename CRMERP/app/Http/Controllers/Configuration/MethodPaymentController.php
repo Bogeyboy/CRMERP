@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Configuration;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\configuration\MethodPayment;
+use Illuminate\Support\Facades\Log;
 
 class MethodPaymentController extends Controller
 {
@@ -54,7 +55,7 @@ class MethodPaymentController extends Controller
             'method_payment' => [
                     'id' => $method_pay->id,
                     'name' => $method_pay->name,
-                    'state' => $method_pay->state,
+                    'state' => $method_pay->state ?? 1,
                     'method_payment_id' => $method_pay->method_payment_id,
                     "method_payment" => $method_pay->method_payment, //Relación existente en el modelo
                     "method_payments" => $method_pay->method_payments, //Relación existente en el modelo
@@ -75,7 +76,7 @@ class MethodPaymentController extends Controller
     /**
      * Actuialización de los registros de la tabla
      */
-    public function update(Request $request, string $id)
+    /* public function update(Request $request, string $id)
     {
         $if_exists_method_payment = MethodPayment::where('name', $request->name)
             ->where('id', '<>', $id)
@@ -86,7 +87,6 @@ class MethodPaymentController extends Controller
                 'message_text' => 'Ya existe un método de pago con ese nombre.',
             ]);
         };
-        //DB::enableQueryLog();
         $method_pay = MethodPayment::findOrFail($id);
         $method_pay->update($request->all());
 
@@ -102,6 +102,31 @@ class MethodPaymentController extends Controller
                 'created_at' => $method_pay->created_at->format('d-m-Y H:i:s'),
             ],
             'message_text' => 'El método de pago se ha actualizado correctamente.',
+        ]);
+    } */
+    public function update(Request $request, string $id)
+    {
+        Log::info('Datos recibidos para actualizar:', $request->all());
+        $is_exits_method_payment = MethodPayment::where("name", $request->name)
+            ->where("id", "<>", $id)->first();
+        if ($is_exits_method_payment) {
+            return response()->json([
+                "message" => 403,
+                "message_text" => "El nombre del metodo de pago ya existe"
+            ]);
+        }
+        $method_pay = MethodPayment::findOrFail($id);
+        $method_pay->update($request->all());
+        return response()->json([
+            "message" => 200,
+            "method_payment" => [
+                "id" => $method_pay->id,
+                "name" => $method_pay->name,
+                "method_payment_id" => $method_pay->method_payment_id,
+                "method_payment" => $method_pay->method_payment,
+                "state" => $method_pay->state,
+                "created_at" => $method_pay->created_at->format("Y-m-d h:i A")
+            ],
         ]);
     }
 
