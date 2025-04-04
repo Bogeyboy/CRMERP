@@ -7,11 +7,11 @@ import { WarehousesModule } from './warehouses/warehouses.module';
 //import { SucursalDeliveriesComponent } from './sucursal-deliveries/sucursal-deliveries.component';
 import { SucursalDeliveriesModule } from './sucursal-deliveries/sucursal-deliveries.module';
 import { MethodPaymentModule } from './method-payment/method-payment.module';
+import { ClientSegmentModule } from './client-segment/client-segment.module';
 
 
 @NgModule({
   declarations: [
-    //SucursalDeliveriesComponent,
   ],
   imports: [
     CommonModule,
@@ -19,7 +19,8 @@ import { MethodPaymentModule } from './method-payment/method-payment.module';
     SucursalesModule,
     WarehousesModule,
     SucursalDeliveriesModule,
-    MethodPaymentModule
+    MethodPaymentModule,
+    ClientSegmentModule,
   ]
 })
 export class ConfigurationModule { }
