@@ -60,5 +60,5 @@ Route::group([
 
     Route::resource("method_payments", MethodPaymentController::class);
 
-    Route::resource("client_segment", ClientSegmentController::class);
+    Route::resource("client_segments", ClientSegmentController::class);
 });
