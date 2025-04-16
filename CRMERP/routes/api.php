@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Configuration\ProductCategorieController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -61,4 +62,7 @@ Route::group([
     Route::resource("method_payments", MethodPaymentController::class);
 
     Route::resource("client_segments", ClientSegmentController::class);
+
+    Route::post('/product_categories/{id}', [ProductCategorieController::class, 'update']);
+    Route::resource("product_categories", ProductCategorieController::class);
 });

@@ -26,6 +26,11 @@ const routes: Routes = [
   {
     path: 'segmento-de-cliente',
     loadChildren: ()=> import('./client-segment/client-segment.module').then((m) => m.ClientSegmentModule)
+  },
+  //Ruta para la configuración de categorías de productos
+  {
+    path: 'categoria-de-productos',
+    loadChildren: ()=> import('./product-categories/product-categories.module').then((m) => m.ProductCategoriesModule)
   }
 ];
 
