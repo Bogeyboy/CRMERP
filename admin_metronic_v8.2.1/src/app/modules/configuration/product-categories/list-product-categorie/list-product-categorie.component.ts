@@ -58,7 +58,7 @@ export class ListProductCategorieComponent {
     modalRef.componentInstance.CATEGORIE_SELECTED = CATEGORIE;
 
     modalRef.componentInstance.ProductCategorieE.subscribe((categorie:any) => {
-      let INDEX = this.PRODUCT_CATEGORIES.findIndex((client_seg:any) => client_seg.id == CATEGORIE.id);
+      let INDEX = this.PRODUCT_CATEGORIES.findIndex((cat_prod:any) => cat_prod.id == CATEGORIE.id);
       if(INDEX != -1){
         this.PRODUCT_CATEGORIES[INDEX] = categorie;
       }
@@ -69,8 +69,8 @@ export class ListProductCategorieComponent {
     const modalRef = this.modalService.open(DeleteProductCategorieComponent,{centered:true, size: 'md'});
     modalRef.componentInstance.CATEGORIE_SELECTED = CATEGORIE;
 
-    modalRef.componentInstance.ProductCategorieD.subscribe((categorie_prod:any) => {
-      let INDEX = this.PRODUCT_CATEGORIES.findIndex((client_seg:any) => client_seg.id == CATEGORIE.id);
+    modalRef.componentInstance.ProductCategorieD.subscribe((categorie:any) => {
+      let INDEX = this.PRODUCT_CATEGORIES.findIndex((cat_prod:any) => cat_prod.id == CATEGORIE.id);
       if(INDEX != -1){
         this.PRODUCT_CATEGORIES.splice(INDEX,1);
       }

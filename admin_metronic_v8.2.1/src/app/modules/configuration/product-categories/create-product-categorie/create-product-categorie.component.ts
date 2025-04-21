@@ -12,50 +12,53 @@ import { ProductCategoriesService } from '../service/product-categories.service'
   styleUrls: ['./create-product-categorie.component.scss']
 })
 export class CreateProductCategorieComponent {
-@Output() ProductCategorieC:EventEmitter<any> = new EventEmitter();
+  @Output() ProductCategorieC:EventEmitter<any> = new EventEmitter();
     
-      //Variables
-      name: string ='';
-      address: string = '';
-      imagen: string = '';
+    //Variables
+    name: string ='';
+    address: string = '';
+    imagen: string = '';
+    IMAGEN_CATEGORIE:any;
+    IMAGEN_PREVISUALIZA: any;
+    isLoading:any;
+  
+    constructor(
+        public modal:NgbActiveModal,
+        private http: HttpClient,
+        public authservice: AuthService,
+        public productCategorieService: ProductCategoriesService,
+        public toast: ToastrService,
+      )
+    {}
+  
+    ngOnInit(): void {
+      //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+      //Add 'implements OnInit' to the class.
+      
+    }
+    //Prtocesamos el archivo que queremos subir al servidor
+    processFile($event:any){
+      if($event.target.files[0].type.indexOf("image") < 0){
+        this.toast.warning("WARN","El archivo no es una imagen");
+        return;
+      }
+      this.IMAGEN_CATEGORIE = $event.target.files[0];
+      let reader = new FileReader();
+      reader.readAsDataURL(this.IMAGEN_CATEGORIE);
+      reader.onloadend = () => this.IMAGEN_PREVISUALIZA = reader.result;
+    }
 
-      IMAGEN_CATEGORIE:any;
-      IMAGEN_PREVISUALIZA: any;
-      isLoading:any;
-    
-      constructor(
-          public modal:NgbActiveModal,
-          private http: HttpClient,
-          public authservice: AuthService,
-          public productCategorie: ProductCategoriesService,
-          public toast: ToastrService,
-        )
-      {
-        
-      }
-    
-      ngOnInit(): void {
-        //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-        //Add 'implements OnInit' to the class.
-        
-      }
-      //Prtocesamos el archivo que queremos subir al servidor
-      processFile($event:any){
-        if($event.target.files[0].type.indexOf("image") < 0){
-          this.toast.warning("WARN","El archivo no es una imagen");
-          return;
-        }
-        this.IMAGEN_CATEGORIE = $event.target.files[0];
-        let reader = new FileReader();
-        reader.readAsDataURL(this.IMAGEN_CATEGORIE);
-        reader.onloadend = () => this.IMAGEN_PREVISUALIZA = reader.result;
-      }
-
-      store()
+    store()
       {
         if(!this.name)
         {
-          this.toast.error("Validación","La categoría de producto ya existe");
+          this.toast.error("Validación","La categoría de producto ya existe.");
+          return false;
+        }
+
+        if(!this.IMAGEN_CATEGORIE)
+        {
+          this.toast.error("Validación","La imagen de la categoría de producto es requerida.");
           return false;
         }
 
@@ -63,7 +66,7 @@ export class CreateProductCategorieComponent {
         formData.append('name',this.name);
         formData.append('categorie_imagen',this.IMAGEN_CATEGORIE);//categorie_imagen es el nombre del campo que espera el servidor
         
-        this.productCategorie.registerProductCategorie(formData).subscribe((resp:any) => {
+        this.productCategorieService.registerProductCategorie(formData).subscribe((resp:any) => {
           console.log(resp);
           if(resp.message == 403)
           {
@@ -76,5 +79,5 @@ export class CreateProductCategorieComponent {
             this.modal.close();
           }
         });
-      }
+    }
 }
