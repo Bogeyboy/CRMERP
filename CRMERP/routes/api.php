@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Configuration\ProductCategorieController;
+use App\Http\Controllers\Configuration\ProviderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -65,4 +66,7 @@ Route::group([
 
     Route::post('/product_categories/{id}', [ProductCategorieController::class, 'update']);
     Route::resource("product_categories", ProductCategorieController::class);
+
+    Route::post('/providers/{id}', [ProviderController::class, 'update']);
+    Route::resource("providers", ProviderController::class);
 });
