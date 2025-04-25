@@ -1,0 +1,125 @@
+<!--begin::Modal content CREATE-->
+<div class="modal-content modal-lg">
+    <!--begin::Modal header-->
+    <div class="modal-header" id="kt_modal_add_user_header">
+        <!--begin::Modal title-->
+        <h2 class="fw-bolder">Editar Proveedor {{ PROVIDER_SELECTED.full_name }}</h2>
+        <!--end::Modal title-->
+        <!--begin::Close-->
+        <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close" (click)="modal.dismiss()">
+            <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+            <span class="svg-icon svg-icon-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+                    <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+                </svg>
+            </span>
+            <!--end::Svg Icon-->
+        </div>
+        <!--end::Close-->
+    </div>
+    <!--end::Modal header-->
+    <!--begin::Modal body-->
+    <div class="modal-body scroll-y mx-5 my-3">
+        <!--begin::Form-->
+        <form id="kt_modal_add_user_form" class="form" action="#">
+            <!--begin::Scroll-->
+            <div class="d-flex flex-column scroll-y me-n7 pe-7"
+                style="max-width:max-content;"
+                id="kt_modal_add_user_scroll"
+                data-kt-scroll="true"
+                data-kt-scroll-activate="{default: false, lg: true}"
+                data-kt-scroll-max-height="auto"
+                data-kt-scroll-dependencies="#kt_modal_add_user_header"
+                data-kt-scroll-wrappers="#kt_modal_add_user_scroll"
+                data-kt-scroll-offset="300px">
+                <!-- Principio de los campos Input -->
+                <!-- Razón social, nombre comercial y nif -->
+                <div class="fv-row row my-1">
+                    <!-- Razón social del proveedor -->
+                    <div class="col-4">
+                        <label class="required fw-bold fs-6 mb-2">Razón Social: </label>
+                        <input type="text" name="full_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Razón social" [(ngModel)]="full_name" />
+                    </div>
+                    <!-- Nombre comercial del proveedor -->
+                    <div class="col-4">
+                        <label class="required fw-bold fs-6 mb-2">Nombre comercial: </label>
+                        <input type="text" name="comercial_name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Nombre comercial" [(ngModel)]="comercial_name" />
+                    </div>
+                    <!-- NIF del proveedor -->
+                    <div class="col-4">
+                        <label class="required fw-bold fs-6 mb-2">NIF: </label>
+                        <input type="text" name="nif" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="NIF" [(ngModel)]="nif" />
+                    </div>
+                </div>
+                <!-- Dirección, email y teléfono de contacto -->
+                <div class="fv-row row my-1">
+                    <!-- Dirección del proveedor -->
+                    <div class="col-4">
+                        <label class="required fw-bold fs-6 mb-2">Dirección: </label>
+                        <textarea class="form-control form-control-solid" rows="3" name="address" placeholder="Dirección" [(ngModel)]="address"></textarea>
+                    </div>
+                    <!-- Email del proveedor -->
+                    <div class="col-4">
+                        <label class="required fw-bold fs-6 mb-2">Email: </label>
+                        <input type="email"
+                            name="email"
+                            class="form-control form-control-solid mb-3 mb-lg-0"
+                            placeholder="Email de contacto"
+                            [(ngModel)]="email"
+                            #emailInput="ngModel"
+                            required email/>
+                            <div *ngIf="emailInput.errors?.['email'] && emailInput.touched">
+                              El Email no es válido.
+                            </div>
+                    </div>
+                    <!-- Teléfono del proveedor -->
+                    <div class="col-4">
+                        <label class="required fw-bold fs-6 mb-2">Teléfono: </label>
+                        <input type="text" name="phone" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Teléfono" [(ngModel)]="phone" />
+                    </div>
+                </div>
+                <!-- Logo del proveedor y estado -->
+                <div class="fv-row row my-1">
+                    <!-- Logo del proveedor -->
+                    <div class="col-6">
+                        <label class="required fw-bold fs-6 mb-2">Logo: </label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="customFile" accept=".jpeg, .bmp, .jpg, .png, .gif, .webp"  (change)="processFile($event)">
+                        </div>
+                        <div *ngIf="IMAGEN_PREVISUALIZA">
+                            <img [src]="IMAGEN_PREVISUALIZA" style="height: 100px;" alt="" srcset="">
+                        </div>
+                    </div>
+                    <!-- Estado del proveedor -->
+                    <div class="col-6">
+                        <label class="required fw-bold fs-6 mb-2">State: (opcional) </label>
+                        <select
+                            class="form-control form-select-solid fw-bolder"
+                            name="state"
+                            placeholder="Selec. Estado"
+                            [(ngModel)]="state"
+                        >
+                            <option value="1">Activo</option>
+                            <option value="2">Inactivo</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Fin de los campos Input -->
+            </div>
+            <!--end::Scroll-->
+            <!--begin::Actions-->
+            <div class="text-center pt-15">
+                <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()">Cerrar</button>
+                <button type="button" (click)="store()" class="btn btn-primary" data-kt-users-modal-action="submit">
+                    <span class="indicator-label">Editar</span>
+                    <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading | async"></span>
+                </button>
+            </div>
+            <!--end::Actions-->
+        </form>
+        <!--end::Form-->
+    </div>
+    <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

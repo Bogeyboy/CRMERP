@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('full_name');
             $table->string('comercial_name')->nullable()->default(null);
             $table->string('nif',15)->unique();
-            $table->string('email')->unique();
+            $table->string('email');
             $table->string('phone',20)->nullable()->default(null);
             $table->string('address')->nullable()->default(null);
             $table->boolean('state')->default(1);

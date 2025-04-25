@@ -31,6 +31,11 @@ const routes: Routes = [
   {
     path: 'categoria-de-productos',
     loadChildren: ()=> import('./product-categories/product-categories.module').then((m) => m.ProductCategoriesModule)
+  },
+  //Ruta para la configuración de proveedores
+  {
+    path: 'proveedores',
+    loadChildren: ()=> import('./providers/providers.module').then((m) => m.ProvidersModule)
   }
 ];
 

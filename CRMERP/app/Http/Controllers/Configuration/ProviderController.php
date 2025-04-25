@@ -24,7 +24,7 @@ class ProviderController extends Controller
                 return [
                     'id' => $provider->id,
                     'full_name' => $provider->full_name,
-                    'comercial_name' => $provider->full_name,
+                    'comercial_name' => $provider->comercial_name,
                     'nif' => $provider->nif,
                     'email' => $provider->email,
                     'phone' => $provider->phone,
@@ -70,12 +70,12 @@ class ProviderController extends Controller
             'provider' => [
                 'id' => $provider->id,
                 'full_name' => $provider->full_name,
-                'comercial_name' => $provider->full_name,
+                'comercial_name' => $provider->comercial_name,
                 'nif' => $provider->nif,
                 'email' => $provider->email,
                 'phone' => $provider->phone,
                 'address' => $provider->address,
-                'state' => $provider->state,
+                'state' => $provider->state ?? 1,
                 'imagen' => $provider->imagen ? env('APP_URL') . 'storage/' . $provider->imagen : null,
                 'created_at' => $provider->created_at->format('d-m-Y H:i:s'),
             ],
@@ -94,7 +94,7 @@ class ProviderController extends Controller
         if ($if_exists_provider) {
             return response()->json([
                 'message' => 403,
-                'message_text' => 'Ya existe un proveedor con ese nombre.',
+                'message_text' => 'Ya existe un proveedor con esa razón social.',
             ]);
         };
 
@@ -104,7 +104,7 @@ class ProviderController extends Controller
         if ($if_exists_provider) {
             return response()->json([
                 'message' => 403,
-                'message_text' => 'El NIF del proveedor ya existe..',
+                'message_text' => 'El NIF del proveedor ya existe.',
             ]);
         };
 
@@ -127,7 +127,7 @@ class ProviderController extends Controller
             'provider' => [
                 'id' => $provider->id,
                 'full_name' => $provider->full_name,
-                'comercial_name' => $provider->full_name,
+                'comercial_name' => $provider->comercial_name,
                 'nif' => $provider->nif,
                 'email' => $provider->email,
                 'phone' => $provider->phone,
@@ -136,7 +136,7 @@ class ProviderController extends Controller
                 'imagen' => $provider->imagen ? env('APP_URL') . 'storage/' . $provider->imagen : null,
                 'created_at' => $provider->created_at->format('d-m-Y H:i:s'),
             ],
-            'message_text' => 'La categoría se ha actualizado correctamente.',
+            'message_text' => 'El proveedor se ha actualizado correctamente.',
         ]);
     }
 
