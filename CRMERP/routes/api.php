@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Configuration\ProductCategorieController;
 use App\Http\Controllers\Configuration\ProviderController;
+use App\Http\Controllers\Configuration\UnitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -69,4 +70,6 @@ Route::group([
 
     Route::post('/providers/{id}', [ProviderController::class, 'update']);
     Route::resource("providers", ProviderController::class);
+
+    Route::resource("units", UnitController::class);
 });
