@@ -31,6 +31,6 @@ class Unit_transform extends Model
 
     public function unit_to()
     {
-        return $this->berlongsTo(Unit::class, 'unit_to_id');
+        return $this->belongsTo(Unit::class, 'unit_to_id');
     }
 }

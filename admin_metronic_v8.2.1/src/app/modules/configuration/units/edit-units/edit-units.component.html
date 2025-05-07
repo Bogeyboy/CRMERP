@@ -3,7 +3,7 @@
     <!--begin::Modal header-->
     <div class="modal-header" id="kt_modal_add_user_header">
         <!--begin::Modal title-->
-        <h2 class="fw-bolder">Añadir Sucursal</h2>
+        <h2 class="fw-bolder">Editar unidad: {{ UNIT_SELECTED.name }}</h2>
         
         <!--end::Modal title-->
         <!--begin::Close-->
@@ -29,18 +29,39 @@
                 <!--begin::Input group-->
                 <div class="fv-row mb-7">
                     <!--begin::Label-->
-                    <label class="required fw-bold fs-6 mb-2">Nombre de la sucursal: (*)</label>
+                    <label class="required fw-bold fs-6 mb-2">Nombre de la unidad: (*)</label>
                     <!--end::Label-->
                     <!--begin::Input-->
-                    <input type="text" name="name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Nombre de la sucursal" [(ngModel)]="name" />
+                    <input type="text" name="name" class="form-control form-control-solid mb-3 mb-lg-0" placeholder="Nombre de la unidad" [(ngModel)]="name" />
                     <!--end::Input-->
                 </div>
-
                 <div class="fv-row mb-7">
                     <!--begin::Label-->
-                    <label class="required fw-bold fs-6 mb-2">Dirección: (opcional) </label>
-                    <textarea class="form-control form-control-solid" rows="3"
-                    name="address" [(ngModel)]="address" placeholder="Dirección de la sucursal"></textarea>
+                    <label class="required fw-bold fs-6 mb-2">Descripción de la unidad: (Opcional)</label>
+                    <!--end::Label-->
+                    <!--begin::Input-->
+                    <textarea
+                        class="form-control form-control-solid" rows="3"
+                        name="description"
+                        placeholder="Descripcion de la unidad"
+                        [(ngModel)]="description"
+                    >
+                    </textarea>
+                    <!--end::Input-->
+                </div>
+                <div class="fv-row mb-7">
+                    <!--begin::Label-->
+                    <label class="required fw-bold fs-6 mb-2">State: (opcional) </label>
+                    <select
+                        class="form-control form-select-solid fw-bolder"
+                        name="state"
+                        placeholder="Selec. Estado"
+                        [(ngModel)]="state"
+                    >
+                        <option value="1">Activo</option>
+                        <option value="2">Inactivo</option>
+                    </select>
+
                 </div>
             </div>
             <!--end::Scroll-->
@@ -49,7 +70,7 @@
             <div class="text-center pt-15">
                 <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()">Cerrar</button>
                 <button type="button" (click)="store()" class="btn btn-primary" data-kt-users-modal-action="submit">
-                    <span class="indicator-label">Registrar</span>
+                    <span class="indicator-label">Editar</span>
 
                     <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading | async"></span>
                     <!-- <span class="indicator-progress">Please wait...

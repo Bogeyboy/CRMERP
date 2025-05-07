@@ -12,7 +12,7 @@ import { DeleteProvidersComponent } from '../delete-providers/delete-providers.c
   styleUrls: ['./list-providers.component.scss']
 })
 export class ListProvidersComponent {
-search:string = '';
+  search:string = '';
   PROVIDERS:any = [];
   isLoading$:any;
 

@@ -71,5 +71,9 @@ Route::group([
     Route::post('/providers/{id}', [ProviderController::class, 'update']);
     Route::resource("providers", ProviderController::class);
 
+    Route::post('/units/add-transform', [UnitController::class,'add_transform']);
+    Route::delete('/units/delete-transform/{id}', [UnitController::class, 'delete_transform']);
+
+
     Route::resource("units", UnitController::class);
 });

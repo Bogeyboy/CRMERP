@@ -36,6 +36,11 @@ const routes: Routes = [
   {
     path: 'proveedores',
     loadChildren: ()=> import('./providers/providers.module').then((m) => m.ProvidersModule)
+  },
+  //Ruta para la configuración de las unidades
+  {
+    path: 'unidades',
+    loadChildren: ()=> import('./units/units.module').then((m) => m.UnitsModule)
   }
 ];
 
