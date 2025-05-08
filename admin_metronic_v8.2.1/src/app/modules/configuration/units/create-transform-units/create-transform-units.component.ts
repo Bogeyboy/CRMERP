@@ -78,7 +78,7 @@ export class CreateTransformUnitsComponent {
     modalRef.componentInstance.UnitD.subscribe((transf:any) => {
       let INDEX = this.UNIT_SELECTED.transforms.findIndex((tran:any) => tran.id == transform.id);
       if(INDEX != -1){
-        this.UNITS.splice(INDEX,1);
+        this.UNIT_SELECTED.transforms.splice(INDEX,1);
       }
     })
   }
