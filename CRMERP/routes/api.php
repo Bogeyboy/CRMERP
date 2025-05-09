@@ -13,6 +13,7 @@ use App\Http\Controllers\Configuration\WarehouseController;
 use App\Http\Controllers\Configuration\ClientSegmentController;
 use App\Http\Controllers\Configuration\MethodPaymentController;
 use App\Http\Controllers\Configuration\SucursalDeliverieController;
+use App\Http\Controllers\Product\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,25 +56,35 @@ Route::group([
     Route::resource("users", UserAccessController::class);
     //Route::post('/users/{user}', [UserAccessController::class, 'update']);
 
+    //Rutas para sucursales
     Route::resource("sucursales", SucursaleController::class);
 
+    //Rutas para almacenes
     Route::resource("warehouses", WarehouseController::class);
 
+    //Rutas para sucursales de entrega
     Route::resource("sucursal_deliveries", SucursalDeliverieController::class);
 
+    //Rutas para métodos de pago
     Route::resource("method_payments", MethodPaymentController::class);
 
+    //Rutas para segmentos de clientes
     Route::resource("client_segments", ClientSegmentController::class);
 
+    //Rutas para categorias de productos
     Route::post('/product_categories/{id}', [ProductCategorieController::class, 'update']);
     Route::resource("product_categories", ProductCategorieController::class);
 
+    //Rutas para proveedores
     Route::post('/providers/{id}', [ProviderController::class, 'update']);
     Route::resource("providers", ProviderController::class);
 
+    //Rutas para unidades de transformación
     Route::post('/units/add-transform', [UnitController::class,'add_transform']);
     Route::delete('/units/delete-transform/{id}', [UnitController::class, 'delete_transform']);
-
-
     Route::resource("units", UnitController::class);
+
+    //Rutas para productos
+    Route::post('/products/{id}', [ProductController::class, 'update']);
+    Route::resource("products", ProductController::class);
 });
