@@ -73,6 +73,11 @@ const Routing: Routes = [
     path: 'configuraciones',
     loadChildren: ()=> import('../modules/configuration/configuration.module').then((m) => m.ConfigurationModule)
   },
+  //PRODUCTOS
+  {
+    path: 'productos',
+    loadChildren: ()=> import('../modules/products/products.module').then((m) => m.ProductsModule)
+  },
   //DASHBOARD->COMPLETO
   {
     path: '',
