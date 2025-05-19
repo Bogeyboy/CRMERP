@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Product;
 
+use App\Models\Configuration\client_segment;
+use App\Models\Configuration\Sucursale;
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
 use App\Http\Controllers\Controller;
+use App\Models\Configuration\Unit;
+use App\Models\Configuration\Warehouse;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -21,6 +25,21 @@ class ProductController extends Controller
         return response()->json([
             'total' => $products->total(),
             'products' => $products
+        ]);
+    }
+
+    public function config()
+    {
+        $almacenes = Warehouse::where('state', 1)->get();
+        $sucursales = Sucursale::where('state', 1)->get();
+        $units = Unit::where('state', 1)->get();
+        $segments_clients = client_segment::where('state', 1)->get();
+
+        return response()->json([
+            'almacenes' => $almacenes,
+            'sucursales' => $sucursales,
+            'units' => $units,
+            'segments_clients' => $segments_clients,
         ]);
     }
     /**
