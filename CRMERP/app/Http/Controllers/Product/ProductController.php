@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Product;
 
 use App\Models\Configuration\client_segment;
+use App\Models\Configuration\ProductCategorie;
 use App\Models\Configuration\Sucursale;
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
 use App\Http\Controllers\Controller;
 use App\Models\Configuration\Unit;
 use App\Models\Configuration\Warehouse;
+use App\Models\Product\ProductWallet;
+use App\Models\Product\ProductWarehouse;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -34,12 +37,14 @@ class ProductController extends Controller
         $sucursales = Sucursale::where('state', 1)->get();
         $units = Unit::where('state', 1)->get();
         $segments_clients = client_segment::where('state', 1)->get();
+        $categories = ProductCategorie::where('state', 1)->get();
 
         return response()->json([
             'almacenes' => $almacenes,
             'sucursales' => $sucursales,
             'units' => $units,
             'segments_clients' => $segments_clients,
+            'categories' => $categories,
         ]);
     }
     /**
@@ -63,6 +68,26 @@ class ProductController extends Controller
         }
 
         $product = Product::create($request->all());
+
+        $WAREHOUSES_PRODUCT = json_decode($request->WAREHOUSES_PRODUCT,true);
+        foreach ($WAREHOUSES_PRODUCT as $WAREHOUSES_PROD) {
+            ProductWarehouse::create([
+                'product_id' => $product->id,
+                'unit_id' => $WAREHOUSES_PROD['unit']['id'],
+                'warehouse_id' => $WAREHOUSES_PROD['warehouse']['id'],
+                'stock' => $WAREHOUSES_PROD['quantity'],
+            ]);
+        }
+        $WALLETS_PRODUCT = json_decode($request->WALLETS_PRODUCT,true);
+        foreach ($WALLETS_PRODUCT as $WALLETS_PROD) {
+            ProductWallet::create([
+                'product_id' => $product->id,
+                'unit_id' => $WALLETS_PROD['unit']['id'],
+                'client_segment_id' => isset($WALLETS_PROD['client_segment']) ? $WALLETS_PROD['client_segment']['id'] : null,
+                'sucursal_id' => isset($WALLETS_PROD['sucursale']) ? $WALLETS_PROD['sucursale']['id'] : null,
+                'price' => $WALLETS_PROD['price_general'],
+            ]);
+        }
         return response()->json([
             'message' => 200,
             /* 'product' => [

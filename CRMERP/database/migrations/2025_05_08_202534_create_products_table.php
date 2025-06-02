@@ -25,7 +25,7 @@ return new class extends Migration
             $table->double('max_discount')->nullable()->comment('Descuento máximo de venta');
             $table->double('umbral')->nullable()->comment('Umbral de stock mínimo para notificación');
             $table->unsignedBigInteger('umbral_unit_id')->nullable()->comment('Umbral de stock mínimo para notificación por unidad');
-            $table->tinyInteger('disponibilidad')->default(null)->comment('1=Es vender los productos sin stock, 2=Es NO vender los productos sin stock, 3=Proyectar con los contratos que se tenga');
+            $table->tinyInteger('disponibilidad')->unsigned()->default(1)->comment('1=Es vender los productos sin stock, 2=Es NO vender los productos sin stock, 3=Proyectar con los contratos que se tenga');
             $table->double('tiempo_de_abastecimiento')->nullable()->comment('Tiempo de abastecimiento en días');
             $table->unsignedBigInteger('provider_id')->nullable()->comment('Proveedor principal del producto');
             $table->timestamps();

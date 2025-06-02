@@ -16,6 +16,7 @@ class Product extends Model
     protected $fillable = [
         'title',
         'sku',
+        'product_categorie_id',
         'imagen',
         'price_general',
         'description',
@@ -26,7 +27,15 @@ class Product extends Model
         'umbral',
         'umbral_unit_id',
         'disponibilidad',
-        'tiempo_de_abastecimiento'
+        'tiempo_de_abastecimiento',
+        'provider_id',
+        'is_discount',
+        'tax_selected',
+        'importe_iva',
+        'weight',
+        'width',
+        'height',
+        'length'
     ];
 
     public function setCreatedAtAttribute($value)

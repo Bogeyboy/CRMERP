@@ -21,7 +21,7 @@ export class CreateProductComponent {
   imagen_previzualiza:any = 'assets/media/svg/files/blank-image.svg';
   //SECCIÓN ADICIONALES
   price_general:number = 0;
-  disponiblidad:string = '';
+  disponibilidad:string = '';
   tiempo_de_abastecimiento:number = 0;
   min_discount:number = 0;
   max_discount:number = 0;
@@ -88,22 +88,20 @@ export class CreateProductComponent {
   }
 
   addWarehouse(){
-    if(!this.almacen_warehouse ||
-      ! this.unit_warehouse  ||
-      ! this.quantity_warehouse
-    ){
-      this.toast.error("VALIDACIÓN","Necesitas seleccionar un almacen y una unidad, aparte de colocar una cantidad");
+    if(!this.almacen_warehouse || !this.unit_warehouse  || !this.quantity_warehouse)
+    {
+      this.toast.error("VALIDACIÓN","Necesitas seleccionar un almacen y una unidad, aparte de colocar la cantidad");
       return;
     }
 
     let UNIT_SELECTED = this.UNITS.find((unit:any) => unit.id == this.unit_warehouse);
     let WAREHOUSE_SELECTED = this.WAREHOUSES.find((wareh:any) => wareh.id == this.almacen_warehouse);
 
-
     let INDEX_WAREHOUSE = this.WAREHOUSES_PRODUCT.findIndex((wh_prod:any) => (wh_prod.unit.id == this.unit_warehouse)
-                                                                              && (wh_prod.warehouse.id == this.almacen_warehouse));
+                                                                            && (wh_prod.warehouse.id == this.almacen_warehouse));
 
-    if(INDEX_WAREHOUSE != -1){
+    if(INDEX_WAREHOUSE != -1)
+    {
       this.toast.error("VALIDACIÓN","La existencia de ese producto con el almacen y la unidad ya existe");
       return;
     }
@@ -115,6 +113,7 @@ export class CreateProductComponent {
     this.almacen_warehouse = ''
     this.unit_warehouse = ''
     this.quantity_warehouse = 0
+    
     console.log(this.WAREHOUSES_PRODUCT);
   }
 
@@ -131,9 +130,8 @@ export class CreateProductComponent {
   }
 
   addPriceMultiple(){
-    if(!this.unit_price_multiple ||
-      ! this.quantity_price_multiple
-    ){
+    if(!this.unit_price_multiple || ! this.quantity_price_multiple)
+    {
       this.toast.error("VALIDACIÓN","Necesitas seleccionar una unidad, aparte de colocar un precio");
       return;
     }
@@ -160,6 +158,7 @@ export class CreateProductComponent {
       sucursale: SUCURSALE_SELECTED,
       client_segment: CLIENT_SEGMENT_SELECTED,
       price_general: this.quantity_price_multiple,
+      quantity: this.quantity_price_multiple,
       sucursale_price_multiple: this.sucursale_price_multiple,
       client_segment_price_multiple: this.client_segment_price_multiple,
     });
@@ -169,19 +168,21 @@ export class CreateProductComponent {
     this.unit_price_multiple = '';
 
     console.log(this.WALLETS_PRODUCT);
+    //const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    //console.log(timeZone);
   }
 
   removePriceMultiple(WALLETS_PROD:any){
     // EL OBJETO QUE QUIERO ELIMINAR
     // LA LISTA DONDE SE ENCUENTRA EL OBJECTO QUE QUIERO ELIMINAR
     //  OBTENER LA POSICIÓN DEL ELEMENTO A ELIMINAR
-    let INDEX_WAREHOUSE = this.WALLETS_PRODUCT.findIndex((wh_prod:any) => 
+    let INDEX_WALLETS_PROD = this.WALLETS_PRODUCT.findIndex((wh_prod:any) => 
       (wh_prod.unit.id == WALLETS_PROD.unit.id)
       && (wh_prod.sucursale_price_multiple == WALLETS_PROD.sucursale_price_multiple)
       && (wh_prod.client_segment_price_multiple == WALLETS_PROD.client_segment_price_multiple));
     //  LA ELIMINACIÓN DEL OBJECTO
-    if(INDEX_WAREHOUSE != -1){
-      this.WALLETS_PRODUCT.splice(INDEX_WAREHOUSE,1);
+    if(INDEX_WALLETS_PROD != -1){
+      this.WALLETS_PRODUCT.splice(INDEX_WALLETS_PROD,1);
     }
   }
 
@@ -218,8 +219,8 @@ export class CreateProductComponent {
   }
 
   store() {
-    console.log(this.title,this.description,this.price_general,this.imagen_product,
-      this.product_categorie_id,this.sku,this.tax_selected,this.weight,this.width,this.height,this.length);
+    console.log(this.disponibilidad, this.tax_selected,this.is_discount,this.is_gift,this.title,this.description,this.price_general,this.imagen_product,
+      this.product_categorie_id,this.sku,this.weight,this.width,this.height,this.length);
     if(!this.title ||
       !this.description ||
       !this.price_general ||
@@ -227,7 +228,7 @@ export class CreateProductComponent {
       !this.product_categorie_id ||
       !this.sku ||
       !this.tax_selected ||
-      // !this.importe_iva ||
+      !this.importe_iva ||
       !this.weight  ||
       !this.width  ||
       !this.height  ||
@@ -236,15 +237,14 @@ export class CreateProductComponent {
       this.toast.error("VALIDACIÓN","Necesitas llenar todos los campos obligatorios");
       return;
     }
-
-   if(this.WAREHOUSES_PRODUCT.length == 0){
-    this.toast.error("VALIDACIÓN","Necesitas ingresar al menos un registro de existencia de producto");
+    if(this.WAREHOUSES_PRODUCT.length == 0){
+      this.toast.error("VALIDACIÓN","Necesitas ingresar al menos un registro de existencia de producto");
       return;
-   }
-   if(this.WALLETS_PRODUCT.length == 0){
-    this.toast.error("VALIDACIÓN","Necesitas ingresar al menos un listado de precio al producto");
+    }
+    if(this.WALLETS_PRODUCT.length == 0){
+      this.toast.error("VALIDACIÓN","Necesitas ingresar al menos un listado de precio al producto");
       return;
-   }
+    }
 
     let formData = new FormData();
     formData.append("title",this.title);
@@ -253,7 +253,8 @@ export class CreateProductComponent {
     formData.append("product_categorie_id",this.product_categorie_id);
     formData.append("product_imagen",this.imagen_product)
     formData.append("price_general",this.price_general+"");
-    formData.append("disponiblidad",this.disponiblidad+"");
+    formData.append("disponibilidad",this.disponibilidad+"");
+    console.log('La disponibilidad es: ',this.disponibilidad);
     formData.append("tiempo_de_abastecimiento",this.tiempo_de_abastecimiento+"");
     formData.append("is_discount",this.is_discount+"");//NUEVO
     formData.append("min_discount",this.min_discount+"");
@@ -293,7 +294,7 @@ export class CreateProductComponent {
       this.state = '1';
       this.product_categorie_id = '';
       this.imagen_product = null;
-      this.disponiblidad = '1';
+      this.disponibilidad = '1';
       this.tiempo_de_abastecimiento = 0;
       this.is_discount = 1;
       this.min_discount = 0;
