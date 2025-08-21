@@ -20,6 +20,7 @@ export class CreateProductComponent {
   imagen_product:any;
   imagen_previzualiza:any = 'assets/media/svg/files/blank-image.svg';
   //SECCIÓN ADICIONALES
+  provider_id:number = 0;
   price_general:number = 0;
   disponibilidad:string = '';
   tiempo_de_abastecimiento:number = 0;
@@ -61,6 +62,7 @@ export class CreateProductComponent {
 
   WAREHOUSES:any = [];
   SUCURSALES:any = [];
+  PROVIDERS:any = [];
   UNITS:any = [];
   CLIENT_SEGMENTS:any = [];
   CATEGORIES:any = [];
@@ -84,6 +86,7 @@ export class CreateProductComponent {
       this.UNITS = resp.units;
       this.CLIENT_SEGMENTS = resp.segments_clients;
       this.CATEGORIES = resp.categories;
+      this.PROVIDERS = resp.providers;
     })
   }
 
@@ -219,7 +222,7 @@ export class CreateProductComponent {
   }
 
   store() {
-    console.log(this.disponibilidad, this.tax_selected,this.is_discount,this.is_gift,this.title,this.description,this.price_general,this.imagen_product,
+    console.log(this.disponibilidad,this.provider_id,this.tax_selected,this.is_discount,this.is_gift,this.title,this.description,this.price_general,this.imagen_product,
       this.product_categorie_id,this.sku,this.weight,this.width,this.height,this.length);
     if(!this.title ||
       !this.description ||
@@ -232,7 +235,8 @@ export class CreateProductComponent {
       !this.weight  ||
       !this.width  ||
       !this.height  ||
-      !this.length
+      !this.length ||
+      !this.provider_id
     ){
       this.toast.error("VALIDACIÓN","Necesitas llenar todos los campos obligatorios");
       return;
@@ -251,10 +255,11 @@ export class CreateProductComponent {
     formData.append("description",this.description);
     formData.append("state",this.state);
     formData.append("product_categorie_id",this.product_categorie_id);
-    formData.append("product_imagen",this.imagen_product)
+    formData.append("product_imagen",this.imagen_product);
+    formData.append("provider_id",this.provider_id+"");
     formData.append("price_general",this.price_general+"");
     formData.append("disponibilidad",this.disponibilidad+"");
-    console.log('La disponibilidad es: ',this.disponibilidad);
+    console.log('El proveedor es: ', this.provider_id);
     formData.append("tiempo_de_abastecimiento",this.tiempo_de_abastecimiento+"");
     formData.append("is_discount",this.is_discount+"");//NUEVO
     formData.append("min_discount",this.min_discount+"");
@@ -275,7 +280,6 @@ export class CreateProductComponent {
     
     formData.append("WAREHOUSES_PRODUCT",JSON.stringify(this.WAREHOUSES_PRODUCT));
     formData.append("WALLETS_PRODUCT",JSON.stringify(this.WALLETS_PRODUCT));
-    
 
     this.productService.registerProduct(formData).subscribe((resp:any) => {
       console.log(resp);
@@ -293,6 +297,7 @@ export class CreateProductComponent {
       this.description = ''
       this.state = '1';
       this.product_categorie_id = '';
+      this.provider_id = 0;
       this.imagen_product = null;
       this.disponibilidad = '1';
       this.tiempo_de_abastecimiento = 0;

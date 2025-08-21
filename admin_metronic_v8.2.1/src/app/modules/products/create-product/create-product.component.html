@@ -243,8 +243,26 @@
                                     <div class="card-body pt-0">
                                         <!-- COMIENZO DE PRECIO, DISPONIBILIDAD Y TIEMPO DE ABASTECIMIENTO -->
                                         <div class="mb-10 row fv-row">
+                                            <!-- COMIENZO DE PROVEEDOR -->
+                                            <div class="col-3">
+                                                <label class="required form-label">Proveedor principal</label>
+                                                <select class="form-select mb-2"
+                                                    [(ngModel)]="provider_id"
+                                                    name="provider_id"
+                                                    placeholder="Seleccione el proveedor">
+                                                    <ng-container *ngFor="let PROVIDER of PROVIDERS">
+                                                        <option [ngValue]="PROVIDER.id">
+                                                            {{ PROVIDER.full_name + ' - ' + PROVIDER.comercial_name }}
+                                                        </option>
+                                                    </ng-container>
+                                                </select>
+                                                <div class="text-muted fs-7">
+                                                    Proveedor
+                                                </div>
+                                            </div>
+                                            <!-- FIN DE PROVEEDOR -->
                                             <!-- COMIENZO DE PRECIO BASE -->
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <label class="required form-label">Precio base</label>
                                                 <input type="number"
                                                     [(ngModel)]="price_general"
@@ -256,7 +274,7 @@
                                             </div>
                                             <!-- FIN DE PRECIO BASE -->
                                             <!-- COMIENZO DE DISPONIBILIDAD -->
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <label class="required form-label">Disponibilidad</label>
                                                 <select class="form-select mb-2"
                                                     [(ngModel)]="disponibilidad"
@@ -271,7 +289,7 @@
                                             </div>
                                             <!-- FIN DE DISPONIBILIDAD -->
                                             <!-- COMIENZO DE TIEMPO DE ABASTECIMIENTO -->
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <label class="required form-label">Tiempo de abastecimiento</label>
                                                 <input type="number"
                                                     [(ngModel)]="tiempo_de_abastecimiento"

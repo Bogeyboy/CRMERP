@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_categorie_id');
             $table->string('imagen')->nullable()->default(null);
             $table->string('sku');
+            $table->tinyInteger('state')->unsigned()->default(1)->comment('1=Activo, 2=Inactivo');
             $table->double('price_general');
             $table->longText('description')->nullable()->default(null);
             $table->json('specifications')->nullable()->default(null);

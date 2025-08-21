@@ -1,1 +1,430 @@
-<p>list-product works!</p>
+<div class="card">
+    <div class="card-header border-0 pt-6">
+        <!-- COMIENZO DE LOS PARÁMETROS DE BÚSQUEDA Y FILTRADO -->
+        <div class="card-title">
+            <div class="row">
+                <!-- COMIENZO INPUT DE BUSQUEDA NORMAL -->
+                <div class="col-3">
+                    <div class="d-flex align-items-center position-relative my-1">
+                        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                        <input type="text" [(ngModel)]="search"
+                            (keyup.enter)="listProducts()"
+                            name="search"
+                            data-kt-customer-table-filter="search"
+                            class="form-control form-control-solid w-250px ps-12"
+                            placeholder="Buscar productos">
+                    </div>
+                </div>
+                <!-- FIN INPUT DE BUSQUEDA NORMAL -->
+                <!-- COMIENZO DE FILTRO MÚLTIPLE -->
+                <!-- COMIENZO SELECT DE BUSQUEDA POR CATEGORÍAS -->
+                <div class="col-2">
+                    <select class="form-select mb-2"
+                        name="product_categorie_id"
+                        [(ngModel)]="product_categorie_id"
+                        (change)="listProducts()">
+                        <ng-container *ngFor="let CATEGORIE of CATEGORIES">
+                            <option [value]="CATEGORIE.id">{{ CATEGORIE.name }}</option>
+                        </ng-container>
+                    </select>
+                    <div class="text-muted fs-7">
+                        Categoria
+                    </div>
+                </div>
+                <!-- FIN SELECT BUSQUEDA POR CATEGORÍAS -->
+                <!-- COMIENZO SELECT BUSQUEDA POR DISPONIBILIDAD -->
+                <div class="col-2">
+                    <select class="form-select mb-2"
+                        [(ngModel)]="disponibilidad"
+                        name="disponibilidad"
+                        (change)="listProducts()">
+                        <option value="1">Vender los productos sin stock</option>
+                        <option value="2">No vender los productos sin stock</option>
+                        <option value="3">Proyectar con los contratos que se tenga</option>
+                    </select>
+                    <div class="text-muted fs-7">
+                        Disponibilidad
+                    </div>
+                </div>
+                <!-- FIN SELECT BUSQUEDA POR DISPONIBILIDAD -->
+                <!-- COMIENZO DE SELECT DE BUSQUEDA POR TIPO DE IMPUESTO -->
+                <div class="col-3">
+                    <select class="form-select mb-2"
+                        [(ngModel)]="tax_selected"
+                        name="tax_selected"
+                        (change)="listProducts()">
+                        <option value="1">Libre de impuestos</option>
+                        <option value="2">Bienes gravables</option>
+                        <option value="3">Producto descargable</option>
+                    </select>
+                    <div class="text-muted fs-7">
+                        Tipo de impuesto
+                    </div>
+                </div>
+                <!-- FIN DE SELECT DE BUSQUEDA POR TIPO DE IMPUESTO -->
+                <!-- COMIENZO DE BOTÓN DE BÚSQUEDA -->
+                <div class="col-1">
+                    <button class="btn btn-primary btn-sm" (click)="listProducts()">
+                        <i class="ki-duotone ki-magnifier fs-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </button>
+                </div>
+                <!-- FIN DE BOTÓN DE BÚSQUEDA -->
+                <!-- COMIENZO BOTÓN RESET BÚSQUEDA -->
+                <div class="col-1">
+                    <button class="btn btn-dark btn-sm" (click)="resetListProducts()">
+                        <i class="ki-duotone ki-loading fs-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                        </i>
+                    </button>
+                </div>
+                <!-- FIN BOTÓN RESET BÚSQUEDA -->
+                <!-- FIN DE FILTRO MÚLTIPLE -->
+            </div>
+        </div>
+        <!-- FIN DE LOS PARÁMETROS DE BÚSQUEDA Y FILTRADO -->
+        <span class="spinner-border spinner-border-sm align-middle ms-2" *ngIf="isLoading$ | async"></span>
+        <!--begin::Card toolbar-->
+        <div class="card-toolbar">
+            <!--begin::Toolbar-->
+            <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
+                <!--begin::Add customer-->
+                <button type="button" class="btn btn-primary" routerLink="/productos/register">
+                    + Añadir Producto
+                </button>
+                <!--end::Add customer-->
+            </div>
+            <!--end::Toolbar-->
+
+            <!--begin::Group actions-->
+            <div class="d-flex justify-content-end align-items-center d-none" data-kt-customer-table-toolbar="selected">
+                <div class="fw-bold me-5">
+                    <span class="me-2" data-kt-customer-table-select="selected_count"></span> Selected
+                </div>
+                
+                <button type="button" class="btn btn-danger" data-kt-customer-table-select="delete_selected">
+                    Delete Selected
+                </button>
+            </div>
+            <!--end::Group actions-->
+        </div>
+        <!--end::Card toolbar-->
+    </div>
+    <div class="card-body pt-0">
+        <!-- COMIENZO DEL FILTRADO ESPECIAL DE PRODUCTOS -->
+        <div class="row">
+            <!-- COMIENZO DE FILTRADO POR PROVEEDORES -->
+            <div class="col-2">
+                <select class="form-select mb-2"
+                    [(ngModel)]="provider_id"
+                    name="provider_id"
+                    (change)="listProducts()"
+                    placeholder="Seleccione una opción">
+                    <ng-container *ngFor="let PROVIDER of PROVIDERS">
+                        <option [ngValue]="PROVIDER.id">
+                            {{ PROVIDER.full_name + ' - ' + PROVIDER.comercial_name }}
+                        </option>
+                    </ng-container>
+                </select>
+                <div class="text-muted fs-7">
+                    Proveedor
+                </div>
+            </div>
+            <!-- FIN DE FILTRADO POR PROVEEDORES -->
+            <!-- COMIENZO DE FILTRADO POR SUCURSALES -->
+            <div class="col-2">
+                <select class="form-select mb-2"
+                    [(ngModel)]="sucursale_price_multiple"
+                    name="sucursale_price_multiple"
+                    (change)="listProducts()"
+                    placeholder="Seleccione una opción">
+                    <ng-container *ngFor="let SUCURSALE of SUCURSALES">
+                        <option [value]="SUCURSALE.id">
+                            {{ SUCURSALE.name }}
+                        </option>
+                    </ng-container>
+                </select>
+                <div class="text-muted fs-7">
+                    Sucursal
+                </div>
+            </div>
+            <!-- FIN DE FILTRADO POR SUCURSALES -->
+            <!-- COMIENZO DE FILTRADO POR ALMACENES -->
+            <div class="col-2">
+                <select class="form-select mb-2"
+                        name="almacen_warehouse"
+                        [(ngModel)]="almacen_warehouse"
+                        (change)="listProducts()"
+                        placeholder="Seleccione una opción">
+                        <ng-container *ngFor="let WAREHOUSE of WAREHOUSES">
+                            <option [value]="WAREHOUSE.id">
+                                {{ WAREHOUSE.name }}
+                            </option>
+                        </ng-container>
+                </select>
+                <div class="text-muted fs-7">
+                    Seleccione Almacén
+                </div>
+            </div>
+            <!-- FIN DE FILTRADO POR ALMACENES -->
+            <!-- COMIENZO DE FILTRADO POR SEGMENTO DE CLIENTE -->
+            <div class="col-2">
+                <select class="form-select mb-2"
+                    name="client_segment_price_multiple"
+                    [(ngModel)]="client_segment_price_multiple"
+                    (change)="listProducts()"
+                    placeholder="Seleccione una opción">
+                    <ng-container *ngFor="let CLIENT_SEGMENT of CLIENT_SEGMENTS">
+                        <option [value]="CLIENT_SEGMENT.id">
+                            {{ CLIENT_SEGMENT.name }}
+                        </option>
+                    </ng-container>
+                </select>
+                <div class="text-muted fs-7">Defina Segmento de cliente.</div>
+            </div>
+            <!-- FIN DE FILTRADO POR SEGMENTO DE CLIENTE -->
+            <!-- COMIENZO DE FILTRADO POR UNIDADES DE ALMACEN -->
+            <div class="col-2">
+                <select class="form-select mb-2"
+                name="unit_warehouse"
+                [(ngModel)]="unit_warehouse"
+                (change)="listProducts()"
+                placeholder="Seleccione una opción.">
+                <ng-container *ngFor="let UNIT of UNITS">
+                    <option [value]="UNIT.id">
+                        {{ UNIT.name }}
+                    </option>
+                </ng-container>
+            </select>
+                <div class="text-muted fs-7">Unidad/Almacén</div>
+            </div>
+            <!-- FIN DE FILTRADO POR UNIDADES DE ALMACEN -->
+            <!-- COMIENZO DE FILTRADO POR UNIDADES DE SUCURSAL -->
+            <!-- <div class="col-2">
+                <select class="form-select mb-2"
+                    name="unit_warehouse"
+                    [(ngModel)]="unit_warehouse"
+                    (change)="listProducts()"
+                    placeholder="Seleccione una opción.">
+                    <ng-container *ngFor="let UNIT of UNITS">
+                        <option [value]="UNIT.id">{{ UNIT.name }}</option>
+                    </ng-container>
+                </select>
+                <div class="text-muted fs-7">Unidad/Sucursal</div>
+            </div> -->
+            <!-- FIN DE FILTRADO POR UNIDADES DE SUCURSAL -->
+            <!-- COMIENZO DEL FILTRADO POR ESTADO DEL PRODUCTO -->
+            <div class="col-2">
+                <select class="form-control form-select-solid fw-bolder"
+                    name="state"
+                    [(ngModel)]="state"
+                    (change)="listProducts()"
+                    placeholder="Selec. Estado">
+                    <ng-container>
+                        <option [value]="1">Activo</option>
+                        <option [value]="2">Inactivo</option>
+                    </ng-container>
+                </select>
+            </div>
+            <!-- FIN DEL FILTRADO POR ESTADO DEL PRODUCTO -->
+        </div>
+        <!-- FIN DEL FILTRADO ESPECIAL DE PRODUCTOS -->
+        <!-- COMIENZO DE TABLA DE LISTADO DE PRODUCTOS -->
+        <div id="kt_customers_table_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
+            <!-- COMIENZO DE LA TABLA -->
+            <div id="" class="table-responsive">
+                <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable" id="kt_customers_table"
+                    style="width: 1199.5px;">
+                    <!-- COMIENZO DE CABECERA DE LA TABLA -->
+                    <thead>
+                        <!-- INICIO DE CABECERA DE NOMBRE DE PRODUCTO -->
+                        <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0" role="row">
+                            <th class="min-w-125px dt-orderable-asc dt-orderable-desc" data-dt-column="1" rowspan="1"
+                                colspan="1" aria-label="Customer Name: Activate to sort" tabindex="0">
+                                <span class="dt-column-title" role="button">
+                                    Producto
+                                </span>
+                                <span class="dt-column-order">
+                                </span>
+                            </th>
+                            <!-- FIN DE CABECERA DE NOMBRE DE PRODUCTO -->
+                            <!-- INICIO DE CABECERA DE CATEGORÍA DEL PRODUCTO -->
+                            <th class="min-w-125px dt-orderable-asc dt-orderable-desc" data-dt-column="1" rowspan="1"
+                                colspan="1" aria-label="Customer Name: Activate to sort" tabindex="0">
+                                <span class="dt-column-title" role="button">
+                                    Categoria
+                                </span>
+                                <span class="dt-column-order">
+                                </span>
+                            </th>
+                            <!-- FIN DE CABECERA DE CATEGORÍA DE PRODUCTO -->
+                            <!-- INICIO DE CABECERA DE PRECIO GENERAL DEL PRODUCTO -->
+                            <th class="min-w-125px dt-orderable-asc dt-orderable-desc" data-dt-column="1" rowspan="1"
+                                colspan="1" aria-label="Customer Name: Activate to sort" tabindex="0">
+                                <span class="dt-column-title" role="button">
+                                    Precio General
+                                </span>
+                                <span class="dt-column-order">
+                                </span>
+                            </th>
+                            <!-- FIN DE CABECERA DE PRECIO GENERAL DEL PRODUCTO -->
+                            <!-- INICIO DE CABECERA DE DISPONIBILIDAD DE PRODUCTO -->
+                            <th class="min-w-125px dt-orderable-asc dt-orderable-desc" data-dt-column="1" rowspan="1"
+                                colspan="1" aria-label="Customer Name: Activate to sort" tabindex="0">
+                                <span class="dt-column-title" role="button">
+                                    Disponibilidad
+                                </span>
+                                <span class="dt-column-order">
+                                </span>
+                            </th>
+                            <!-- FIN DE CABECERA DE DISPONIBILIDAD DE PRODUCTO -->
+                            <!-- INICIO DE CABECERA DE CÓDIGO SKU DEL PRODUCTO -->
+                            <th class="min-w-125px dt-orderable-asc dt-orderable-desc" data-dt-column="1" rowspan="1"
+                                colspan="1" aria-label="Customer Name: Activate to sort" tabindex="0">
+                                <span class="dt-column-title" role="button">
+                                    CÓDIGO SKU
+                                </span>
+                                <span class="dt-column-order">
+                                </span>
+                            </th>
+                            <!-- FIN DE CABECERA DE CÓDIGO SKU DEL PRODUCTO -->
+                            <!-- INICIO DE CABECERA DE TIPO DE IMPUESTO DEL PRODUCTO -->
+                            <th class="min-w-125px dt-orderable-asc dt-orderable-desc" data-dt-column="1" rowspan="1"
+                                colspan="1" aria-label="Created Date: Activate to sort" tabindex="0">
+                                <span class="dt-column-title" role="button">
+                                    Tipo de impuesto
+                                </span>
+                                <span class="dt-column-order">
+                                </span>
+                            </th>
+                            <!-- FIN DE CABECERA DE TIPO DE IMPUESTO DEL PRODUCTO -->
+                            <!-- INICIO DE CABECERA DE ESTADO DEL PRODUCTO -->
+                            <th class="text-end min-w-70px dt-orderable-none" data-dt-column="1" rowspan="1" colspan="1"
+                                aria-label="State"><span class="dt-column-title">
+                                    Estado
+                                </span>
+                                <span class="dt-column-order">
+                                </span>
+                            </th>
+                            <!-- FIN DE CABECERA DE ESTADO DEL PRODUCTO -->
+                            <!-- INICIO DE CABECERA DE ACCIONES DEL PRODUCTO -->                            
+                            <th class="text-end min-w-70px dt-orderable-none" data-dt-column="1" rowspan="1" colspan="1"
+                                aria-label="Actions"><span class="dt-column-title">
+                                    Acciones
+                                </span>
+                                <span class="dt-column-order">
+                                </span>
+                            </th>
+                        </tr>
+                        <!-- FIN DE CABECERA DE ACCIONES DEL PRODUCTO -->
+                    </thead>
+                    <!-- FIN DE CABECERA DE LA TABLA -->
+                    <!-- COMIENZO DEL CUERPO DE LA TABLA -->
+                    <tbody class="fw-semibold text-gray-600">
+                        <!-- COMINEZO DE CONTENEDOR DEL LISTADO DE PRODUCTOS -->
+                        <ng-container *ngFor="let PRODUCT of PRODUCTS">
+                            <tr>
+                                <!-- COMIENZO DE IMAGEN Y NOMBRE DEL PRODUCTO Y PESO DE PRODUCTO -->
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <!-- COMIENZO DE IMAGEN DEL PRODUCTO -->
+                                        <div class="symbol symbol-50px me-5">
+                                            <img [src]="PRODUCT.imagen" class="" alt="">
+                                        </div>
+                                        <!-- FIN DE IMAGEN DEL PRODUCTO -->
+                                        <!-- COMIENZO DE NOMBRE Y PESO DEL PRODUCTO -->
+                                        <div class="d-flex justify-content-start flex-column">
+                                            <!-- COMIENZO DE NOMBRE DEL PRODUCTO -->
+                                            <a href="#" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">
+                                                {{ PRODUCT.title }}
+                                            </a>
+                                            <!-- FIN DE NOMBRE DEL PRODUCTO -->
+                                            <!-- COMIENZO DE PESO DEL PRODUCTO -->
+                                            <span class="text-muted fw-semibold text-muted d-block fs-7">
+                                                Peso: {{ PRODUCT.weight }}
+                                            </span>
+                                            <!-- FIN DE PESO DEL PRODUCTO -->
+                                        </div>
+                                        <!-- FIN DE NOMBRE Y PESO DEL PRODUCTO -->
+                                    </div>
+                                </td>
+                                <!-- COMIENZO DE IMAGEN Y NOMBRE DEL PRODUCTO Y PESO DE PRODUCTO -->
+                                <!-- COMIENZO DE CATEGORÍA DEL PRODUCTO -->
+                                <td>
+                                    {{ PRODUCT.product_categorie.name }}
+                                </td>
+
+                                <!-- PRECIO GENERAL DEL PRODUCTO -->
+                                <td>
+                                    {{ PRODUCT.price_general }}
+                                </td>
+                                <!-- DISPONIBILIDAD DEL PRODUCTO -->
+                                <td >
+                                    {{ getDisponibilidad(PRODUCT.disponibilidad) }}
+                                </td>
+                                <!-- CÓDIGO SKU DEL PRODUCTO -->
+                                <td>
+                                    {{ PRODUCT.sku }}
+                                </td>
+                                <!-- TIPO DE IMPUESTO DEL PRODUCTO -->
+                                <td>
+                                    {{ getTaxSelected(PRODUCT.tax_selected) }}
+                                </td>
+                                <!-- ESTADO DEL PRODUCTO -->
+                                <td>
+                                    <span class="badge badge-light-success" *ngIf="PRODUCT.state == 1">Activo</span>
+                                    <span class="badge badge-light-danger" *ngIf="PRODUCT.state == 2">Inactivo</span>
+                                </td>
+                                <!-- BOTONES DE ACCIÓN DE PRODUCTO -->
+                                <td>
+                                    <!-- BOTÓN DE EDICIÓN -->
+                                    <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                                        [routerLink]="'/productos/list/edit/' + PRODUCT.id ">
+                                        <i class="ki-duotone ki-pencil fs-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                        </i> 
+                                    </a>
+                                    <!-- BOTÓN DE ELIMINACIÓN -->
+                                    <a href="#" onclick="return false;" (click)="deleteProduct(PRODUCT)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                                        <i class="ki-duotone ki-trash fs-2">
+                                            <span class="path1"></span>
+                                            <span class="path2"></span>
+                                            <span class="path3"></span>
+                                            <span class="path4"></span>
+                                            <span class="path5"></span>
+                                        </i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </ng-container>
+                        <!-- FIN DE CONTENEDOR DEL LISTADO DE PRODUCTOS -->
+                    </tbody>
+                    <!-- FIN DEL CUERPO DE LA TABLA -->
+                    <!-- COMIENZO DEL PIE DE LA TABLA -->
+                    <tfoot>
+                    </tfoot>
+                    <!-- FIN DEL PIE DE LA TABLA -->
+                </table>
+            </div>
+            <!-- FIN DE LA TABLA -->
+            <!-- INICIO DE LA PAGINACIÓN -->
+            <ngb-pagination
+                [collectionSize]="totalPages"
+                [(page)]="currentPage"
+                [pageSize]="25"
+                [rotate]="true"
+                [boundaryLinks]="true"
+                (pageChange)="loadPage($event)">
+            </ngb-pagination>
+            <!-- FIN DE LA PAGINACIÓN -->
+        </div>
+        <!-- FIN DE TABLA DE LISTADO DE PRODUCTOS -->
+    </div>
+</div>

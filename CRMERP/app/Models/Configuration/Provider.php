@@ -2,6 +2,7 @@
 
 namespace App\Models\Configuration;
 
+use App\Models\Product\Product;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -33,5 +34,9 @@ class Provider extends Model
         date_default_timezone_set('Europe/Madrid');
         /* $this->attributes['deleted_at'] = Carbon::now(); */
         $this->attributes['updated_at'] = Carbon::now();
+    }
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'id');
     }
 }

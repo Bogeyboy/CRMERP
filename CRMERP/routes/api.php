@@ -85,6 +85,7 @@ Route::group([
     Route::resource("units", UnitController::class);
 
     //Rutas para productos
+    Route::post('/products/index', [ProductController::class, 'index']);
     Route::post('/products/{id}', [ProductController::class, 'update']);
     Route::get('/products/config', [ProductController::class, 'config']);
 

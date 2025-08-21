@@ -2,33 +2,75 @@
 
 namespace App\Http\Controllers\Product;
 
-use App\Models\Configuration\client_segment;
-use App\Models\Configuration\ProductCategorie;
-use App\Models\Configuration\Sucursale;
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
-use App\Http\Controllers\Controller;
 use App\Models\Configuration\Unit;
-use App\Models\Configuration\Warehouse;
+use App\Http\Controllers\Controller;
 use App\Models\Product\ProductWallet;
-use App\Models\Product\ProductWarehouse;
+use App\Models\Configuration\Provider;
+use App\Models\Configuration\Sucursale;
+use App\Models\Configuration\Warehouse;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Product\ProductWarehouse;
+use App\Models\Configuration\client_segment;
+use App\Models\Configuration\ProductCategorie;
+use App\Http\Resources\Product\ProductResource;
+use App\Http\Resources\Product\ProductCollection;
 
 class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $search = $request->get('search');
+        /* $search = $request->get('search'); */
 
-        $products = Product::where('title', 'like', "%" . $search . "%")
-            //->orWhere('address', 'like', "%" . $search . "%")
+        logger()->info('Request recibido: ', $request->all());
+        $provider_id = $request->input('provider_id');
+        
+        logger()->info('provider_id recibido:', [
+            'valor' => $provider_id,
+            'tipo'  => gettype($provider_id)
+        ]);
+
+        //dd($request->input('provider_id'));
+
+        $search = $request->search;
+        $product_categorie_id = $request->product_categorie_id;
+        $disponibilidad = $request->disponibilidad;
+        $tax_selected = $request->tax_selected;
+        $sucursale_price_multiple = $request->sucursale_price_multiple;
+        $almacen_warehouse = $request->almacen_warehouse;
+        $client_segment_price_multiple = $request->client_segment_price_multiple;
+        $unit_warehouse = $request->unit_warehouse;
+        //$provider = $request->provider;
+        $provider = $request->input('provider_id');
+        //dd($provider);
+
+        $state = $request->state;
+
+        //where('title', 'like', "%" . $search . "%")
+
+        $products = Product::filterAdvance($search,
+            product_categorie_id: $product_categorie_id,
+            disponibilidad: $disponibilidad,
+            tax_selected: $tax_selected,
+            provider_id: $provider,
+            sucursale_price_multiple: $sucursale_price_multiple,
+            almacen_warehouse: $almacen_warehouse,
+            client_segment_price_multiple: $client_segment_price_multiple,
+            state: $state,
+            unit_warehouse: $unit_warehouse)
             ->orderBy('id', 'desc')
             ->paginate(25);
 
         return response()->json([
             'total' => $products->total(),
-            'products' => $products
+            'products' => ProductCollection::make($products),
         ]);
+
+        /* return response()->json([
+            'provider_id' => $provider_id,
+            'tipo'        => gettype($provider_id),
+        ]); */
     }
 
     public function config()
@@ -38,6 +80,7 @@ class ProductController extends Controller
         $units = Unit::where('state', 1)->get();
         $segments_clients = client_segment::where('state', 1)->get();
         $categories = ProductCategorie::where('state', 1)->get();
+        $providers = Provider::where('state', 1)->get();
 
         return response()->json([
             'almacenes' => $almacenes,
@@ -45,6 +88,7 @@ class ProductController extends Controller
             'units' => $units,
             'segments_clients' => $segments_clients,
             'categories' => $categories,
+            'providers' => $providers,
         ]);
     }
     /**
@@ -108,7 +152,7 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         return response()->json([
-            "product" => $product,
+            "product" => ProductResource::make($product),
         ]);
         /* return response()->json([
             'product' => [
