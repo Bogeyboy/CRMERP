@@ -16,11 +16,14 @@ export class CreateProductComponent {
   //SECCION GENERAL
   title:string = '';
   description:string = '';
+  //PROVEEDOR Y ESPECIFICACIONES
+  provider_id: number = 0;
+  key_v: string = '';
+  value_v: string = '';
   //SECCIÓN IMAGEN DE PRODUCTO
   imagen_product:any;
   imagen_previzualiza:any = 'assets/media/svg/files/blank-image.svg';
   //SECCIÓN ADICIONALES
-  provider_id:number = 0;
   price_general:number = 0;
   disponibilidad:string = '';
   tiempo_de_abastecimiento:number = 0;
@@ -66,6 +69,10 @@ export class CreateProductComponent {
   UNITS:any = [];
   CLIENT_SEGMENTS:any = [];
   CATEGORIES:any = [];
+
+  PRODUCT_ID: string = '';
+  PRODUCT_SELECTED: any = null;
+  ESPECIFICACIONES: any = [];
 
   constructor(
     public toast:ToastrService,
@@ -118,6 +125,23 @@ export class CreateProductComponent {
     this.quantity_warehouse = 0
     
     console.log(this.WAREHOUSES_PRODUCT);
+  }
+
+  addEspecif() {
+    if (!this.key_v || !this.value_v) {
+      this.toast.error("VALIDACIÓN", "Necesitas introducir una propiedad y su correspondiente valor");
+      return;
+    }
+    this.ESPECIFICACIONES.unshift({
+      key_v: this.key_v,
+      value_v: this.value_v
+    });
+    this.key_v = '';
+    this.value_v = '';
+  }
+
+  removeEspecif(i: number) {
+    this.ESPECIFICACIONES.splice(i, 1);
   }
 
   removeWarehouse(WAREHOUSES_PROD:any){
@@ -223,7 +247,7 @@ export class CreateProductComponent {
 
   store() {
     console.log(this.disponibilidad,this.provider_id,this.tax_selected,this.is_discount,this.is_gift,this.title,this.description,this.price_general,this.imagen_product,
-      this.product_categorie_id,this.sku,this.weight,this.width,this.height,this.length);
+      this.product_categorie_id,this.sku,this.weight,this.width,this.height,this.length, this.ESPECIFICACIONES);
     if(!this.title ||
       !this.description ||
       !this.price_general ||
@@ -253,13 +277,14 @@ export class CreateProductComponent {
     let formData = new FormData();
     formData.append("title",this.title);
     formData.append("description",this.description);
+    formData.append("specifications",JSON.stringify(this.ESPECIFICACIONES));
     formData.append("state",this.state);
     formData.append("product_categorie_id",this.product_categorie_id);
     formData.append("product_imagen",this.imagen_product);
     formData.append("provider_id",this.provider_id+"");
     formData.append("price_general",this.price_general+"");
     formData.append("disponibilidad",this.disponibilidad+"");
-    console.log('El proveedor es: ', this.provider_id);
+    //console.log('El proveedor es: ', this.provider_id);
     formData.append("tiempo_de_abastecimiento",this.tiempo_de_abastecimiento+"");
     formData.append("is_discount",this.is_discount+"");//NUEVO
     formData.append("min_discount",this.min_discount+"");

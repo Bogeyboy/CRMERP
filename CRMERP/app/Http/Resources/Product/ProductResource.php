@@ -26,7 +26,7 @@ class ProductResource extends JsonResource
             'imagen' => env('APP_URL')."storage/".$this->resource->imagen,
             'price_general' => $this->resource->price_general,
             'description' => $this->resource->description,
-            'specifications' => $this->resource->specifications,
+            'specifications' => $this->resource->specifications ? json_decode($this->resource->specifications, true) : [],
             'min_discount' => $this->resource->min_discount,
             'max_discount' => $this->resource->max_discount,
             'is_gift' => $this->resource->is_gift,

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { ProductsService } from '../service/products.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-edit-product',
@@ -20,7 +21,7 @@ isLoading$:any;
   imagen_product:any;
   imagen_previzualiza:any = 'assets/media/svg/files/blank-image.svg';
   //SECCIÓN ADICIONALES
-  provider_id:number = 0;
+  
   price_general:number = 0;
   disponibilidad:string = '';
   tiempo_de_abastecimiento:number = 0;
@@ -46,6 +47,9 @@ isLoading$:any;
   height:number = 0;
   length:number = 0;
 
+  key_v:string = '';
+  value_v:string = '';
+
 
   // SECTION WAREHOUSES
   almacen_warehouse:string = '';
@@ -63,13 +67,21 @@ isLoading$:any;
   WAREHOUSES:any = [];
   SUCURSALES:any = [];
   PROVIDERS:any = [];
+  provider_id:string ='';
+  
   UNITS:any = [];
   CLIENT_SEGMENTS:any = [];
   CATEGORIES:any = [];
 
+  PRODUCT_ID:string = '';
+  PRODUCT_SELECTED:any = null;
+
+  ESPECIFICACIONES:any = [];
+
   constructor(
     public toast:ToastrService,
     public productService: ProductsService,
+    public ActivedRoute: ActivatedRoute
   ) {
     
   }
@@ -77,7 +89,44 @@ isLoading$:any;
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
+
+    this.ActivedRoute.params.subscribe((resp:any)=>{
+      console.log(resp);
+      this.PRODUCT_ID = resp.id;
+    });
     this.isLoading$ = this.productService.isLoading$;
+
+    this.productService.showProduct(this.PRODUCT_ID).subscribe((resp: any) => {
+      console.log(resp);
+      this.PRODUCT_SELECTED = resp.product;
+
+      this.is_discount = this.PRODUCT_SELECTED.is_discount;
+      this.title = this.PRODUCT_SELECTED.title;
+      this.description = this.PRODUCT_SELECTED.description;
+      //this.imagen_product = this.PRODUCT_SELECTED.imagen_product;
+      this.imagen_previzualiza = this.PRODUCT_SELECTED.imagen;
+      this.provider_id = this.PRODUCT_SELECTED.provider_id;
+      this.price_general = this.PRODUCT_SELECTED.price_general;
+      this.disponibilidad = this.PRODUCT_SELECTED.disponibilidad;
+      this.tiempo_de_abastecimiento = this.PRODUCT_SELECTED.tiempo_de_abastecimiento;
+      this.min_discount = this.PRODUCT_SELECTED.min_discount;
+      this.max_discount = this.PRODUCT_SELECTED.max_discount;
+      this.tax_selected = this.PRODUCT_SELECTED.tax_selected;
+      this.importe_iva = this.PRODUCT_SELECTED.importe_iva;
+      this.state = this.PRODUCT_SELECTED.state;
+      this.product_categorie_id = this.PRODUCT_SELECTED.product_categorie_id;
+      this.sku = this.PRODUCT_SELECTED.sku;
+      this.is_gift = this.PRODUCT_SELECTED.is_gift;
+      this.umbral = this.PRODUCT_SELECTED.umbral;
+      this.umbral_unit_id = this.PRODUCT_SELECTED.umbral_unit_id;
+      this.weight = this.PRODUCT_SELECTED.weight;
+      this.width = this.PRODUCT_SELECTED.width;
+      this.height = this.PRODUCT_SELECTED.height;
+      this.length = this.PRODUCT_SELECTED.length;
+
+      this.ESPECIFICACIONES = this.PRODUCT_SELECTED.specifications;
+
+    });
 
     this.productService.configAll().subscribe((resp:any) => {
       console.log(resp);
@@ -189,6 +238,23 @@ isLoading$:any;
     }
   }
 
+  addEspecif(){
+    if (!this.key_v || !this.value_v) {
+      this.toast.error("VALIDACIÓN", "Necesitas introducir una propiedad y su correspondiente valor");
+      return;
+    }
+    this.ESPECIFICACIONES.unshift({
+      key_v: this.key_v,
+      value_v: this.value_v
+    });
+    this.key_v = '';
+    this.value_v = '';
+  }
+
+  removeEspecif(i:number){
+    this.ESPECIFICACIONES.splice(i,1);
+  }
+
   isLoadingProcess(){
     this.productService.isLoadingSubject.next(true);
     setTimeout(() => {
@@ -222,12 +288,12 @@ isLoading$:any;
   }
 
   store() {
-    console.log(this.disponibilidad,this.provider_id,this.tax_selected,this.is_discount,this.is_gift,this.title,this.description,this.price_general,this.imagen_product,
-      this.product_categorie_id,this.sku,this.weight,this.width,this.height,this.length);
+    /* console.log(this.disponibilidad,this.provider_id,this.tax_selected,this.is_discount,this.is_gift,this.title,this.description,this.price_general,this.imagen_product,
+      this.product_categorie_id,this.sku,this.weight,this.width,this.height,this.length); */
     if(!this.title ||
       !this.description ||
       !this.price_general ||
-      !this.imagen_product ||
+      //!this.imagen_product ||
       !this.product_categorie_id ||
       !this.sku ||
       !this.tax_selected ||
@@ -255,11 +321,14 @@ isLoading$:any;
     formData.append("description",this.description);
     formData.append("state",this.state);
     formData.append("product_categorie_id",this.product_categorie_id);
-    formData.append("product_imagen",this.imagen_product);
+    if(this.imagen_product){
+      formData.append("product_imagen",this.imagen_product);
+    }
     formData.append("provider_id",this.provider_id+"");
+    formData.append("specifications", JSON.stringify(this.ESPECIFICACIONES));
     formData.append("price_general",this.price_general+"");
     formData.append("disponibilidad",this.disponibilidad+"");
-    console.log('El proveedor es: ', this.provider_id);
+    //console.log('El proveedor es: ', this.provider_id);
     formData.append("tiempo_de_abastecimiento",this.tiempo_de_abastecimiento+"");
     formData.append("is_discount",this.is_discount+"");//NUEVO
     formData.append("min_discount",this.min_discount+"");
@@ -277,22 +346,23 @@ isLoading$:any;
     
     formData.append("umbral",this.umbral+"");
     formData.append("umbral_unit_id",this.umbral_unit_id);
-    
-    formData.append("WAREHOUSES_PRODUCT",JSON.stringify(this.WAREHOUSES_PRODUCT));
-    formData.append("WALLETS_PRODUCT",JSON.stringify(this.WALLETS_PRODUCT));
 
-    this.productService.registerProduct(formData).subscribe((resp:any) => {
+    
+    //formData.append("WAREHOUSES_PRODUCT",JSON.stringify(this.WAREHOUSES_PRODUCT));
+    //formData.append("WALLETS_PRODUCT",JSON.stringify(this.WALLETS_PRODUCT));
+
+    this.productService.updateProduct(this.PRODUCT_ID,formData).subscribe((resp:any) => {
       console.log(resp);
       if(resp.message == 200){
-        this.toast.success("EXITO","El producto se registro correctamente");
-        this.cleanForm();
+        this.toast.success("EXITO","El producto se editó correctamente");
+        //this.cleanForm();
       }else{
         this.toast.warning("VALIDACIÓN",resp.message_text);
       }
     })
   }
 
-  cleanForm(){
+  /* cleanForm(){
       this.title = '';
       this.description = ''
       this.state = '1';
@@ -317,5 +387,5 @@ isLoading$:any;
       this.WAREHOUSES_PRODUCT = [];
       this.WALLETS_PRODUCT = [];
       this.imagen_previzualiza = 'assets/media/svg/files/blank-image.svg';
-  }
+  } */
 }

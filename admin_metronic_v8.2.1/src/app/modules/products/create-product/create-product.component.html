@@ -226,6 +226,88 @@
                                             <div class="text-muted fs-7">Indica una descripción del producto para una mejor visibilidad.</div>
                                         </div>
                                         <!-- FIN DESCRIPCÓN DE PRODUCTO -->
+                                        <!-- COMIENZO DE PROVEEDOR Y ESPECIFICACIONES -->
+                                        <div class="row">
+                                            <!-- COMIENZO DE PROVEEDOR -->
+                                            <div class="col-4">
+                                                <label class="required form-label">Proveedor principal</label>
+                                                <select class="form-select mb-2"
+                                                    [(ngModel)]="provider_id"
+                                                    name="provider_id"
+                                                    placeholder="Seleccione el proveedor">
+                                                    <ng-container *ngFor="let PROVIDER of PROVIDERS">
+                                                        <option [ngValue]="PROVIDER.id">
+                                                            {{ PROVIDER.full_name + ' - ' + PROVIDER.comercial_name }}
+                                                        </option>
+                                                    </ng-container>
+                                                </select>
+                                                <div class="text-muted fs-7">
+                                                    Proveedor
+                                                </div>
+                                            </div>
+                                            <!-- FIN DE PROVEEDOR -->
+                                            <!-- COMIENZO DE ESPECIFICACIONES -->
+                                            <div class="col-8">
+                                                <label class="form-label">Especificaciones</label>
+                                                <div class="d-flex">
+                                                    <input type="text"
+                                                        [(ngModel)]="key_v"
+                                                        name="key_v"
+                                                        class="form-control mb-2"
+                                                        placeholder="Propiedad"/>
+                                                    <input type="text"
+                                                        [(ngModel)]="value_v"
+                                                        name="value_v"
+                                                        class="form-control mb-2"
+                                                        placeholder="Valor"/>
+                                                    <button class="btn btn-primary btn-sm" (click)="addEspecif()">+</button>
+                                                </div>
+                                                <div>
+                                                    <div class="table-responsive">
+                                                        <!-- INICIO DE LA TABLA RESUMEN DE ESPECIFICACIONES-->
+                                                        <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+                                                            <!-- INICIO CABECERA DE LA TABLA RESUMEN -->
+                                                            <thead>
+                                                                <tr class="fw-bold text-muted">
+                                                                    <th class="">Propiedad</th>
+                                                                    <th class="">Valor</th>
+                                                                    <th class="">Actions</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <!-- FIN CABECERA DE LA TABLA RESUMEN -->
+                                                            <!-- INICIO CUERPO DE LA TABLA RESUMEN -->
+                                                            <tbody>
+                                                                <ng-container *ngFor="let ESPECIFICACION of ESPECIFICACIONES;let i = index">
+                                                                    <tr>
+                                                                        <td>
+                                                                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">{{ ESPECIFICACION.key_v }}</a>
+                                                                            <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Code: PH</span> -->
+                                                                        </td>
+                                                                        <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                                                                            {{ ESPECIFICACION.value_v }}                     
+                                                                        </td>
+                                                                        <td class="">
+                                                                            <a href="#" onClick="return false" (click)="removeEspecif(i)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                                                                                <i class="ki-duotone ki-trash fs-2">
+                                                                                    <span class="path1"></span>
+                                                                                    <span class="path2"></span>
+                                                                                    <span class="path3"></span>
+                                                                                    <span class="path4"></span>
+                                                                                    <span class="path5"></span>
+                                                                                </i>
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                </ng-container>
+                                                            </tbody>
+                                                            <!-- FIN CUERPO DE LA TABLA RESUMEN -->
+                                                        </table>
+                                                        <!-- FIN DE LA TABLA RESUMEN DE ESPECIFICACIONES-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- FIN DE ESPECIFICACIONES -->
+                                        </div>
                                     </div>
                                     <!--FIN CUERPO DE LA SECCIÓN-->
                                 </div>
@@ -244,7 +326,7 @@
                                         <!-- COMIENZO DE PRECIO, DISPONIBILIDAD Y TIEMPO DE ABASTECIMIENTO -->
                                         <div class="mb-10 row fv-row">
                                             <!-- COMIENZO DE PROVEEDOR -->
-                                            <div class="col-3">
+                                            <!-- <div class="col-3">
                                                 <label class="required form-label">Proveedor principal</label>
                                                 <select class="form-select mb-2"
                                                     [(ngModel)]="provider_id"
@@ -259,7 +341,7 @@
                                                 <div class="text-muted fs-7">
                                                     Proveedor
                                                 </div>
-                                            </div>
+                                            </div> -->
                                             <!-- FIN DE PROVEEDOR -->
                                             <!-- COMIENZO DE PRECIO BASE -->
                                             <div class="col-3">
