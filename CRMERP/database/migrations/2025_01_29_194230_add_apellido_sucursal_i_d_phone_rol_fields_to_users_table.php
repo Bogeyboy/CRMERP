@@ -36,7 +36,6 @@ return new class extends Migration
             $table->dropColumn('phone');
             $table->dropColumn('address');
             $table->dropColumn('avatar');
-            $table->dropColumn('avatar');
             $table->dropColumn('rol_id');
             $table->dropColumn('sucursal_id');
         });
