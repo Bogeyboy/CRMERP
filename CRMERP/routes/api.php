@@ -1,19 +1,21 @@
 <?php
 
-use App\Http\Controllers\Configuration\ProductCategorieController;
-use App\Http\Controllers\Configuration\ProviderController;
-use App\Http\Controllers\Configuration\UnitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserAccessController;
 use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\Product\ProductController;
+use App\Http\Controllers\Configuration\UnitController;
+use App\Http\Controllers\Product\ProductWalletController;
+use App\Http\Controllers\Configuration\ProviderController;
 use App\Http\Controllers\Configuration\SucursaleController;
 use App\Http\Controllers\Configuration\WarehouseController;
+use App\Http\Controllers\Product\ProductWarehouseController;
 use App\Http\Controllers\Configuration\ClientSegmentController;
 use App\Http\Controllers\Configuration\MethodPaymentController;
+use App\Http\Controllers\Configuration\ProductCategorieController;
 use App\Http\Controllers\Configuration\SucursalDeliverieController;
-use App\Http\Controllers\Product\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,4 +92,7 @@ Route::group([
     Route::get('/products/config', [ProductController::class, 'config']);
 
     Route::resource("products", ProductController::class);
+
+    Route::resource("product_wallets", ProductWalletController::class);
+    Route::resource("product_warehouses", ProductWarehouseController::class);
 });

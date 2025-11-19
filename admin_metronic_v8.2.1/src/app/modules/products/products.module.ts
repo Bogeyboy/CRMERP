@@ -22,6 +22,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModule, NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
+import { EditWalletPriceProductComponent } from './wallet/edit-wallet-price-product/edit-wallet-price-product.component';
+import { DeleteWalletPriceProductComponent } from './wallet/delete-wallet-price-product/delete-wallet-price-product.component';
+import { EditWarehouseProductComponent } from './warehouse/edit-warehouse-product/edit-warehouse-product.component';
+import { DeleteWarehouseProductComponent } from './warehouse/delete-warehouse-product/delete-warehouse-product.component';
 
 
 @NgModule({
@@ -30,7 +34,11 @@ import { InlineSVGModule } from 'ng-inline-svg-2';
     CreateProductComponent,
     ListProductComponent,
     EditProductComponent,
-    DeleteProductComponent
+    DeleteProductComponent,
+    EditWalletPriceProductComponent,
+    DeleteWalletPriceProductComponent,
+    EditWarehouseProductComponent,
+    DeleteWarehouseProductComponent
   ],
   imports: [
     CommonModule,
