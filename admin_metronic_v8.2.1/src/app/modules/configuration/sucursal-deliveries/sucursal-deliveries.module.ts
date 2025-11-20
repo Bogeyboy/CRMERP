@@ -6,7 +6,7 @@ import { CreateSucursalDeliverieComponent } from './create-sucursal-deliverie/cr
 import { EditSucursalDeliverieComponent } from './edit-sucursal-deliverie/edit-sucursal-deliverie.component';
 import { ListSucursalDeliverieComponent } from './list-sucursal-deliverie/list-sucursal-deliverie.component';
 import { DeleteSucursalDeliverieComponent } from './delete-sucursal-deliverie/delete-sucursal-deliverie.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule, NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
@@ -15,31 +15,18 @@ import { SucursalDeliveriesComponent } from './sucursal-deliveries.component';
 
 
 
-@NgModule({
-  declarations: [
-    SucursalDeliveriesComponent,
-    CreateSucursalDeliverieComponent,
-    EditSucursalDeliverieComponent,
-    ListSucursalDeliverieComponent,
-    DeleteSucursalDeliverieComponent,
-  ],
-  imports: [
-    CommonModule,
-    SucursalDeliveriesRoutingModule,
-
-    /* SucursalDeliveriesComponent,
-    CreateSucursalDeliverieComponent,
-    EditSucursalDeliverieComponent,
-    ListSucursalDeliverieComponent,
-    DeleteSucursalDeliverieComponent, */
-
-    HttpClientModule,
-    FormsModule,
-    NgbModule,
-    ReactiveFormsModule,
-    InlineSVGModule,
-    NgbModalModule,
-    NgbPaginationModule,
-  ]
-})
+@NgModule({ declarations: [
+        SucursalDeliveriesComponent,
+        CreateSucursalDeliverieComponent,
+        EditSucursalDeliverieComponent,
+        ListSucursalDeliverieComponent,
+        DeleteSucursalDeliverieComponent,
+    ], imports: [CommonModule,
+        SucursalDeliveriesRoutingModule,
+        FormsModule,
+        NgbModule,
+        ReactiveFormsModule,
+        InlineSVGModule,
+        NgbModalModule,
+        NgbPaginationModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class SucursalDeliveriesModule { }

@@ -7,33 +7,26 @@ import { CreateProductCategorieComponent } from './create-product-categorie/crea
 import { ListProductCategorieComponent } from './list-product-categorie/list-product-categorie.component';
 import { EditProductCategorieComponent } from './edit-product-categorie/edit-product-categorie.component';
 import { DeleteProductCategorieComponent } from './delete-product-categorie/delete-product-categorie.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModule, NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
 
 
-@NgModule({
-  declarations: [
-    ProductCategoriesComponent,
-    CreateProductCategorieComponent,
-    ListProductCategorieComponent,
-    EditProductCategorieComponent,
-    DeleteProductCategorieComponent
-  ],
-  imports: [
-    CommonModule,
-    ProductCategoriesRoutingModule,
-    
-    RouterModule,
-    HttpClientModule,
-    FormsModule,
-    NgbModule,
-    ReactiveFormsModule,
-    InlineSVGModule,
-    NgbModalModule,
-    NgbPaginationModule,
-  ]
-})
+@NgModule({ declarations: [
+        ProductCategoriesComponent,
+        CreateProductCategorieComponent,
+        ListProductCategorieComponent,
+        EditProductCategorieComponent,
+        DeleteProductCategorieComponent
+    ], imports: [CommonModule,
+        ProductCategoriesRoutingModule,
+        RouterModule,
+        FormsModule,
+        NgbModule,
+        ReactiveFormsModule,
+        InlineSVGModule,
+        NgbModalModule,
+        NgbPaginationModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class ProductCategoriesModule { }

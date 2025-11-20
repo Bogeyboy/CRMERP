@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { WarehousesRoutingModule } from './warehouses-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule, NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
@@ -13,26 +13,18 @@ import { ListWarehouseComponent } from './list-warehouse/list-warehouse.componen
 import { WarehousesComponent } from './warehouses.component';
 
 
-@NgModule({
-  declarations: [
-    WarehousesComponent,
-    CreateWarehouseComponent,
-    EditWarehouseComponent,
-    DeleteWarehouseComponent,
-    ListWarehouseComponent
-  ],
-  imports: [
-
-    CommonModule,
-    WarehousesRoutingModule,
-    HttpClientModule,
-    FormsModule,
-    NgbModule,
-    ReactiveFormsModule,
-    InlineSVGModule,
-    NgbModalModule,
-
-    NgbPaginationModule,
-  ]
-})
+@NgModule({ declarations: [
+        WarehousesComponent,
+        CreateWarehouseComponent,
+        EditWarehouseComponent,
+        DeleteWarehouseComponent,
+        ListWarehouseComponent
+    ], imports: [CommonModule,
+        WarehousesRoutingModule,
+        FormsModule,
+        NgbModule,
+        ReactiveFormsModule,
+        InlineSVGModule,
+        NgbModalModule,
+        NgbPaginationModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class WarehousesModule { }

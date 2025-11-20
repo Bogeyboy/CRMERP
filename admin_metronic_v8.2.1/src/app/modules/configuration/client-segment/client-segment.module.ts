@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { ClientSegmentRoutingModule } from './client-segment-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModule, NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,25 +15,19 @@ import { EditClientSegmentComponent } from './edit-client-segment/edit-client-se
 import { DeleteClientSegmentComponent } from './delete-client-segment/delete-client-segment.component';
 
 
-@NgModule({
-  declarations: [
-    ClientSegmentComponent,
-    CreateClientSegmentComponent,
-    ListClientSegmentComponent,
-    EditClientSegmentComponent,
-    DeleteClientSegmentComponent
-  ],
-  imports: [
-    CommonModule,
-    ClientSegmentRoutingModule,
-    RouterModule,
-    HttpClientModule,
-    FormsModule,
-    NgbModule,
-    ReactiveFormsModule,
-    InlineSVGModule,
-    NgbModalModule,
-    NgbPaginationModule,
-  ]
-})
+@NgModule({ declarations: [
+        ClientSegmentComponent,
+        CreateClientSegmentComponent,
+        ListClientSegmentComponent,
+        EditClientSegmentComponent,
+        DeleteClientSegmentComponent
+    ], imports: [CommonModule,
+        ClientSegmentRoutingModule,
+        RouterModule,
+        FormsModule,
+        NgbModule,
+        ReactiveFormsModule,
+        InlineSVGModule,
+        NgbModalModule,
+        NgbPaginationModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class ClientSegmentModule { }

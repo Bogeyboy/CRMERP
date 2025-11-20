@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { SucursalesRoutingModule } from './sucursales-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule, NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
@@ -31,26 +31,19 @@ import { SucursalesComponent } from './sucursales.component';
     RouterModule.forChild(routes)
   ]
 }) */
-@NgModule({
-  declarations: [
-    SucursalesComponent,
-    CreateSucursalComponent,
-    EditSucursalComponent,
-    DeleteSucursalComponent,
-    ListSucursalComponent
-  ],
-  imports: [
-    CommonModule,
-    SucursalesRoutingModule,
-
-    HttpClientModule,
-    FormsModule,
-    NgbModule,
-    ReactiveFormsModule,
-    InlineSVGModule,
-    NgbModalModule,
-    NgbPaginationModule,
-  ]
-})
+@NgModule({ declarations: [
+        SucursalesComponent,
+        CreateSucursalComponent,
+        EditSucursalComponent,
+        DeleteSucursalComponent,
+        ListSucursalComponent
+    ], imports: [CommonModule,
+        SucursalesRoutingModule,
+        FormsModule,
+        NgbModule,
+        ReactiveFormsModule,
+        InlineSVGModule,
+        NgbModalModule,
+        NgbPaginationModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 
   export class SucursalesModule { }

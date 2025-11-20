@@ -7,31 +7,24 @@ import { CreateRolesComponent } from './create-roles/create-roles.component';
 import { EditRolesComponent } from './edit-roles/edit-roles.component';
 import { DeleteRolesComponent } from './delete-roles/delete-roles.component';
 import { ListRolesComponent } from './list-roles/list-roles.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule, NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
 
 
-@NgModule({
-  declarations: [
-    RolesComponent,
-    CreateRolesComponent,
-    EditRolesComponent,
-    DeleteRolesComponent,
-    ListRolesComponent
-  ],
-  imports: [
-    CommonModule,
-    RolesRoutingModule,
-    // admin *.module.ts
-    HttpClientModule,
-    FormsModule,
-    NgbModule,
-    ReactiveFormsModule,
-    InlineSVGModule,
-    NgbModalModule,
-    NgbPaginationModule,
-  ]
-})
+@NgModule({ declarations: [
+        RolesComponent,
+        CreateRolesComponent,
+        EditRolesComponent,
+        DeleteRolesComponent,
+        ListRolesComponent
+    ], imports: [CommonModule,
+        RolesRoutingModule,
+        FormsModule,
+        NgbModule,
+        ReactiveFormsModule,
+        InlineSVGModule,
+        NgbModalModule,
+        NgbPaginationModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class RolesModule { }

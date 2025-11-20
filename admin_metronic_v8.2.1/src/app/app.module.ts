@@ -1,7 +1,7 @@
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { ClipboardModule } from 'ngx-clipboard';
 import { TranslateModule } from '@ngx-translate/core';
@@ -29,38 +29,32 @@ function appInitializer(authService: AuthService) {
   };
 }
 
-@NgModule({
-  declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    RouterModule.forRoot([]),
-    TranslateModule.forRoot(),
-    HttpClientModule,
-    ClipboardModule,
-    // #fake-start#
-    environment.isMockEnabled
-      ? HttpClientInMemoryWebApiModule.forRoot(FakeAPIService, {
-        passThruUnknownUrl: true,
-        dataEncapsulation: false,
-      })
-      : [],
-    // #fake-end#
-    AppRoutingModule,
-    InlineSVGModule.forRoot(),
-    NgbModule,
-    SweetAlert2Module.forRoot(),
-    ToastrModule.forRoot(), // ToastrModule added
-    NgbPaginationModule,
-  ],
-  providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: appInitializer,
-      multi: true,
-      deps: [AuthService],
-    },
-  ],
-  bootstrap: [AppComponent],
-})
+@NgModule({ declarations: [AppComponent],
+    bootstrap: [AppComponent], imports: [BrowserModule,
+        BrowserAnimationsModule,
+        RouterModule.forRoot([]),
+        TranslateModule.forRoot(),
+        ClipboardModule,
+        // #fake-start#
+        environment.isMockEnabled
+            ? HttpClientInMemoryWebApiModule.forRoot(FakeAPIService, {
+                passThruUnknownUrl: true,
+                dataEncapsulation: false,
+            })
+            : [],
+        // #fake-end#
+        AppRoutingModule,
+        InlineSVGModule.forRoot(),
+        NgbModule,
+        SweetAlert2Module.forRoot(),
+        ToastrModule.forRoot(), // ToastrModule added
+        NgbPaginationModule], providers: [
+        {
+            provide: APP_INITIALIZER,
+            useFactory: appInitializer,
+            multi: true,
+            deps: [AuthService],
+        },
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule { }

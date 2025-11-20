@@ -17,7 +17,7 @@ import { CreateProductComponent } from './create-product/create-product.componen
 import { EditProductComponent } from './edit-product/edit-product.component';
 import { DeleteProductComponent } from './delete-product/delete-product.component';
 import { ProductsComponent } from './products.component';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { NgbModule, NgbModalModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
@@ -28,30 +28,23 @@ import { EditWarehouseProductComponent } from './warehouse/edit-warehouse-produc
 import { DeleteWarehouseProductComponent } from './warehouse/delete-warehouse-product/delete-warehouse-product.component';
 
 
-@NgModule({
-  declarations: [
-    ProductsComponent,
-    CreateProductComponent,
-    ListProductComponent,
-    EditProductComponent,
-    DeleteProductComponent,
-    EditWalletPriceProductComponent,
-    DeleteWalletPriceProductComponent,
-    EditWarehouseProductComponent,
-    DeleteWarehouseProductComponent
-  ],
-  imports: [
-    CommonModule,
-    ProductsRoutingModule,
-
-    RouterModule,
-    HttpClientModule,
-    FormsModule,
-    NgbModule,
-    ReactiveFormsModule,
-    InlineSVGModule,
-    NgbModalModule,
-    NgbPaginationModule,
-  ]
-})
+@NgModule({ declarations: [
+        ProductsComponent,
+        CreateProductComponent,
+        ListProductComponent,
+        EditProductComponent,
+        DeleteProductComponent,
+        EditWalletPriceProductComponent,
+        DeleteWalletPriceProductComponent,
+        EditWarehouseProductComponent,
+        DeleteWarehouseProductComponent
+    ], imports: [CommonModule,
+        ProductsRoutingModule,
+        RouterModule,
+        FormsModule,
+        NgbModule,
+        ReactiveFormsModule,
+        InlineSVGModule,
+        NgbModalModule,
+        NgbPaginationModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class ProductsModule { }
