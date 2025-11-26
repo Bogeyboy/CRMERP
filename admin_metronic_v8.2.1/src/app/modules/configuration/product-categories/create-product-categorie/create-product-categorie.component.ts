@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/modules/auth';
@@ -11,7 +11,7 @@ import { ProductCategoriesService } from '../service/product-categories.service'
   templateUrl: './create-product-categorie.component.html',
   styleUrls: ['./create-product-categorie.component.scss']
 })
-export class CreateProductCategorieComponent {
+export class CreateProductCategorieComponent implements OnInit {
   @Output() ProductCategorieC:EventEmitter<any> = new EventEmitter();
     
     //Variables

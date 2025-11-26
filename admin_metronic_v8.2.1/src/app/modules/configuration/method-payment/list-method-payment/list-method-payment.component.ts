@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MethodPaymentService } from '../service/method-payment.service';
 import { CreateMethodPaymentComponent } from '../create-method-payment/create-method-payment.component';
 import { EditMethodPaymentComponent } from '../edit-method-payment/edit-method-payment.component';
@@ -11,7 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './list-method-payment.component.html',
   styleUrls: ['./list-method-payment.component.scss']
 })
-export class ListMethodPaymentComponent {
+export class ListMethodPaymentComponent implements OnInit {
   search:string = '';
       METHOD_PAYMENTS:any[];
       isLoading$:any;

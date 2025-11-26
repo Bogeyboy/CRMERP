@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { UsersService } from '../service/users.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -9,7 +9,7 @@ import { SIDEBAR } from 'src/app/config/config';
   templateUrl: './delete-user.component.html',
   styleUrls: ['./delete-user.component.scss']
 })
-export class DeleteUserComponent {
+export class DeleteUserComponent implements OnInit {
 
   @Output() UserD: EventEmitter<any> = new EventEmitter();
   @Input()  USER_SELECTED:any;

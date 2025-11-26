@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { UnitsService } from '../service/units.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/modules/auth';
   templateUrl: './edit-units.component.html',
   styleUrls: ['./edit-units.component.scss']
 })
-export class EditUnitsComponent {
+export class EditUnitsComponent implements OnInit {
   @Output() UnitE:EventEmitter<any> = new EventEmitter();
   @Input() UNIT_SELECTED:any;
   

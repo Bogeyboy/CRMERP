@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/modules/auth';
@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './delete-transform-units.component.html',
   styleUrls: ['./delete-transform-units.component.scss']
 })
-export class DeleteTransformUnitsComponent {
+export class DeleteTransformUnitsComponent implements OnInit {
   @Output() UnitD:EventEmitter<any> = new EventEmitter();
   //@Output() UnitTD:EventEmitter<any> = new EventEmitter();
     //recibiendo datos del componente padre

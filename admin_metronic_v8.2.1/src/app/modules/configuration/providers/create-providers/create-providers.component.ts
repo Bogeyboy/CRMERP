@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { ProvidersService } from '../service/providers.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/modules/auth';
   templateUrl: './create-providers.component.html',
   styleUrls: ['./create-providers.component.scss']
 })
-export class CreateProvidersComponent {
+export class CreateProvidersComponent implements OnInit {
 @Output() ProviderC:EventEmitter<any> = new EventEmitter();
     
     //Variables

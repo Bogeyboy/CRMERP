@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ProvidersService } from '../service/providers.service';
 import { CreateProvidersComponent } from '../create-providers/create-providers.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { DeleteProvidersComponent } from '../delete-providers/delete-providers.c
   templateUrl: './list-providers.component.html',
   styleUrls: ['./list-providers.component.scss']
 })
-export class ListProvidersComponent {
+export class ListProvidersComponent implements OnInit {
   search:string = '';
   PROVIDERS:any = [];
   isLoading$:any;

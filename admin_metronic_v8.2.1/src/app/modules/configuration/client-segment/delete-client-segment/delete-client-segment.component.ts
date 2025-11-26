@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { ClientSegmentService } from '../service/client-segment.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/modules/auth';
   templateUrl: './delete-client-segment.component.html',
   styleUrls: ['./delete-client-segment.component.scss']
 })
-export class DeleteClientSegmentComponent {
+export class DeleteClientSegmentComponent implements OnInit {
   @Output() ClientSegmentD:EventEmitter<any> = new EventEmitter();
       //recibiendo datos del componente padre
       @Input() CLIENT_SEGMENT_SELECTED:any;

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CreateProductCategorieComponent } from '../create-product-categorie/create-product-categorie.component';
 import { EditProductCategorieComponent } from '../edit-product-categorie/edit-product-categorie.component';
 import { DeleteProductCategorieComponent } from '../delete-product-categorie/delete-product-categorie.component';
@@ -10,7 +10,7 @@ import { ProductCategoriesService } from '../service/product-categories.service'
   templateUrl: './list-product-categorie.component.html',
   styleUrls: ['./list-product-categorie.component.scss']
 })
-export class ListProductCategorieComponent {
+export class ListProductCategorieComponent implements OnInit {
 
   search:string = '';
   PRODUCT_CATEGORIES:any = [];

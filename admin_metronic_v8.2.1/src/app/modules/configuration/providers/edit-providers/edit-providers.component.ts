@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/modules/auth';
@@ -11,7 +11,7 @@ import { ProvidersService } from '../service/providers.service';
   templateUrl: './edit-providers.component.html',
   styleUrls: ['./edit-providers.component.scss']
 })
-export class EditProvidersComponent {
+export class EditProvidersComponent implements OnInit {
   @Output() ProviderE:EventEmitter<any> = new EventEmitter();
   @Input() PROVIDER_SELECTED:any;
     

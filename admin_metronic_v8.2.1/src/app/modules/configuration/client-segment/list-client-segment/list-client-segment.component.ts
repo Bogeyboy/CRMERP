@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ClientSegmentService } from '../service/client-segment.service';
 import { CreateClientSegmentComponent } from '../create-client-segment/create-client-segment.component';
 import { EditClientSegmentComponent } from '../edit-client-segment/edit-client-segment.component';
@@ -11,7 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './list-client-segment.component.html',
   styleUrls: ['./list-client-segment.component.scss']
 })
-export class ListClientSegmentComponent {
+export class ListClientSegmentComponent implements OnInit {
     
     search:string = '';
     CLIENT_SEGMENTS:any[];

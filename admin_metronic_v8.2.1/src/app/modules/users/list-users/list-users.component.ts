@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CreateUserComponent } from '../create-user/create-user.component';
 import { EditUserComponent } from '../edit-user/edit-user.component';
 import { DeleteUserComponent } from '../delete-user/delete-user.component';
@@ -10,7 +10,7 @@ import { UsersService } from '../service/users.service';
   templateUrl: './list-users.component.html',
   styleUrls: ['./list-users.component.scss']
 })
-export class ListUsersComponent {
+export class ListUsersComponent implements OnInit {
   
   search:string = '';
   USERS:any = [];

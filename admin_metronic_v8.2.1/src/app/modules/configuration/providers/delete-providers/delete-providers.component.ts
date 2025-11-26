@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ProvidersService } from '../service/providers.service';
@@ -9,7 +9,7 @@ import { ProvidersService } from '../service/providers.service';
   templateUrl: './delete-providers.component.html',
   styleUrls: ['./delete-providers.component.scss']
 })
-export class DeleteProvidersComponent {
+export class DeleteProvidersComponent implements OnInit {
   @Output() ProviderD: EventEmitter<any> = new EventEmitter();
   @Input()  PROVIDER_SELECTED:any;
 

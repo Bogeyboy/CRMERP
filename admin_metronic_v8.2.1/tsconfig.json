@@ -43,7 +43,9 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@app/*": ["src/app/*"]
+      "@app/*": [
+        "src/app/*"
+      ]
     },
     "ignoreDeprecations": "6.0",
     "outDir": "./dist/out-tsc",
@@ -56,15 +58,11 @@
     "sourceMap": true,
     "declaration": false,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "resolveJsonModule": true,
     "target": "es2022",
-    "module": "es2020",
-    "lib": [
-      "es2018",
-      "dom"
-    ]
+    "module": "es2020"
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

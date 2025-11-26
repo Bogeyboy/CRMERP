@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { UnitsService } from '../service/units.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/modules/auth';
   templateUrl: './delete-units.component.html',
   styleUrls: ['./delete-units.component.scss']
 })
-export class DeleteUnitsComponent {
+export class DeleteUnitsComponent implements OnInit {
   @Output() UnitD:EventEmitter<any> = new EventEmitter();
     //recibiendo datos del componente padre
   @Input() UNIT_SELECTED:any;

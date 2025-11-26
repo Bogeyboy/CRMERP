@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/modules/auth';
@@ -10,7 +10,7 @@ import { WarehouseService } from '../service/warehouse.service';
   templateUrl: './delete-warehouse.component.html',
   styleUrls: ['./delete-warehouse.component.scss']
 })
-export class DeleteWarehouseComponent {
+export class DeleteWarehouseComponent implements OnInit {
 
   @Output() WarehouseD:EventEmitter<any> = new EventEmitter();
       //recibiendo datos del componente padre

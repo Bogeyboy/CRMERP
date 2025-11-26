@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { UsersService } from '../service/users.service';
@@ -8,7 +8,7 @@ import { UsersService } from '../service/users.service';
   templateUrl: './edit-user.component.html',
   styleUrls: ['./edit-user.component.scss']
 })
-export class EditUserComponent {
+export class EditUserComponent implements OnInit {
 
   @Output() UserE: EventEmitter<any> = new EventEmitter();
   @Input() roles:any = [];

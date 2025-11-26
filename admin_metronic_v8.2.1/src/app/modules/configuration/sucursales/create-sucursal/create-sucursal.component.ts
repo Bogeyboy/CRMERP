@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { SucursalService } from '../service/sucursal.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/modules/auth';
   templateUrl: './create-sucursal.component.html',
   styleUrls: ['./create-sucursal.component.scss']
 })
-export class CreateSucursalComponent {
+export class CreateSucursalComponent implements OnInit {
 
   @Output() SucursalC:EventEmitter<any> = new EventEmitter();
   

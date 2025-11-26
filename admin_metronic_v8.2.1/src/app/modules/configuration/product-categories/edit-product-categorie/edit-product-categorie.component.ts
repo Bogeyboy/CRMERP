@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { ProductCategoriesService } from '../service/product-categories.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/modules/auth';
   templateUrl: './edit-product-categorie.component.html',
   styleUrls: ['./edit-product-categorie.component.scss']
 })
-export class EditProductCategorieComponent {
+export class EditProductCategorieComponent implements OnInit {
   @Output() ProductCategorieE:EventEmitter<any> = new EventEmitter();
   @Input() CATEGORIE_SELECTED:any;
     

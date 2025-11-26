@@ -1,4 +1,4 @@
-import { Component, Provider } from '@angular/core';
+import { Component, Provider, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { UnitsService } from '../service/units.service';
 import { CreateUnitsComponent } from '../create-units/create-units.component';
@@ -12,7 +12,7 @@ import { CreateTransformUnitsComponent } from '../create-transform-units/create-
   templateUrl: './list-units.component.html',
   styleUrls: ['./list-units.component.scss']
 })
-export class ListUnitsComponent {
+export class ListUnitsComponent implements OnInit {
   search:string = '';
   UNITS:any = [];
   isLoading$:any;

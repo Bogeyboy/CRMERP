@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DeleteSucursalDeliverieComponent } from '../delete-sucursal-deliverie/delete-sucursal-deliverie.component';
 import { EditSucursalDeliverieComponent } from '../edit-sucursal-deliverie/edit-sucursal-deliverie.component';
 import { CreateSucursalDeliverieComponent } from '../create-sucursal-deliverie/create-sucursal-deliverie.component';
@@ -11,7 +11,7 @@ import { SucursalDeliverieService } from '../service/sucursal-deliverie.service'
   templateUrl: './list-sucursal-deliverie.component.html',
   styleUrls: ['./list-sucursal-deliverie.component.scss']
 })
-export class ListSucursalDeliverieComponent {
+export class ListSucursalDeliverieComponent implements OnInit {
   search:string = '';
       SUCURSALES_DELIVERIES:any [] = [];
       isLoading$:any;

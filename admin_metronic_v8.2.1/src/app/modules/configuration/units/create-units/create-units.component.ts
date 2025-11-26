@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/modules/auth';
@@ -11,7 +11,7 @@ import { UnitsService } from '../service/units.service';
   templateUrl: './create-units.component.html',
   styleUrls: ['./create-units.component.scss']
 })
-export class CreateUnitsComponent {
+export class CreateUnitsComponent implements OnInit {
   @Output() UnitC:EventEmitter<any> = new EventEmitter();
   
   //Variables

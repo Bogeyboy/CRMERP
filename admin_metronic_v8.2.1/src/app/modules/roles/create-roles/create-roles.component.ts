@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { SIDEBAR } from 'src/app/config/config';
@@ -11,7 +11,7 @@ import { RolesService } from '../service/roles.service';
   templateUrl: './create-roles.component.html',
   styleUrls: ['./create-roles.component.scss']
 })
-export class CreateRolesComponent {
+export class CreateRolesComponent implements OnInit {
 
   //Definimos este ouput para que se actualice la lista de roles en la vista de list-roles
   //enviando datos desde el componente hijo al padre

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CreateRolesComponent } from '../create-roles/create-roles.component';
 import { RolesService } from '../service/roles.service';
@@ -10,7 +10,7 @@ import { DeleteRolesComponent } from '../delete-roles/delete-roles.component';
   templateUrl: './list-roles.component.html',
   styleUrls: ['./list-roles.component.scss']
 })
-export class ListRolesComponent {
+export class ListRolesComponent implements OnInit {
   
   search:string = '';
   ROLES:any[] = [];

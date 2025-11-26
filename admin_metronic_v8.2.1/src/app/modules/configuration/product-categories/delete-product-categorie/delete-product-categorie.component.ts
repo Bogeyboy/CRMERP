@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { ProductCategoriesService } from '../service/product-categories.service';
@@ -9,7 +9,7 @@ import { ProductCategoriesService } from '../service/product-categories.service'
   templateUrl: './delete-product-categorie.component.html',
   styleUrls: ['./delete-product-categorie.component.scss']
 })
-export class DeleteProductCategorieComponent {
+export class DeleteProductCategorieComponent implements OnInit {
   @Output() ProductCategorieD: EventEmitter<any> = new EventEmitter();
   @Input()  CATEGORIE_SELECTED:any;
 

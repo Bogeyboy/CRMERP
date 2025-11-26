@@ -8,7 +8,7 @@ import { ICreateAccount } from '../../create-account.helper';
   templateUrl: './step3.component.html',
 })
 export class Step3Component implements OnInit, OnDestroy {
-  @Input('updateParentModel') updateParentModel: (
+  @Input() updateParentModel: (
     part: Partial<ICreateAccount>,
     isFormValid: boolean
   ) => void;

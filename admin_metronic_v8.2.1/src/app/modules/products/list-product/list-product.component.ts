@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ProductsService } from '../service/products.service';
 import { DeleteProductComponent } from '../delete-product/delete-product.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -9,7 +9,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './list-product.component.html',
   styleUrls: ['./list-product.component.scss']
 })
-export class ListProductComponent {
+export class ListProductComponent implements OnInit {
 
   search:string = '';
   PRODUCTS:any = [];

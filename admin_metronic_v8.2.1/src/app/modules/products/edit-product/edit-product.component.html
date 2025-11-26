@@ -40,7 +40,7 @@
                             <!--begin::Image input-->
                             <!--begin::Image input placeholder-->
                             <!-- <style>.image-input-placeholder { background-image: url('assets/media/svg/files/blank-image.svg'); } [data-bs-theme="dark"] .image-input-placeholder { background-image: url('assets/media/svg/files/blank-image-dark.svg'); }</style> -->
-                            
+
                             <!--end::Image input placeholder-->
                             <div class="image-input image-input-empty image-input-outline image-input-placeholder mb-3"
                                 [ngStyle]="{'background-image': 'url('+imagen_previzualiza+')'}"
@@ -104,7 +104,7 @@
                         <!--begin::Card body-->
                         <div class="card-body pt-0">
                             <!--begin::Select2-->
-                            <select class="form-select mb-2" 
+                            <select class="form-select mb-2"
                                 [(ngModel)]="state"
                                 name="state"
                                 data-control="select2"
@@ -167,7 +167,7 @@
                         <!-- COMIENZO ETIQUETA PESTAÑA GENERAL -->
                         <li class="nav-item">
                             <a class="nav-link text-active-primary pb-4"
-                                [ngClass]="{'active': tab_selected == 1}"
+                                [ngClass]="{'active': tab_selected === 1}"
                                 data-bs-toggle="tab"
                                 href="#kt_ecommerce_add_product_general"
                                 onclick="return false;"
@@ -178,7 +178,7 @@
                         <!-- COMIENZO ETIQUETA PESTAÑA AVANZADO -->
                         <li class="nav-item">
                             <a class="nav-link text-active-primary pb-4"
-                                [ngClass]="{'active': tab_selected == 2}"
+                                [ngClass]="{'active': tab_selected === 2}"
                                 data-bs-toggle="tab"
                                 href="#kt_ecommerce_add_product_advanced"
                                 onclick="return false;"
@@ -191,7 +191,7 @@
                     <!-- COMIENZO CONTENEDOR PESTAÑA GENERAL Y AVANZADO -->
                     <div class="tab-content">
                         <!-- COMIENZO PESTAÑA GENERAL -->
-                        <div class="tab-pane fade" [ngClass]="{'show active': tab_selected == 1}" id="kt_ecommerce_add_product_general" role="tab-panel">
+                        <div class="tab-pane fade" [ngClass]="{'show active': tab_selected === 1}" id="kt_ecommerce_add_product_general" role="tab-panel">
                             <div class="d-flex flex-column gap-7 gap-lg-10">
                                 <!--COMIENZO SECCIÓN GENERAL, TITULO Y DESCRIPCION-->
                                 <div class="card card-flush py-4">
@@ -284,7 +284,7 @@
                                                                             <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Code: PH</span> -->
                                                                         </td>
                                                                         <td class="text-gray-900 fw-bold text-hover-primary fs-6">
-                                                                            {{ ESPECIFICACION.value_v }}                     
+                                                                            {{ ESPECIFICACION.value_v }}
                                                                         </td>
                                                                         <td class="">
                                                                             <a href="#" onClick="return false" (click)="removeEspecif(i)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
@@ -326,7 +326,7 @@
                                     <div class="card-body pt-0">
                                         <!-- COMIENZO DE PRECIO, DISPONIBILIDAD Y TIEMPO DE ABASTECIMIENTO -->
                                         <div class="mb-10 row fv-row">
-                                            
+
                                             <!-- COMIENZO DE PRECIO BASE -->
                                             <div class="col-3">
                                                 <label class="required form-label">Precio base</label>
@@ -346,7 +346,7 @@
                                                     [(ngModel)]="disponibilidad"
                                                     name="disponibilidad"
                                                     data-control="select2"
-                                                    data-hide-search="true" 
+                                                    data-hide-search="true"
                                                     data-placeholder="Select an option">
                                                     <option value="1">1.- Vender los productos sin stock</option>
                                                     <option value="2">2.- No vender los productos sin stock</option>
@@ -369,7 +369,7 @@
                                         <!-- FIN DE PRECIO, DISPONIBILIDAD Y TIEMPO DE ABASTECIMIENTO -->
                                         <!-- COMIENZO TIPOS DE DESCUENTO -->
                                         <div class="fv-row mb-10">
-                                            <label class="fs-6 fw-semibold mb-2">Tipo de descuento 
+                                            <label class="fs-6 fw-semibold mb-2">Tipo de descuento
                                                 <span class="ms-1" data-bs-toggle="tooltip" title="Selecciona el tipo de descuento que será aplicado a este artículo">
                                                     <i class="ki-duotone ki-information-5 text-gray-500 fs-6">
                                                         <span class="path1"></span>
@@ -382,7 +382,7 @@
                                             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button='true']">
                                                 <!-- INICIO SIN DESCUENTO -->
                                                 <div class="col">
-                                                    <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" [ngClass]="{'active': is_discount == 1}" data-kt-button="true">
+                                                    <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" [ngClass]="{'active': is_discount === 1}" data-kt-button="true">
                                                         <!--COMIENZO RADIO BUTTON-->
                                                         <span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
                                                             <input class="form-check-input" type="radio" name="discount_option" (click)="selectedDiscount(1)" checked="checked" />
@@ -397,7 +397,7 @@
                                                 <!-- COMIENZO DESCUENTO POR PORCENTAJE -->
                                                 <div class="col">
                                                     <!--COMIENZO RADIO BUTTON-->
-                                                    <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" [ngClass]="{'active': is_discount == 2}" data-kt-button="true">
+                                                    <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" [ngClass]="{'active': is_discount === 2}" data-kt-button="true">
                                                         <span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
                                                             <input class="form-check-input" type="radio" name="discount_option" (click)="selectedDiscount(2)" />
                                                         </span>
@@ -413,7 +413,7 @@
                                         </div>
                                         <!-- FIN TIPOS DE DESCUENTO -->
                                         <!-- COMIENZO CANTIDAD DESCUENTOS -->
-                                        <div class="mb-10 row fv-row" *ngIf="is_discount == 2" id="kt_ecommerce_add_product_discount_fixed">
+                                        <div class="mb-10 row fv-row" *ngIf="is_discount === 2" id="kt_ecommerce_add_product_discount_fixed">
                                             <!-- COMIENZO DESCUENTO MÍNIMO -->
                                             <div class="col-4">
                                                 <label class="form-label">Descuento Minimo:</label>
@@ -447,7 +447,7 @@
                                                     [(ngModel)]="tax_selected"
                                                     name="tax_selected"
                                                     data-control="select2"
-                                                    data-hide-search="true" 
+                                                    data-hide-search="true"
                                                     data-placeholder="Select an option">
                                                     <option value="1">Libre de impuestos</option>
                                                     <option value="2">Bienes gravables</option>
@@ -483,7 +483,7 @@
                         </div>
                         <!-- FIN PESTAÑA GENERAL -->
                         <!-- COMIENZO PESTAÑA AVANZADO-->
-                        <div class="tab-pane fade" [ngClass]="{'show active': tab_selected == 2}" id="kt_ecommerce_add_product_advanced" role="tab-panel">
+                        <div class="tab-pane fade" [ngClass]="{'show active': tab_selected === 2}" id="kt_ecommerce_add_product_advanced" role="tab-panel">
                             <div class="d-flex flex-column gap-7 gap-lg-10">
                                 <!-- COMIENZO CABECERA PARTE INVENTARIO -->
                                 <div class="card card-flush py-4">
@@ -512,7 +512,7 @@
                                             <div class="col-6">
                                                 <label class="form-label">¿Es gratuito?</label>
                                                 <div class="form-check form-check-custom form-check-solid mb-2">
-                                                    <input class="form-check-input" type="checkbox" (click)="isGift()" [checked]="is_gift == 2" />
+                                                    <input class="form-check-input" type="checkbox" (click)="isGift()" [checked]="is_gift === 2" />
                                                     <label class="form-check-label">Si</label>
                                                 </div>
                                                 <div class="text-muted fs-7">Es posible que el producto tenga coste 0.</div>
@@ -549,7 +549,7 @@
                                             </div>
                                             <!-- FIN UNIDAD DE UMBREAL -->
                                         </div>
-                                        <!-- FIN UMBRAL Y UNIDAD DE UMBRAL-->                                         
+                                        <!-- FIN UMBRAL Y UNIDAD DE UMBRAL-->
                                         <!-- INICIO TIPO DE UNIDAD, ALMACÉN Y CANTIDAD -->
                                         <div class="mb-10 fv-row row">
                                             <!-- COMIENZO SELECCIONABLE TIPO DE UNIDAD -->
@@ -623,15 +623,15 @@
                                                                         <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Code: PH</span> -->
                                                                     </td>
                                                                     <td class="text-gray-900 fw-bold text-hover-primary fs-6">
-                                                                        {{ WAREHOUSES_PROD.warehouse.name }}                     
+                                                                        {{ WAREHOUSES_PROD.warehouse.name }}
                                                                     </td>
                                                                     <td class="text-gray-900 fw-bold text-hover-primary fs-6">
-                                                                        {{ WAREHOUSES_PROD.quantity }}                     
+                                                                        {{ WAREHOUSES_PROD.quantity }}
                                                                     </td>
                                                                     <td class="">
                                                                         <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                                                         <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i></a> -->
-                                                            
+
                                                                         <a href="#" onClick="return false" (click)="removeWarehouse(WAREHOUSES_PROD)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
                                                                         <i class="ki-duotone ki-trash fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i></a>
                                                                     </td>
@@ -757,7 +757,7 @@
                                                                     </td>
                                                                     <!-- NOMBRE DE SUCURSAL -->
                                                                     <td class="text-gray-900 fw-bold text-hover-primary fs-6">
-                                                                        {{ WALLETS_PROD.sucursale ? WALLETS_PROD.sucursale.name : 'N/A' }}                     
+                                                                        {{ WALLETS_PROD.sucursale ? WALLETS_PROD.sucursale.name : 'N/A' }}
                                                                     </td>
                                                                     <!-- NOMBRE DE SEGMENTO DE CLIENTE -->
                                                                     <td>
@@ -771,13 +771,13 @@
                                                                     <td class="">
                                                                         <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                                                         <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i></a> -->
-                                                            
+
                                                                         <a href="#" onClick="return false;" (click)="removePriceMultiple(WALLETS_PROD)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
                                                                         <i class="ki-duotone ki-trash fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i></a>
                                                                     </td>
                                                                 </tr>
                                                             </ng-container>
-                                                            
+
                                                         </tbody>
                                                         <!-- FIN CUERPO DE TABLA -->
                                                     </table>
@@ -819,10 +819,10 @@
                                                     <!-- ANCHO -->
                                                     <div class="col-3">
                                                         <label class="form-label">Ancho</label>
-                                                        <input type="number" 
+                                                        <input type="number"
                                                             [(ngModel)]="width"
-                                                            name="width" 
-                                                            class="form-control mb-2" 
+                                                            name="width"
+                                                            class="form-control mb-2"
                                                             placeholder="Width (w)"
                                                             value="" />
                                                         <div class="text-muted fs-7">Ancho (cm).</div>
@@ -830,7 +830,7 @@
                                                     <!-- ALTO -->
                                                     <div class="col-3">
                                                         <label class="form-label">Alto</label>
-                                                        <input type="number" 
+                                                        <input type="number"
                                                             [(ngModel)]="height"
                                                             name="height"
                                                             class="form-control mb-2"
@@ -841,7 +841,7 @@
                                                     <!-- LARGO -->
                                                     <div class="col-3">
                                                         <label class="form-label">Largo</label>
-                                                        <input type="number" 
+                                                        <input type="number"
                                                             [(ngModel)]="length"
                                                             name="length"
                                                             class="form-control mb-2"
@@ -873,7 +873,7 @@
                         <!--COMIENZO BOTÓN SALVAR CAMBIOS-->
                         <button type="button" (click)="store()" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
                             <span class="indicator-label">Salvar cambios</span>
-                            <span class="indicator-progress">Por favor, espera... 
+                            <span class="indicator-progress">Por favor, espera...
                             <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
                         </button>
                         <!--FIN BOTÓN SALVAR CAMBIOS-->

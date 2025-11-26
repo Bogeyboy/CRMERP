@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/modules/auth';
@@ -11,7 +11,7 @@ import { MethodPaymentService } from '../service/method-payment.service';
   templateUrl: './create-method-payment.component.html',
   styleUrls: ['./create-method-payment.component.scss']
 })
-export class CreateMethodPaymentComponent {
+export class CreateMethodPaymentComponent implements OnInit {
   @Output() MethodPaymentC:EventEmitter<any> = new EventEmitter();
   @Input() METHOD_PAYMENTS:any = [];
     

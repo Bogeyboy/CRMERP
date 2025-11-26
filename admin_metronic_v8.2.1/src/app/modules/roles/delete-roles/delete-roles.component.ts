@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { data } from 'jquery';
 import { ToastrService } from 'ngx-toastr';
@@ -12,7 +12,7 @@ import { RolesService } from '../service/roles.service';
   templateUrl: './delete-roles.component.html',
   styleUrls: ['./delete-roles.component.scss']
 })
-export class DeleteRolesComponent {
+export class DeleteRolesComponent implements OnInit {
     @Output() RoleD:EventEmitter<any> = new EventEmitter();
   
     //recibiendo datos del componente padre

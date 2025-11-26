@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/modules/auth';
@@ -15,7 +15,7 @@ import { DeleteTransformUnitsComponent } from '../delete-transform-units/delete-
   templateUrl: './create-transform-units.component.html',
   styleUrls: ['./create-transform-units.component.scss']
 })
-export class CreateTransformUnitsComponent {
+export class CreateTransformUnitsComponent implements OnInit {
   //@Output() UnitC:EventEmitter<any> = new EventEmitter();
   @Input() UNIT_SELECTED:any;
   @Input() UNITS:any = [];

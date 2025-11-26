@@ -167,7 +167,7 @@
                         <!-- COMIENZO ETIQUETA PESTAÑA GENERAL -->
                         <li class="nav-item">
                             <a class="nav-link text-active-primary pb-4"
-                                [ngClass]="{'active': tab_selected == 1}"
+                                [ngClass]="{'active': tab_selected === 1}"
                                 data-bs-toggle="tab"
                                 href="#kt_ecommerce_add_product_general"
                                 onclick="return false;"
@@ -178,7 +178,7 @@
                         <!-- COMIENZO ETIQUETA PESTAÑA AVANZADO -->
                         <li class="nav-item">
                             <a class="nav-link text-active-primary pb-4"
-                                [ngClass]="{'active': tab_selected == 2}"
+                                [ngClass]="{'active': tab_selected === 2}"
                                 data-bs-toggle="tab"
                                 href="#kt_ecommerce_add_product_advanced"
                                 onclick="return false;"
@@ -191,7 +191,7 @@
                     <!-- COMIENZO CONTENEDOR PESTAÑA GENERAL Y AVANZADO -->
                     <div class="tab-content">
                         <!-- COMIENZO PESTAÑA GENERAL -->
-                        <div class="tab-pane fade" [ngClass]="{'show active': tab_selected == 1}" id="kt_ecommerce_add_product_general" role="tab-panel">
+                        <div class="tab-pane fade" [ngClass]="{'show active': tab_selected === 1}" id="kt_ecommerce_add_product_general" role="tab-panel">
                             <div class="d-flex flex-column gap-7 gap-lg-10">
                                 <!--COMIENZO SECCIÓN GENERAL, TITULO Y DESCRIPCION-->
                                 <div class="card card-flush py-4">
@@ -398,7 +398,7 @@
                                             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-1 row-cols-xl-3 g-9" data-kt-buttons="true" data-kt-buttons-target="[data-kt-button='true']">
                                                 <!-- INICIO SIN DESCUENTO -->
                                                 <div class="col">
-                                                    <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" [ngClass]="{'active': is_discount == 1}" data-kt-button="true">
+                                                    <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" [ngClass]="{'active': is_discount === 1}" data-kt-button="true">
                                                         <!--COMIENZO RADIO BUTTON-->
                                                         <span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
                                                             <input class="form-check-input" type="radio" name="discount_option" (click)="selectedDiscount(1)" checked="checked" />
@@ -413,7 +413,7 @@
                                                 <!-- COMIENZO DESCUENTO POR PORCENTAJE -->
                                                 <div class="col">
                                                     <!--COMIENZO RADIO BUTTON-->
-                                                    <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" [ngClass]="{'active': is_discount == 2}" data-kt-button="true">
+                                                    <label class="btn btn-outline btn-outline-dashed btn-active-light-primary d-flex text-start p-6" [ngClass]="{'active': is_discount === 2}" data-kt-button="true">
                                                         <span class="form-check form-check-custom form-check-solid form-check-sm align-items-start mt-1">
                                                             <input class="form-check-input" type="radio" name="discount_option" (click)="selectedDiscount(2)" />
                                                         </span>
@@ -429,7 +429,7 @@
                                         </div>
                                         <!-- FIN TIPOS DE DESCUENTO -->
                                         <!-- COMIENZO CANTIDAD DESCUENTOS -->
-                                        <div class="mb-10 row fv-row" *ngIf="is_discount == 2" id="kt_ecommerce_add_product_discount_fixed">
+                                        <div class="mb-10 row fv-row" *ngIf="is_discount === 2" id="kt_ecommerce_add_product_discount_fixed">
                                             <!-- COMIENZO DESCUENTO MÍNIMO -->
                                             <div class="col-4">
                                                 <label class="form-label">Descuento Minimo:</label>
@@ -499,7 +499,7 @@
                         </div>
                         <!-- FIN PESTAÑA GENERAL -->
                         <!-- COMIENZO PESTAÑA AVANZADO-->
-                        <div class="tab-pane fade" [ngClass]="{'show active': tab_selected == 2}" id="kt_ecommerce_add_product_advanced" role="tab-panel">
+                        <div class="tab-pane fade" [ngClass]="{'show active': tab_selected === 2}" id="kt_ecommerce_add_product_advanced" role="tab-panel">
                             <div class="d-flex flex-column gap-7 gap-lg-10">
                                 <!-- COMIENZO CABECERA PARTE INVENTARIO -->
                                 <div class="card card-flush py-4">

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { ClientSegmentService } from '../service/client-segment.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/modules/auth';
   templateUrl: './edit-client-segment.component.html',
   styleUrls: ['./edit-client-segment.component.scss']
 })
-export class EditClientSegmentComponent {
+export class EditClientSegmentComponent implements OnInit {
   @Output() ClientSegmentE:EventEmitter<any> = new EventEmitter();
     @Input() CLIENT_SEGMENT_SELECTED:any;
     

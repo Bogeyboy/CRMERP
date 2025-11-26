@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SucursalService } from '../service/sucursal.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CreateSucursalComponent } from '../create-sucursal/create-sucursal.component';
@@ -11,7 +11,7 @@ import { DeleteSucursalComponent } from '../delete-sucursal/delete-sucursal.comp
   templateUrl: './list-sucursal.component.html',
   styleUrls: ['./list-sucursal.component.scss']
 })
-export class ListSucursalComponent {
+export class ListSucursalComponent implements OnInit {
     search:string = '';
     SUCURSALES:any[];
     isLoading$:any;

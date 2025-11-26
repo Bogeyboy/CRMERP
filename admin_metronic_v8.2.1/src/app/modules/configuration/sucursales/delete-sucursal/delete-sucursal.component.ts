@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { SucursalService } from '../service/sucursal.service';
 import { HttpClient } from '@angular/common/http';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/modules/auth';
   templateUrl: './delete-sucursal.component.html',
   styleUrls: ['./delete-sucursal.component.scss']
 })
-export class DeleteSucursalComponent {
+export class DeleteSucursalComponent implements OnInit {
 
     @Output() SucursalD:EventEmitter<any> = new EventEmitter();
     //recibiendo datos del componente padre

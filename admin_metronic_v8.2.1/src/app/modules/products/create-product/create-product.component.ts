@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { ProductsService } from '../service/products.service';
 
@@ -7,7 +7,7 @@ import { ProductsService } from '../service/products.service';
   templateUrl: './create-product.component.html',
   styleUrls: ['./create-product.component.scss']
 })
-export class CreateProductComponent {
+export class CreateProductComponent implements OnInit {
 
   isLoading$:any;
   is_discount:number = 1;

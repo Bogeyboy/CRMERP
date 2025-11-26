@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { WarehouseService } from '../service/warehouse.service';
 import { CreateWarehouseComponent } from '../create-warehouse/create-warehouse.component';
 import { EditWarehouseComponent } from '../edit-warehouse/edit-warehouse.component';
@@ -11,7 +11,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   templateUrl: './list-warehouse.component.html',
   styleUrls: ['./list-warehouse.component.scss']
 })
-export class ListWarehouseComponent {
+export class ListWarehouseComponent implements OnInit {
     search:string = '';
     WAREHOUSES:any = [];
     SUCURSALES:any = [];

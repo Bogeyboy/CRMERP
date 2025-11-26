@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/modules/auth';
@@ -11,7 +11,7 @@ import { SucursalDeliverieService } from '../service/sucursal-deliverie.service'
   templateUrl: './delete-sucursal-deliverie.component.html',
   styleUrls: ['./delete-sucursal-deliverie.component.scss']
 })
-export class DeleteSucursalDeliverieComponent {
+export class DeleteSucursalDeliverieComponent implements OnInit {
   @Output() SucursalD:EventEmitter<any> = new EventEmitter();
       //recibiendo datos del componente padre
       @Input() SUCURSAL_SELECTED:any;
