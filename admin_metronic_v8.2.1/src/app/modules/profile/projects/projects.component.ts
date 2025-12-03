@@ -6,7 +6,7 @@ import { IconUserModel } from '../../../_metronic/partials';
   templateUrl: './projects.component.html',
 })
 export class ProjectsComponent implements OnInit {
-  users1: Array<IconUserModel> = [
+  users1: IconUserModel[] = [
     { name: 'Emma Smith', avatar: './assets/media/avatars/300-6.jpg' },
     { name: 'Rudy Stone', avatar: './assets/media/avatars/300-1.jpg' },
     { name: 'Susan Redwood', initials: 'S', color: 'primary' },

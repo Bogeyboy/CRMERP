@@ -9,9 +9,9 @@ import { getCSSVariableValue } from '../../../../../../kt/_utils';
 export class CardsWidget17Component implements OnInit {
   chartOptions: any = {};
 
-  @Input() cssClass: string = '';
-  @Input() chartSize: number = 70;
-  @Input() chartLine: number = 11;
+  @Input() cssClass = '';
+  @Input() chartSize = 70;
+  @Input() chartLine = 11;
   @Input() chartRotate?: number = 145;
 
   constructor() {}
@@ -24,9 +24,9 @@ export class CardsWidget17Component implements OnInit {
 }
 
 const initChart = function (
-  chartSize: number = 70,
-  chartLine: number = 11,
-  chartRotate: number = 145
+  chartSize = 70,
+  chartLine = 11,
+  chartRotate = 145
 ) {
   const el = document.getElementById('kt_card_widget_17_chart');
 
@@ -34,7 +34,7 @@ const initChart = function (
     return;
   }
 
-  var options = {
+  const options = {
     size: chartSize,
     lineWidth: chartLine,
     rotate: chartRotate,

@@ -12,14 +12,14 @@ import { UsersService } from '../service/users.service';
 })
 export class ListUsersComponent implements OnInit {
   
-  search:string = '';
+  search = '';
   USERS:any = [];
   isLoading$:any;
 
   roles:any = [];
 
-  totalPages:number = 0;
-  currentPage:number = 1;
+  totalPages = 0;
+  currentPage = 1;
   constructor(
     public modalService: NgbModal,
     public usersService: UsersService,
@@ -67,7 +67,7 @@ export class ListUsersComponent implements OnInit {
     modalRef.componentInstance.roles = this.roles;
 
     modalRef.componentInstance.UserE.subscribe((user:any) => {
-      let INDEX = this.USERS.findIndex((user:any) => user.id == USER.id);
+      const INDEX = this.USERS.findIndex((user:any) => user.id == USER.id);
       if(INDEX != -1){
         this.USERS[INDEX] = user;
       }
@@ -79,7 +79,7 @@ export class ListUsersComponent implements OnInit {
     modalRef.componentInstance.USER_SELECTED = USER;
 
     modalRef.componentInstance.UserD.subscribe((user:any) => {
-      let INDEX = this.USERS.findIndex((user:any) => user.id == USER.id);
+      const INDEX = this.USERS.findIndex((user:any) => user.id == USER.id);
       if(INDEX != -1){
         this.USERS.splice(INDEX,1);
       }

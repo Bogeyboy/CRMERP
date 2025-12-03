@@ -12,12 +12,12 @@ import { DeleteSucursalComponent } from '../delete-sucursal/delete-sucursal.comp
   styleUrls: ['./list-sucursal.component.scss']
 })
 export class ListSucursalComponent implements OnInit {
-    search:string = '';
+    search = '';
     SUCURSALES:any[];
     isLoading$:any;
   
-    totalPages:number = 0;
-    currentPage:number = 1;
+    totalPages = 0;
+    currentPage = 1;
   
     constructor(
       public modalService: NgbModal,
@@ -65,7 +65,7 @@ export class ListSucursalComponent implements OnInit {
   
       //Recibimos los datos del componente hijo
       modalRef.componentInstance.SucursalE.subscribe((sucursal:any) => {
-        let INDEX = this.SUCURSALES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
+        const INDEX = this.SUCURSALES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
         //console.log(INDEX);
         if(INDEX!=-1)
         {
@@ -82,7 +82,7 @@ export class ListSucursalComponent implements OnInit {
 
       //Recibimos los datos del componente hijo
       modalRef.componentInstance.SucursalD.subscribe((sucursal:any) => {
-        let INDEX = this.SUCURSALES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
+        const INDEX = this.SUCURSALES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
         if(INDEX!=-1)
         {
           //this.ROLES[INDEX] = rol;

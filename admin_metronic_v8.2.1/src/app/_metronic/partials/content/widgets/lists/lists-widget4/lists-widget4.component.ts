@@ -5,6 +5,6 @@ import { Component, Input } from '@angular/core';
   templateUrl: './lists-widget4.component.html',
 })
 export class ListsWidget4Component {
-  @Input() items: number = 6;
+  @Input() items = 6;
   constructor() {}
 }

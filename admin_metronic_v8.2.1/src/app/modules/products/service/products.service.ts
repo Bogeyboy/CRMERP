@@ -22,8 +22,8 @@ export class ProductsService {
 
   registerProduct(data:any) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/products";
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/products";
     return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
@@ -31,8 +31,8 @@ export class ProductsService {
 
   listProducts(page = 1,data:any = null){
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/products/index?page="+page;
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/products/index?page="+page;
     return this.http.post(URL,data,{headers: headers}).pipe(
     /* return this.http.get(URL,{headers: headers}).pipe( */
       finalize(() => this.isLoadingSubject.next(false))
@@ -41,8 +41,8 @@ export class ProductsService {
 
   showProduct(PRODUCT_ID:string){
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/products/"+PRODUCT_ID;
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/products/"+PRODUCT_ID;
     return this.http.get(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
@@ -50,8 +50,8 @@ export class ProductsService {
 
   configAll(){
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/products/config";
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/products/config";
     return this.http.get(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
@@ -59,8 +59,8 @@ export class ProductsService {
 
   updateProduct(ID_PRODUCT:string,data:any) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/products/"+ID_PRODUCT;
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/products/"+ID_PRODUCT;
     return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );

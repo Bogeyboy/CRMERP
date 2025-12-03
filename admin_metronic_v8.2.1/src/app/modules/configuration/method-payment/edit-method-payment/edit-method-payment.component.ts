@@ -12,14 +12,14 @@ import { MethodPaymentService } from '../service/method-payment.service';
   styleUrls: ['./edit-method-payment.component.scss']
 })
 export class EditMethodPaymentComponent implements OnInit {
-  @Output() MethodPaymentE:EventEmitter<any> = new EventEmitter();
+  @Output() MethodPaymentE = new EventEmitter<any>();
   @Input() METHOD_PAYMENTS:any = [];
   @Input() METHOD_PAYMENT_SELECTED:any;
     
       //Variables
-      name: string ='';
+      name ='';
       state: number;
-      method_payment_id: string = '';
+      method_payment_id = '';
       isLoading:any;
     
       constructor(
@@ -51,7 +51,7 @@ export class EditMethodPaymentComponent implements OnInit {
           return false;
         }
         
-        let data = {
+        const data = {
           name: this.name,
           method_payment_id: this.method_payment_id,
           state: this.state,

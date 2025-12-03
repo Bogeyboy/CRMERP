@@ -22,17 +22,17 @@ export class ProductCategoriesService {
 
   registerProductCategorie(data:any) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/product_categories";
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/product_categories";
     return this.http.post(URL,data,{headers: headers}).pipe(
     finalize(() => this.isLoadingSubject.next(false))
     );
   }
 
-  listProductCategories(page = 1,search:string = ''){
+  listProductCategories(page = 1,search = ''){
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/product_categories?page="+page+"&search="+search;
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/product_categories?page="+page+"&search="+search;
     return this.http.get(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
@@ -40,9 +40,9 @@ export class ProductCategoriesService {
 
   updateProductCategorie(ID_PRODUCT_CATEGORIE:string,data:any) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     //console.log(data);
-    let URL = URL_SERVICIOS + '/product_categories/' + ID_PRODUCT_CATEGORIE;
+    const URL = URL_SERVICIOS + '/product_categories/' + ID_PRODUCT_CATEGORIE;
     //console.log(URL);
     return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
@@ -51,8 +51,8 @@ export class ProductCategoriesService {
 
   deleteProductCategorie(ID_PRODUCT_CATEGORIE:string) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS + '/product_categories/' + ID_PRODUCT_CATEGORIE;
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS + '/product_categories/' + ID_PRODUCT_CATEGORIE;
     return this.http.delete(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );

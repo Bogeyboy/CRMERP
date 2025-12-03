@@ -12,12 +12,12 @@ import { SucursalDeliverieService } from '../service/sucursal-deliverie.service'
   styleUrls: ['./list-sucursal-deliverie.component.scss']
 })
 export class ListSucursalDeliverieComponent implements OnInit {
-  search:string = '';
+  search = '';
       SUCURSALES_DELIVERIES:any [] = [];
       isLoading$:any;
     
-      totalPages:number = 0;
-      currentPage:number = 1;
+      totalPages = 0;
+      currentPage = 1;
     
       constructor(
         public modalService: NgbModal,
@@ -79,7 +79,7 @@ export class ListSucursalDeliverieComponent implements OnInit {
     
         //Recibimos los datos del componente hijo
         modalRef.componentInstance.SucursalE.subscribe((sucursal:any) => {
-          let INDEX = this.SUCURSALES_DELIVERIES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
+          const INDEX = this.SUCURSALES_DELIVERIES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
           //console.log(INDEX);
           if(INDEX!=-1)
           {
@@ -96,7 +96,7 @@ export class ListSucursalDeliverieComponent implements OnInit {
   
         //Recibimos los datos del componente hijo
         modalRef.componentInstance.SucursalD.subscribe((sucursal:any) => {
-          let INDEX = this.SUCURSALES_DELIVERIES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
+          const INDEX = this.SUCURSALES_DELIVERIES.findIndex((sucurs:any) => sucurs.id == SUCURSAL.id);
           if(INDEX!=-1)
           {
             //this.ROLES[INDEX] = rol;

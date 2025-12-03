@@ -13,11 +13,11 @@ import { AuthService } from 'src/app/modules/auth';
 })
 export class CreateSucursalComponent implements OnInit {
 
-  @Output() SucursalC:EventEmitter<any> = new EventEmitter();
+  @Output() SucursalC = new EventEmitter<any>();
   
     //Variables
-    name: string ='';
-    address: string = '';
+    name ='';
+    address = '';
     isLoading:any;
   
     constructor(
@@ -45,7 +45,7 @@ export class CreateSucursalComponent implements OnInit {
         return false;
       }
       
-      let data = {
+      const data = {
         name: this.name,
         address: this.address
       }

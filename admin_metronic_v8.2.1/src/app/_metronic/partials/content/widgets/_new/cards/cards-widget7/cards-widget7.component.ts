@@ -6,13 +6,13 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./cards-widget7.component.scss'],
 })
 export class CardsWidget7Component implements OnInit {
-  @Input() cssClass: string = '';
-  @Input() icon: boolean = false;
-  @Input() stats: number = 357;
-  @Input() description: string = 'Professionals';
-  @Input() labelColor: string = 'dark';
-  @Input() textColor: string = 'gray-300';
-  items: Array<{ name: string; initials?: string; state?: string, src?: string }>;
+  @Input() cssClass = '';
+  @Input() icon = false;
+  @Input() stats = 357;
+  @Input() description = 'Professionals';
+  @Input() labelColor = 'dark';
+  @Input() textColor = 'gray-300';
+  items: { name: string; initials?: string; state?: string, src?: string }[];
 
   constructor() {}
 

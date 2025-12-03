@@ -12,7 +12,7 @@ import { MethodPaymentService } from '../service/method-payment.service';
   styleUrls: ['./delete-method-payment.component.scss']
 })
 export class DeleteMethodPaymentComponent implements OnInit {
-@Output() MethodPaymentD:EventEmitter<any> = new EventEmitter();
+@Output() MethodPaymentD = new EventEmitter<any>();
     //recibiendo datos del componente padre
     @Input() METHOD_PAYMENT_SELECTED:any;
   

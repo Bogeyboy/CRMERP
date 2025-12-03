@@ -4,15 +4,9 @@ export type LayoutType =
   | 'dark-header'
   | 'light-header';
 
-export type CSSClassesType = {
-  [key: string]: string[];
-};
+export type CSSClassesType = Record<string, string[]>;
 
-export type HTMLAttributesType = {
-  [key: string]: {
-    [attrName: string]: string | boolean;
-  };
-};
+export type HTMLAttributesType = Record<string, Record<string, string | boolean>>;
 
 export interface ILayoutComponent {
   componentName: string;
@@ -59,11 +53,11 @@ export interface ISidebar extends ILayoutComponent {
     };
     drawer?: {
       enabled?: boolean;
-      attributes?: { [attrName: string]: string };
+      attributes?: Record<string, string>;
     };
     sticky?: {
       enabled?: boolean;
-      attributes?: { [attrName: string]: string };
+      attributes?: Record<string, string>;
     };
     fixed?: {
       desktop?: boolean;
@@ -189,21 +183,21 @@ export interface ILayout {
 }
 
 export interface ILayoutCSSClasses {
-  header: Array<string>;
-  headerContainer: Array<string>;
-  headerMobile: Array<string>;
-  headerMenu: Array<string>;
-  aside: Array<string>;
-  asideMenu: Array<string>;
-  asideToggle: Array<string>;
-  sidebar: Array<string>;
-  toolbar: Array<string>;
-  toolbarContainer: Array<string>;
-  content: Array<string>;
-  contentContainer: Array<string>;
-  footerContainer: Array<string>;
-  pageTitle: Array<string>;
-  pageContainer: Array<string>;
+  header: string[];
+  headerContainer: string[];
+  headerMobile: string[];
+  headerMenu: string[];
+  aside: string[];
+  asideMenu: string[];
+  asideToggle: string[];
+  sidebar: string[];
+  toolbar: string[];
+  toolbarContainer: string[];
+  content: string[];
+  contentContainer: string[];
+  footerContainer: string[];
+  pageTitle: string[];
+  pageContainer: string[];
 }
 
 export interface ILayoutHTMLAttributes {

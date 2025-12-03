@@ -24,22 +24,22 @@ export class LayoutComponent implements OnInit, OnDestroy {
   // page
   pageContainerCSSClasses: string;
   // header
-  appHeaderDefaultClass: string = '';
+  appHeaderDefaultClass = '';
   appHeaderDisplay: boolean;
   appHeaderDefaultStickyEnabled: boolean;
-  appHeaderDefaultStickyAttributes: { [attrName: string]: string } = {};
+  appHeaderDefaultStickyAttributes: Record<string, string> = {};
   appHeaderDefaultMinimizeEnabled: boolean;
-  appHeaderDefaultMinimizeAttributes: { [attrName: string]: string } = {};
+  appHeaderDefaultMinimizeAttributes: Record<string, string> = {};
   // toolbar
   appToolbarDisplay: boolean;
   appToolbarLayout: 'classic' | 'accounting' | 'extended' | 'reports' | 'saas';
-  appToolbarCSSClass: string = '';
+  appToolbarCSSClass = '';
   appToolbarSwapEnabled: boolean;
-  appToolbarSwapAttributes: { [attrName: string]: string } = {};
+  appToolbarSwapAttributes: Record<string, string> = {};
   appToolbarStickyEnabled: boolean;
-  appToolbarStickyAttributes: { [attrName: string]: string } = {};
+  appToolbarStickyAttributes: Record<string, string> = {};
   appToolbarMinimizeEnabled: boolean;
-  appToolbarMinimizeAttributes: { [attrName: string]: string } = {};
+  appToolbarMinimizeAttributes: Record<string, string> = {};
 
   // content
   appContentContiner?: 'fixed' | 'fluid';
@@ -49,18 +49,18 @@ export class LayoutComponent implements OnInit, OnDestroy {
   // sidebar
   appSidebarDefaultClass: string;
   appSidebarDefaultDrawerEnabled: boolean;
-  appSidebarDefaultDrawerAttributes: { [attrName: string]: string } = {};
+  appSidebarDefaultDrawerAttributes: Record<string, string> = {};
   appSidebarDisplay: boolean;
   appSidebarDefaultStickyEnabled: boolean;
-  appSidebarDefaultStickyAttributes: { [attrName: string]: string } = {};
+  appSidebarDefaultStickyAttributes: Record<string, string> = {};
   @ViewChild('ktSidebar', { static: true }) ktSidebar: ElementRef;
   /// sidebar panel
   appSidebarPanelDisplay: boolean;
   // footer
   appFooterDisplay: boolean;
-  appFooterCSSClass: string = '';
-  appFooterContainer: string = '';
-  appFooterContainerCSSClass: string = '';
+  appFooterCSSClass = '';
+  appFooterContainer = '';
+  appFooterContainerCSSClass = '';
   appFooterFixedDesktop: boolean;
   appFooterFixedMobile: boolean;
 
@@ -180,7 +180,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.appSidebarDefaultDrawerAttributes = this.layout.getProp(
         'app.sidebar.default.drawer.attributes',
         config
-      ) as { [attrName: string]: string };
+      ) as Record<string, string>;
     }
 
     this.appSidebarDefaultStickyEnabled = this.layout.getProp(
@@ -191,7 +191,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.appSidebarDefaultStickyAttributes = this.layout.getProp(
         'app.sidebar.default.sticky.attributes',
         config
-      ) as { [attrName: string]: string };
+      ) as Record<string, string>;
     }
 
     setTimeout(() => {
@@ -239,7 +239,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.appHeaderDefaultStickyAttributes = this.layout.getProp(
         'app.header.default.sticky.attributes',
         config
-      ) as { [attrName: string]: string };
+      ) as Record<string, string>;
     }
 
     this.appHeaderDefaultMinimizeEnabled = this.layout.getProp(
@@ -250,7 +250,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.appHeaderDefaultMinimizeAttributes = this.layout.getProp(
         'app.header.default.minimize.attributes',
         config
-      ) as { [attrName: string]: string };
+      ) as Record<string, string>;
     }
 
     setTimeout(() => {
@@ -323,7 +323,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.appToolbarSwapAttributes = this.layout.getProp(
         'app.toolbar.swap.attributes',
         config
-      ) as { [attrName: string]: string };
+      ) as Record<string, string>;
     }
 
     this.appToolbarStickyEnabled = this.layout.getProp(
@@ -334,7 +334,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.appToolbarStickyAttributes = this.layout.getProp(
         'app.toolbar.sticky.attributes',
         config
-      ) as { [attrName: string]: string };
+      ) as Record<string, string>;
     }
 
     this.appToolbarCSSClass =
@@ -347,7 +347,7 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this.appToolbarMinimizeAttributes = this.layout.getProp(
         'app.toolbar.minimize.attributes',
         config
-      ) as { [attrName: string]: string };
+      ) as Record<string, string>;
       this.appToolbarCSSClass += ' app-toolbar-minimize';
     }
 

@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/modules/auth';
   styleUrls: ['./delete-units.component.scss']
 })
 export class DeleteUnitsComponent implements OnInit {
-  @Output() UnitD:EventEmitter<any> = new EventEmitter();
+  @Output() UnitD = new EventEmitter<any>();
     //recibiendo datos del componente padre
   @Input() UNIT_SELECTED:any;
 

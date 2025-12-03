@@ -12,12 +12,12 @@ import { MethodPaymentService } from '../service/method-payment.service';
   styleUrls: ['./create-method-payment.component.scss']
 })
 export class CreateMethodPaymentComponent implements OnInit {
-  @Output() MethodPaymentC:EventEmitter<any> = new EventEmitter();
+  @Output() MethodPaymentC = new EventEmitter<any>();
   @Input() METHOD_PAYMENTS:any = [];
     
       //Variables
-      name: string ='';
-      method_payment_id: string = '';
+      name ='';
+      method_payment_id = '';
       isLoading:any;
     
       constructor(
@@ -45,7 +45,7 @@ export class CreateMethodPaymentComponent implements OnInit {
           return false;
         }
         
-        let data = {
+        const data = {
           name: this.name,
           method_payment_id: this.method_payment_id
         }

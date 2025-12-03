@@ -18,13 +18,13 @@ export class NewChartsWidget8Component implements OnInit {
   @ViewChild('weekChart') weekChart: ElementRef<HTMLDivElement>;
   @ViewChild('monthChart') monthChart: ElementRef<HTMLDivElement>;
 
-  @Input() chartHeight: string = '425px';
-  @Input() chartHeightNumber: number = 425;
-  @Input() cssClass: string = '';
+  @Input() chartHeight = '425px';
+  @Input() chartHeightNumber = 425;
+  @Input() cssClass = '';
   tab: 'Week' | 'Month' = 'Week';
   chart1Options: any = {};
   chart2Options: any = {};
-  hadDelay: boolean = false;
+  hadDelay = false;
 
   constructor(private cdr: ChangeDetectorRef) {}
 

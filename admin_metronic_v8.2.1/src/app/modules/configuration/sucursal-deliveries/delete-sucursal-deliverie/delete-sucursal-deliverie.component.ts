@@ -12,7 +12,7 @@ import { SucursalDeliverieService } from '../service/sucursal-deliverie.service'
   styleUrls: ['./delete-sucursal-deliverie.component.scss']
 })
 export class DeleteSucursalDeliverieComponent implements OnInit {
-  @Output() SucursalD:EventEmitter<any> = new EventEmitter();
+  @Output() SucursalD = new EventEmitter<any>();
       //recibiendo datos del componente padre
       @Input() SUCURSAL_SELECTED:any;
     

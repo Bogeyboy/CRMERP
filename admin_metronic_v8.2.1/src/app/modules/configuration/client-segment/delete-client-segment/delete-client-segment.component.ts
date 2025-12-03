@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/modules/auth';
   styleUrls: ['./delete-client-segment.component.scss']
 })
 export class DeleteClientSegmentComponent implements OnInit {
-  @Output() ClientSegmentD:EventEmitter<any> = new EventEmitter();
+  @Output() ClientSegmentD = new EventEmitter<any>();
       //recibiendo datos del componente padre
       @Input() CLIENT_SEGMENT_SELECTED:any;
     

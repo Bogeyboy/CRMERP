@@ -13,12 +13,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ListClientSegmentComponent implements OnInit {
     
-    search:string = '';
+    search = '';
     CLIENT_SEGMENTS:any[];
     isLoading$:any;
   
-    totalPages:number = 0;
-    currentPage:number = 1;
+    totalPages = 0;
+    currentPage = 1;
   
     constructor(
       public modalService: NgbModal,
@@ -66,7 +66,7 @@ export class ListClientSegmentComponent implements OnInit {
   
       //Recibimos los datos del componente hijo
       modalRef.componentInstance.ClientSegmentE.subscribe((client_segment:any) => {
-        let INDEX = this.CLIENT_SEGMENTS.findIndex((client_seg:any) => client_seg.id == CLIENT_SEGMENT.id);
+        const INDEX = this.CLIENT_SEGMENTS.findIndex((client_seg:any) => client_seg.id == CLIENT_SEGMENT.id);
         //console.log(INDEX);
         if(INDEX!=-1)
         {
@@ -83,7 +83,7 @@ export class ListClientSegmentComponent implements OnInit {
 
       //Recibimos los datos del componente hijo
       modalRef.componentInstance.ClientSegmentD.subscribe((client_segment:any) => {
-        let INDEX = this.CLIENT_SEGMENTS.findIndex((client_seg:any) => client_seg.id == CLIENT_SEGMENT.id);
+        const INDEX = this.CLIENT_SEGMENTS.findIndex((client_seg:any) => client_seg.id == CLIENT_SEGMENT.id);
         if(INDEX!=-1)
         {
           //this.ROLES[INDEX] = rol;

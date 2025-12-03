@@ -20,15 +20,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   appHeaderDefaultFixedMobile: boolean;
 
   appHeaderDefaultContainer: 'fixed' | 'fluid';
-  headerContainerCssClass: string = '';
-  appHeaderDefaultContainerClass: string = '';
+  headerContainerCssClass = '';
+  appHeaderDefaultContainerClass = '';
 
   appHeaderDefaultStacked: boolean;
 
   // view
   appSidebarDefaultCollapseDesktopEnabled: boolean;
   appSidebarDisplay: boolean;
-  appHeaderDefaultContent: string = '';
+  appHeaderDefaultContent = '';
   appHeaderDefaulMenuDisplay: boolean;
   appPageTitleDisplay: boolean;
 

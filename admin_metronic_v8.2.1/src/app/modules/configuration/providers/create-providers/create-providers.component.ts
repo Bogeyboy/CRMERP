@@ -12,17 +12,17 @@ import { AuthService } from 'src/app/modules/auth';
   styleUrls: ['./create-providers.component.scss']
 })
 export class CreateProvidersComponent implements OnInit {
-@Output() ProviderC:EventEmitter<any> = new EventEmitter();
+@Output() ProviderC = new EventEmitter<any>();
     
     //Variables
-    full_name: string ='';
-    comercial_name: string ='';
-    nif: string ='';
-    email: string ='';
-    phone: string ='';
-    address: string = '';
+    full_name ='';
+    comercial_name ='';
+    nif ='';
+    email ='';
+    phone ='';
+    address = '';
 
-    imagen: string = '';
+    imagen = '';
     IMAGEN_PROVIDER:any;
     IMAGEN_PREVISUALIZA: any;
     isLoading:any;
@@ -48,14 +48,14 @@ export class CreateProvidersComponent implements OnInit {
         return;
       }
       this.IMAGEN_PROVIDER = $event.target.files[0];
-      let reader = new FileReader();
+      const reader = new FileReader();
       reader.readAsDataURL(this.IMAGEN_PROVIDER);
       reader.onloadend = () => this.IMAGEN_PREVISUALIZA = reader.result;
     }
 
     store()
       {
-        let formData = new FormData();
+        const formData = new FormData();
         /* Comprobamos la existencia de la razón social, si no existe la añadimos */
         if(!this.full_name)
         {

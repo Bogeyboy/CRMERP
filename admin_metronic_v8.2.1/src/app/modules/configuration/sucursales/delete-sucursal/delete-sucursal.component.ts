@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/modules/auth';
 })
 export class DeleteSucursalComponent implements OnInit {
 
-    @Output() SucursalD:EventEmitter<any> = new EventEmitter();
+    @Output() SucursalD = new EventEmitter<any>();
     //recibiendo datos del componente padre
     @Input() SUCURSAL_SELECTED:any;
   

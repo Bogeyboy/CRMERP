@@ -12,14 +12,14 @@ import { AuthService } from 'src/app/modules/auth';
   styleUrls: ['./edit-units.component.scss']
 })
 export class EditUnitsComponent implements OnInit {
-  @Output() UnitE:EventEmitter<any> = new EventEmitter();
+  @Output() UnitE = new EventEmitter<any>();
   @Input() UNIT_SELECTED:any;
   
   //Variables
-  name: string ='';
-  state: number = 1;
-  description: string ='';
-  id: number = 0;
+  name ='';
+  state = 1;
+  description ='';
+  id = 0;
   isLoading:any;
 
   constructor(
@@ -51,7 +51,7 @@ export class EditUnitsComponent implements OnInit {
       return false;
     }
     
-    let data = {
+    const data = {
       name: this.name,
       state: this.state,
       description: this.description,

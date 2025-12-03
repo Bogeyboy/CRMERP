@@ -12,13 +12,13 @@ import { AuthService } from 'src/app/modules/auth';
   styleUrls: ['./edit-client-segment.component.scss']
 })
 export class EditClientSegmentComponent implements OnInit {
-  @Output() ClientSegmentE:EventEmitter<any> = new EventEmitter();
+  @Output() ClientSegmentE = new EventEmitter<any>();
     @Input() CLIENT_SEGMENT_SELECTED:any;
     
       //Variables
-      name: string ='';
-      state: number = 1;
-      id: number = 0;
+      name ='';
+      state = 1;
+      id = 0;
       isLoading:any;
     
       constructor(
@@ -48,7 +48,7 @@ export class EditClientSegmentComponent implements OnInit {
           return false;
         }
         
-        let data = {
+        const data = {
           name: this.name,
           state: this.state,
           id: this.id

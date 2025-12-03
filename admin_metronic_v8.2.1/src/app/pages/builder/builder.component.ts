@@ -12,8 +12,8 @@ export class BuilderComponent implements OnInit {
   activeTab: Tabs = 'Sidebar';
   model: any;
   @ViewChild('form', { static: true }) form: NgForm;
-  configLoading: boolean = false;
-  resetLoading: boolean = false;
+  configLoading = false;
+  resetLoading = false;
   constructor(private layout: LayoutService) {}
 
   ngOnInit(): void {

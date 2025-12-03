@@ -17,10 +17,10 @@ class ToggleComponent {
   element: HTMLElement;
   instanceUid: string;
   options: ToggleOptions;
-  state: string = '';
-  mode: string = '';
+  state = '';
+  mode = '';
   target: HTMLElement | null = null;
-  attribute: string = '';
+  attribute = '';
 
   constructor(_element: HTMLElement, options: ToggleOptions) {
     this.options = Object.assign(defaultToggleOptions, options);

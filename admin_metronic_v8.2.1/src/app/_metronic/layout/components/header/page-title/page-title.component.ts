@@ -9,13 +9,13 @@ import { PageInfoService, PageLink } from '../../../core/page-info.service';
 export class PageTitleComponent implements OnInit, OnDestroy {
   private unsubscribe: Subscription[] = [];
 
-  @Input() appPageTitleDirection: string = '';
+  @Input() appPageTitleDirection = '';
   @Input() appPageTitleBreadcrumb: boolean;
   @Input() appPageTitleDescription: boolean;
 
   title$: Observable<string>;
   description$: Observable<string>;
-  bc$: Observable<Array<PageLink>>;
+  bc$: Observable<PageLink[]>;
 
   constructor(private pageInfo: PageInfoService) {}
 

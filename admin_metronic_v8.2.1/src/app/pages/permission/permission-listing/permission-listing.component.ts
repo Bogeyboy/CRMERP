@@ -22,7 +22,7 @@ export class PermissionListingComponent implements OnInit, AfterViewInit, OnDest
   datatableConfig: DataTables.Settings = {};
 
   // Reload emitter inside datatable
-  reloadEvent: EventEmitter<boolean> = new EventEmitter();
+  reloadEvent = new EventEmitter<boolean>();
 
   // Single model
   permission$: Observable<IPermissionModel>;
@@ -153,9 +153,9 @@ export class PermissionListingComponent implements OnInit, AfterViewInit, OnDest
   }
 
   extractText(obj: any): string {
-    var textArray: string[] = [];
+    let textArray: string[] = [];
 
-    for (var key in obj) {
+    for (const key in obj) {
       if (typeof obj[key] === 'string') {
         // If the value is a string, add it to the 'textArray'
         textArray.push(obj[key]);
@@ -166,10 +166,10 @@ export class PermissionListingComponent implements OnInit, AfterViewInit, OnDest
     }
 
     // Use a Set to remove duplicates and convert back to an array
-    var uniqueTextArray = Array.from(new Set(textArray));
+    const uniqueTextArray = Array.from(new Set(textArray));
 
     // Convert the uniqueTextArray to a single string with line breaks
-    var text = uniqueTextArray.join('\n');
+    const text = uniqueTextArray.join('\n');
 
     return text;
   }

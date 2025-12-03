@@ -12,12 +12,12 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./list-method-payment.component.scss']
 })
 export class ListMethodPaymentComponent implements OnInit {
-  search:string = '';
+  search = '';
       METHOD_PAYMENTS:any[];
       isLoading$:any;
     
-      totalPages:number = 0;
-      currentPage:number = 1;
+      totalPages = 0;
+      currentPage = 1;
     
       constructor(
         public modalService: NgbModal,
@@ -69,7 +69,7 @@ export class ListMethodPaymentComponent implements OnInit {
         //Recibimos los datos del componente hijo
         modalRef.componentInstance.MethodPaymentE.subscribe((method_payment:any) => {
 
-          let INDEX = this.METHOD_PAYMENTS.findIndex((method_pay:any) => method_pay.id == METHOD_PAYMENT.id);
+          const INDEX = this.METHOD_PAYMENTS.findIndex((method_pay:any) => method_pay.id == METHOD_PAYMENT.id);
           //console.log("Datos recibidos desde el mmodal: ",method_payment);
           if(INDEX!=-1)
           {
@@ -88,7 +88,7 @@ export class ListMethodPaymentComponent implements OnInit {
   
         //Recibimos los datos del componente hijo
         modalRef.componentInstance.MethodPaymentD.subscribe((method_payment:any) => {
-          let INDEX = this.METHOD_PAYMENTS.findIndex((method_pay:any) => method_pay.id == METHOD_PAYMENT.id);
+          const INDEX = this.METHOD_PAYMENTS.findIndex((method_pay:any) => method_pay.id == METHOD_PAYMENT.id);
           if(INDEX!=-1)
           {
             //this.ROLES[INDEX] = rol;

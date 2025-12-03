@@ -58,8 +58,8 @@ class StickyComponent {
   }
 
   private scroll = () => {
-    let offset = this.getOption('offset')
-    let reverse = this.getOption('reverse')
+    const offset = this.getOption('offset')
+    const reverse = this.getOption('reverse')
 
     // Exit if false
     if (offset === false) {
@@ -168,7 +168,7 @@ class StickyComponent {
     ElementStyleUtil.remove(this.element, 'position')
   }
 
-  private enable = (update: boolean = false) => {
+  private enable = (update = false) => {
     const top = this.getOption('top')
     const left = this.getOption('left')
     // const right = this.getOption("right");
@@ -202,7 +202,7 @@ class StickyComponent {
 
     if (left !== null) {
       if (String(left).toLowerCase() === 'auto') {
-        var offsetLeft = getElementOffset(this.element).left
+        const offsetLeft = getElementOffset(this.element).left
 
         if (offsetLeft > 0) {
           ElementStyleUtil.set(this.element, 'left', String(offsetLeft) + 'px')
@@ -281,11 +281,11 @@ class StickyComponent {
     return sticky
   }
 
-  public static bootstrap(attr: string = '[data-kt-sticky="true"]') {
+  public static bootstrap(attr = '[data-kt-sticky="true"]') {
     StickyComponent.createInstances(attr)
   }
 
-  public static reInitialization(attr: string = '[data-kt-sticky="true"]') {
+  public static reInitialization(attr = '[data-kt-sticky="true"]') {
     StickyComponent.createInstances(attr)
   }
 }

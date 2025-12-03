@@ -5,10 +5,10 @@ import { Component, Input } from '@angular/core';
   templateUrl: './mixed-widget4.component.html',
 })
 export class MixedWidget4Component {
-  @Input() color: string = '';
-  @Input() image: string = '';
-  @Input() title: string = '';
-  @Input() date: string = '';
-  @Input() progress: string = '';
+  @Input() color = '';
+  @Input() image = '';
+  @Input() title = '';
+  @Input() date = '';
+  @Input() progress = '';
   constructor() {}
 }

@@ -20,7 +20,7 @@ import {
   templateUrl: './chat-inner.component.html',
 })
 export class ChatInnerComponent implements OnInit {
-  @Input() isDrawer: boolean = false;
+  @Input() isDrawer = false;
   @HostBinding('class') class = 'card-body';
   @HostBinding('id') id = this.isDrawer
     ? 'kt_drawer_chat_messenger_body'
@@ -28,10 +28,10 @@ export class ChatInnerComponent implements OnInit {
   @ViewChild('messageInput', { static: true })
   messageInput: ElementRef<HTMLTextAreaElement>;
 
-  private messages$: BehaviorSubject<Array<MessageModel>> = new BehaviorSubject<
-    Array<MessageModel>
+  private messages$: BehaviorSubject<MessageModel[]> = new BehaviorSubject<
+    MessageModel[]
   >(defaultMessages);
-  messagesObs: Observable<Array<MessageModel>>;
+  messagesObs: Observable<MessageModel[]>;
 
   constructor() {
     this.messagesObs = this.messages$.asObservable();

@@ -9,11 +9,11 @@ export class SearchResultInnerComponent implements OnInit {
   @HostBinding('attr.data-kt-menu') dataKtMenu = 'true';
   @HostBinding('attr.data-kt-search-element') dataKtSearch = 'content';
 
-  resultModels: Array<ResultModel> = resultModels;
-  recentlySearchedModels: Array<ResultModel> = recentlySearchedModels;
+  resultModels: ResultModel[] = resultModels;
+  recentlySearchedModels: ResultModel[] = recentlySearchedModels;
 
-  keyword: string = '';
-  searching: boolean = false;
+  keyword = '';
+  searching = false;
 
   constructor(private cdr: ChangeDetectorRef) {
   }
@@ -43,7 +43,7 @@ interface ResultModel {
   description: string;
 }
 
-const resultModels: Array<ResultModel> = [
+const resultModels: ResultModel[] = [
   {
     'image': './assets/media/avatars/300-6.jpg',
     'title': 'Karina Clark',
@@ -71,7 +71,7 @@ const resultModels: Array<ResultModel> = [
   }
 ];
 
-const recentlySearchedModels: Array<ResultModel> = [
+const recentlySearchedModels: ResultModel[] = [
   {
     'icon': './assets/media/icons/duotune/electronics/elc004.svg',
     'title': 'BoomApp by Keenthemes',

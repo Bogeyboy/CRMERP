@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment';
 
 import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgApexchartsModule } from "ng-apexcharts";
 // #fake-start#
 import { FakeAPIService } from './_fake/fake-api.service';
 import { ToastrModule } from 'ngx-toastr';
@@ -30,10 +31,13 @@ function appInitializer(authService: AuthService) {
 }
 
 @NgModule({ declarations: [AppComponent],
-    bootstrap: [AppComponent], imports: [BrowserModule,
+    bootstrap: [AppComponent], 
+    imports: [
+        BrowserModule,
         BrowserAnimationsModule,
         RouterModule.forRoot([]),
         TranslateModule.forRoot(),
+        InlineSVGModule.forRoot(),
         ClipboardModule,
         // #fake-start#
         environment.isMockEnabled
@@ -46,8 +50,15 @@ function appInitializer(authService: AuthService) {
         AppRoutingModule,
         InlineSVGModule.forRoot(),
         NgbModule,
+        NgApexchartsModule,
         SweetAlert2Module.forRoot(),
-        ToastrModule.forRoot(), // ToastrModule added
+        /* ToastrModule.forRoot(), // ToastrModule added */
+        ToastrModule.forRoot({
+          timeOut: 3000,
+          progressBar: true,
+          closeButton: true,
+          positionClass: 'toast-bottom-right'
+        })
         NgbPaginationModule], providers: [
         {
             provide: APP_INITIALIZER,

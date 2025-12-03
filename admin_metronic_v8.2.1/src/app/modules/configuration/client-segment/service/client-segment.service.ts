@@ -21,17 +21,17 @@ export class ClientSegmentService {
 
   registerClientSegment(data:any) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/client_segments";
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/client_segments";
     return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
 
-  listClientSegments(page = 1,search:string = ''){
+  listClientSegments(page = 1,search = ''){
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/client_segments?page="+page+"&search="+search;
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/client_segments?page="+page+"&search="+search;
     return this.http.get(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
@@ -39,9 +39,9 @@ export class ClientSegmentService {
 
   updateClientSegment(ID_CLIENT_SEGMENT:string,data:any) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     //console.log(data);
-    let URL = URL_SERVICIOS + '/client_segments/' + ID_CLIENT_SEGMENT;
+    const URL = URL_SERVICIOS + '/client_segments/' + ID_CLIENT_SEGMENT;
     //console.log(URL);
     return this.http.put(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
@@ -50,8 +50,8 @@ export class ClientSegmentService {
 
   deleteClientSegment(ID_CLIENT_SEGMENT:string) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS + '/client_segments/' + ID_CLIENT_SEGMENT;
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS + '/client_segments/' + ID_CLIENT_SEGMENT;
     return this.http.delete(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );

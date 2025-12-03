@@ -12,7 +12,7 @@ import { WarehouseService } from '../service/warehouse.service';
 })
 export class DeleteWarehouseComponent implements OnInit {
 
-  @Output() WarehouseD:EventEmitter<any> = new EventEmitter();
+  @Output() WarehouseD = new EventEmitter<any>();
       //recibiendo datos del componente padre
       @Input() WAREHOUSE_SELECTED:any;
     

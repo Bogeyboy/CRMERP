@@ -12,12 +12,12 @@ import { DeleteProvidersComponent } from '../delete-providers/delete-providers.c
   styleUrls: ['./list-providers.component.scss']
 })
 export class ListProvidersComponent implements OnInit {
-  search:string = '';
+  search = '';
   PROVIDERS:any = [];
   isLoading$:any;
 
-  totalPages:number = 0;
-  currentPage:number = 1;
+  totalPages = 0;
+  currentPage = 1;
   constructor(
     public modalService: NgbModal,
     public providerService: ProvidersService,
@@ -58,7 +58,7 @@ export class ListProvidersComponent implements OnInit {
     modalRef.componentInstance.PROVIDER_SELECTED = PROVIDER;
 
     modalRef.componentInstance.ProviderE.subscribe((provider:any) => {
-      let INDEX = this.PROVIDERS.findIndex((prov:any) => prov.id == PROVIDER.id);
+      const INDEX = this.PROVIDERS.findIndex((prov:any) => prov.id == PROVIDER.id);
       if(INDEX != -1){
         this.PROVIDERS[INDEX] = provider;
       }
@@ -70,7 +70,7 @@ export class ListProvidersComponent implements OnInit {
     modalRef.componentInstance.PROVIDER_SELECTED = PROVIDER;
 
     modalRef.componentInstance.ProviderD.subscribe((provider:any) => {
-      let INDEX = this.PROVIDERS.findIndex((prov:any) => prov.id == PROVIDER.id);
+      const INDEX = this.PROVIDERS.findIndex((prov:any) => prov.id == PROVIDER.id);
       if(INDEX != -1){
         this.PROVIDERS.splice(INDEX,1);
       }

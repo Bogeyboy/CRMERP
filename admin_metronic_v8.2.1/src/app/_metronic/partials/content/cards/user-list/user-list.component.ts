@@ -7,7 +7,7 @@ import { IconUserModel } from '../icon-user.model';
   styleUrls: ['./user-list.component.scss'],
 })
 export class UserListComponent implements OnInit {
-  @Input() users: Array<IconUserModel> = [];
+  @Input() users: IconUserModel[] = [];
 
   constructor() {}
 

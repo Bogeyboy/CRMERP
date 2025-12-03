@@ -15,10 +15,10 @@ export class CreateRolesComponent implements OnInit {
 
   //Definimos este ouput para que se actualice la lista de roles en la vista de list-roles
   //enviando datos desde el componente hijo al padre
-  @Output() RoleC:EventEmitter<any> = new EventEmitter();
+  @Output() RoleC = new EventEmitter<any>();
 
   //Variables
-  name: string ='';
+  name ='';
   isLoading:any;
   SIDEBAR:any = SIDEBAR;
   permissions:any = [];
@@ -42,7 +42,7 @@ export class CreateRolesComponent implements OnInit {
   //Función para añadir permisos
   addPermission(permiso:string)
   {
-    let INDEX = this.permissions.findIndex((perm:string) => perm == permiso);
+    const INDEX = this.permissions.findIndex((perm:string) => perm == permiso);
     // Si encuentra una coincidencia, elimina el permiso, si no la encuentra lo añade
     if (INDEX != -1) {
       this.permissions.splice(INDEX,1);
@@ -68,7 +68,7 @@ export class CreateRolesComponent implements OnInit {
       return false;
     }
     
-    let data = {
+    const data = {
       name: this.name,
       permissions: this.permissions,
     }

@@ -12,11 +12,11 @@ import { UnitsService } from '../service/units.service';
   styleUrls: ['./create-units.component.scss']
 })
 export class CreateUnitsComponent implements OnInit {
-  @Output() UnitC:EventEmitter<any> = new EventEmitter();
+  @Output() UnitC = new EventEmitter<any>();
   
   //Variables
-  name: string ='';
-  description: string = '';
+  name ='';
+  description = '';
   isLoading:any;
 
   constructor(
@@ -44,7 +44,7 @@ export class CreateUnitsComponent implements OnInit {
       return false;
     }
     
-    let data = {
+    const data = {
       name: this.name,
       description: this.description
     }

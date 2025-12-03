@@ -11,14 +11,14 @@ import { WarehouseService } from '../service/warehouse.service';
   styleUrls: ['./edit-warehouse.component.scss']
 })
 export class EditWarehouseComponent implements OnInit {
-  @Output() WarehouseE:EventEmitter<any> = new EventEmitter(); //Envia datos del componente padre al componente hijo
+  @Output() WarehouseE = new EventEmitter<any>(); //Envia datos del componente padre al componente hijo
   @Input() SUCURSALES:any = [];
   @Input() WAREHOUSE_SELECTED: any;
     
       //Variables
-      name: string ='';
-      address: string = '';
-      sucursale_id: string = '';
+      name ='';
+      address = '';
+      sucursale_id = '';
 
       isLoading:any;
     
@@ -51,7 +51,7 @@ export class EditWarehouseComponent implements OnInit {
           return false;
         }
         
-        let data = {
+        const data = {
           name: this.name,
           address: this.address,
           sucursale_id: this.sucursale_id

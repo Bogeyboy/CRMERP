@@ -6,15 +6,15 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./cards-widget18.component.scss'],
 })
 export class CardsWidget18Component implements OnInit {
-  @Input() cssClass: string = '';
-  @Input() image: string = '';
+  @Input() cssClass = '';
+  @Input() image = '';
 
-  cards: Array<{
+  cards: {
     name: string;
     src?: string;
     initials?: string;
     state?: string;
-  }> = [];
+  }[] = [];
 
   constructor() {
     this.cards = [

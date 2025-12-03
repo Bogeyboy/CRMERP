@@ -16,8 +16,8 @@ export class NotificationsInnerComponent implements OnInit {
   @HostBinding('attr.data-kt-menu') dataKtMenu = 'true';
 
   activeTabId: NotificationsTabsType = 'kt_topbar_notifications_2';
-  alerts: Array<AlertModel> = defaultAlerts;
-  logs: Array<LogModel> = defaultLogs;
+  alerts: AlertModel[] = defaultAlerts;
+  logs: LogModel[] = defaultLogs;
   constructor() {}
 
   ngOnInit(): void {}
@@ -35,7 +35,7 @@ interface AlertModel {
   state: 'primary' | 'danger' | 'warning' | 'success' | 'info';
 }
 
-const defaultAlerts: Array<AlertModel> = [
+const defaultAlerts: AlertModel[] = [
   {
     title: 'Project Alice',
     description: 'Phase 1 development',
@@ -94,7 +94,7 @@ interface LogModel {
   time: string;
 }
 
-const defaultLogs: Array<LogModel> = [
+const defaultLogs: LogModel[] = [
   { code: '200 OK', state: 'success', message: 'New order', time: 'Just now' },
   { code: '500 ERR', state: 'danger', message: 'New customer', time: '2 hrs' },
   {

@@ -11,39 +11,39 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ListProductComponent implements OnInit {
 
-  search:string = '';
+  search = '';
   PRODUCTS:any = [];
   isLoading$:any;
 
 
   CATEGORIES:any = [];
-  product_categorie_id:string = '';
-  disponibilidad:string = '';
-  tax_selected: string = '';
+  product_categorie_id = '';
+  disponibilidad = '';
+  tax_selected = '';
 
   //Variables para las sucursales
-  sucursale_price_multiple:string = '';
+  sucursale_price_multiple = '';
   SUCURSALES:any = [];
 
   //Vvariables para el filtrado de almacenes
-  almacen_warehouse: string = '';
+  almacen_warehouse = '';
   WAREHOUSES:any = [];
 
   //Variables para el filtrado por segmento de cliente
-  client_segment_price_multiple:string = '';
+  client_segment_price_multiple = '';
   CLIENT_SEGMENTS:any = [];
 
   //Variables para el filtrado por estado del producto
-  state:number = 0;
+  state = 0;
   STATES:any = [];
 
   //Variables para el filtrado por unidades de almacén
   UNITS:any = [];
-  unit_warehouse: string = '';
+  unit_warehouse = '';
 
   //Variables para el filtrado por proveedores
   PROVIDERS:any = [];
-  provider_id: string = '';
+  provider_id = '';
   //provider_id: number = 0;
 
   //Objeto que contiene los filtros
@@ -59,8 +59,8 @@ export class ListProductComponent implements OnInit {
   //provider_id: '',
 }
 
-  totalPages:number = 0;
-  currentPage:number = 1;
+  totalPages = 0;
+  currentPage = 1;
   constructor(
     public modalService: NgbModal,
     public productService: ProductsService, // Replace with actual service type
@@ -89,7 +89,7 @@ export class ListProductComponent implements OnInit {
     })
   }
   listProducts(page = 1){
-    let data = {
+    const data = {
       product_categorie_id: this.product_categorie_id,
       disponibilidad: this.disponibilidad,
       tax_selected: this.tax_selected,
@@ -117,7 +117,7 @@ export class ListProductComponent implements OnInit {
       modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
   
       modalRef.componentInstance.ProductD.subscribe((prod:any) => {
-        let INDEX = this.PRODUCTS.findIndex((prod:any) => prod.id == PRODUCT.id);
+        const INDEX = this.PRODUCTS.findIndex((prod:any) => prod.id == PRODUCT.id);
         if(INDEX != -1){
           this.PRODUCTS.splice(INDEX,1);
         }
@@ -130,7 +130,7 @@ export class ListProductComponent implements OnInit {
     //const valor = etiqueta.getAttributeNames().find(attr => attr === 'value') ? etiqueta.getAttribute('value') : '';
     const valor = etiqueta.hasAttribute('value') ? etiqueta.getAttribute('value') : '';
 
-    let data = {
+    const data = {
       product_categorie_id: this.product_categorie_id,
       disponibilidad: this.disponibilidad,
       tax_selected: this.tax_selected,

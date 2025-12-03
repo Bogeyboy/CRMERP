@@ -144,7 +144,7 @@ class FeedbackComponent {
     throw new Error('not implemented')
   }
 
-  public static bootstrap(attr: string = '[data-Feedback]') {
+  public static bootstrap(attr = '[data-Feedback]') {
     throw new Error('not implemented')
   }
 }

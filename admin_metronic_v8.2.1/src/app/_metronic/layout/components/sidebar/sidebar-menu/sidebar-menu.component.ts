@@ -22,8 +22,8 @@ export class SidebarMenuComponent implements OnInit {
     if (this.isRole()){
       return true;
     }
-    let permissions = this.user.permissions;
-    var is_show = false;
+    const permissions = this.user.permissions;
+    let is_show = false;
     permisos.forEach((permiso:any) => {
       if(permissions.includes(permiso)/*  || this.isRole() */){
         is_show = true;

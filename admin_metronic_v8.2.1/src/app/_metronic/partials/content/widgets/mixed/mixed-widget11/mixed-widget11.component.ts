@@ -5,7 +5,7 @@ import { getCSSVariableValue } from '../../../../../kt/_utils';
   templateUrl: './mixed-widget11.component.html',
 })
 export class MixedWidget11Component implements OnInit {
-  @Input() chartColor: string = '';
+  @Input() chartColor = '';
   @Input() chartHeight: string;
   chartOptions: any = {};
 

@@ -10,10 +10,10 @@ import { ProvidersService } from '../service/providers.service';
   styleUrls: ['./delete-providers.component.scss']
 })
 export class DeleteProvidersComponent implements OnInit {
-  @Output() ProviderD: EventEmitter<any> = new EventEmitter();
+  @Output() ProviderD = new EventEmitter<any>();
   @Input()  PROVIDER_SELECTED:any;
 
-  name:string = '';
+  name = '';
   isLoading:any;
 
   constructor(

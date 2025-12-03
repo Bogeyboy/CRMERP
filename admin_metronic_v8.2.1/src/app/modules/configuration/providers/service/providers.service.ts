@@ -23,17 +23,17 @@ export class ProvidersService {
     registerProvider(data:any) {
       console.log(data);
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS+"/providers";
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS+"/providers";
       return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
       );
     }
   
-    listProviders(page = 1,search:string = ''){
+    listProviders(page = 1,search = ''){
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS+"/providers?page="+page+"&search="+search;
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS+"/providers?page="+page+"&search="+search;
       return this.http.get(URL,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );
@@ -41,9 +41,9 @@ export class ProvidersService {
   
     updateProvider(ID_PROVIDER:string,data:any) {
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
       //console.log(data);
-      let URL = URL_SERVICIOS + '/providers/' + ID_PROVIDER;
+      const URL = URL_SERVICIOS + '/providers/' + ID_PROVIDER;
       //console.log(URL);
       return this.http.post(URL,data,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
@@ -52,8 +52,8 @@ export class ProvidersService {
   
     deleteProvider(ID_PROVIDER:string) {
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS + '/providers/' + ID_PROVIDER;
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS + '/providers/' + ID_PROVIDER;
       return this.http.delete(URL,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );

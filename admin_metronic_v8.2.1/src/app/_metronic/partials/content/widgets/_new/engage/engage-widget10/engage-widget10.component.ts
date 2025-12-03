@@ -6,7 +6,7 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./engage-widget10.component.scss']
 })
 export class EngageWidget10Component implements OnInit {
-  @Input() cssClass: string = ''
+  @Input() cssClass = ''
   constructor() { }
 
   ngOnInit(): void {

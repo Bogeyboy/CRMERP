@@ -12,12 +12,12 @@ import { ProductCategoriesService } from '../service/product-categories.service'
   styleUrls: ['./create-product-categorie.component.scss']
 })
 export class CreateProductCategorieComponent implements OnInit {
-  @Output() ProductCategorieC:EventEmitter<any> = new EventEmitter();
+  @Output() ProductCategorieC = new EventEmitter<any>();
     
     //Variables
-    name: string ='';
-    address: string = '';
-    imagen: string = '';
+    name ='';
+    address = '';
+    imagen = '';
     IMAGEN_CATEGORIE:any;
     IMAGEN_PREVISUALIZA: any;
     isLoading:any;
@@ -43,7 +43,7 @@ export class CreateProductCategorieComponent implements OnInit {
         return;
       }
       this.IMAGEN_CATEGORIE = $event.target.files[0];
-      let reader = new FileReader();
+      const reader = new FileReader();
       reader.readAsDataURL(this.IMAGEN_CATEGORIE);
       reader.onloadend = () => this.IMAGEN_PREVISUALIZA = reader.result;
     }
@@ -62,7 +62,7 @@ export class CreateProductCategorieComponent implements OnInit {
           return false;
         }
 
-        let formData = new FormData();
+        const formData = new FormData();
         formData.append('name',this.name);
         formData.append('categorie_imagen',this.IMAGEN_CATEGORIE);//categorie_imagen es el nombre del campo que espera el servidor
         

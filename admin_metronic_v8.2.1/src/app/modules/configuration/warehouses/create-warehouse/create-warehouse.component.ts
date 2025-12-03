@@ -11,13 +11,13 @@ import { AuthService } from 'src/app/modules/auth';
   styleUrls: ['./create-warehouse.component.scss']
 })
 export class CreateWarehouseComponent implements OnInit {
-@Output() WarehouseC:EventEmitter<any> = new EventEmitter(); //Envia datos del componente padre al componente hijo
+@Output() WarehouseC = new EventEmitter<any>(); //Envia datos del componente padre al componente hijo
 @Input() SUCURSALES:any = [];
   
     //Variables
-    name: string ='';
-    address: string = '';
-    sucursale_id: string = '';
+    name ='';
+    address = '';
+    sucursale_id = '';
     isLoading:any;
   
     constructor(
@@ -45,7 +45,7 @@ export class CreateWarehouseComponent implements OnInit {
         return false;
       }
       
-      let data = {
+      const data = {
         name: this.name,
         address: this.address,
         sucursale_id: this.sucursale_id

@@ -22,17 +22,17 @@ export class MethodPaymentService {
   
     registerMethodPayment(data:any) {
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS+"/method_payments";
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS+"/method_payments";
       return this.http.post(URL,data,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );
     }
   
-    listMethodPayments(page = 1,search:string = ''){
+    listMethodPayments(page = 1,search = ''){
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS+"/method_payments?page="+page+"&search="+search;
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS+"/method_payments?page="+page+"&search="+search;
       return this.http.get(URL,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );
@@ -40,17 +40,17 @@ export class MethodPaymentService {
   
     updateMethodPayment(ID_METHOD_PAYMENT:string,data:any) {
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
       //console.log("Enviando datos al backend: ",data);
-      let URL = URL_SERVICIOS + '/method_payments/' + ID_METHOD_PAYMENT ; 
+      const URL = URL_SERVICIOS + '/method_payments/' + ID_METHOD_PAYMENT ; 
       //console.log(URL);
       return this.http.put(URL,data,{headers: headers}).pipe(finalize(() => this.isLoadingSubject.next(false)));
     }
   
     deleteMethodPayment(ID_METHOD_PAYMENT:string) {
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS + '/method_payments/' + ID_METHOD_PAYMENT ;
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS + '/method_payments/' + ID_METHOD_PAYMENT ;
       return this.http.delete(URL,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );

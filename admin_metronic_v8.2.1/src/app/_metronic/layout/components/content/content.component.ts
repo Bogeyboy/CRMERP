@@ -8,9 +8,9 @@ import { Subscription } from 'rxjs/internal/Subscription';
   styleUrls: ['./content.component.scss'],
 })
 export class ContentComponent implements OnInit, OnDestroy {
-  @Input() contentContainerCSSClass: string = '';
+  @Input() contentContainerCSSClass = '';
   @Input() appContentContiner?: 'fixed' | 'fluid';
-  @Input() appContentContainerClass: string = '';
+  @Input() appContentContainerClass = '';
 
   private unsubscribe: Subscription[] = [];
 

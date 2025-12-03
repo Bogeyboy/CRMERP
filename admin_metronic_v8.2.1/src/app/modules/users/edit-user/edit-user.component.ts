@@ -10,27 +10,27 @@ import { UsersService } from '../service/users.service';
 })
 export class EditUserComponent implements OnInit {
 
-  @Output() UserE: EventEmitter<any> = new EventEmitter();
+  @Output() UserE = new EventEmitter<any>();
   @Input() roles:any = [];
   @Input() USER_SELECTED:any;
 
   isLoading:any;
   
-  name:string = '';
-  surname:string = '';
-  email:string = '';
-  phone:string = '';
-  rol_id:string = '';
-  gender:string = '';
-  type_document:string = 'DNI';
-  document:string = '';
-  address:string = '';
+  name = '';
+  surname = '';
+  email = '';
+  phone = '';
+  rol_id = '';
+  gender = '';
+  type_document = 'DNI';
+  document = '';
+  address = '';
 
   file_name:any;
   imagen_previzualiza:any;
 
-  password:string = '';
-  password_repit:string = '';
+  password = '';
+  password_repit = '';
   constructor(
     public modal: NgbActiveModal,
     public usersService: UsersService,
@@ -60,7 +60,7 @@ export class EditUserComponent implements OnInit {
       return;
     }
     this.file_name = $event.target.files[0];
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.readAsDataURL(this.file_name);
     reader.onloadend = () => this.imagen_previzualiza = reader.result;
   }
@@ -96,7 +96,7 @@ export class EditUserComponent implements OnInit {
       return false;
     }
 
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append("name",this.name);
     formData.append("surname",this.surname);
     formData.append("email",this.email);

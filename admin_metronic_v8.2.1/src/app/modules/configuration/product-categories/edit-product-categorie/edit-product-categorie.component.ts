@@ -12,12 +12,12 @@ import { AuthService } from 'src/app/modules/auth';
   styleUrls: ['./edit-product-categorie.component.scss']
 })
 export class EditProductCategorieComponent implements OnInit {
-  @Output() ProductCategorieE:EventEmitter<any> = new EventEmitter();
+  @Output() ProductCategorieE = new EventEmitter<any>();
   @Input() CATEGORIE_SELECTED:any;
     
     //Variables
-    name: string ='';
-    state: number = 1;
+    name ='';
+    state = 1;
     IMAGEN_CATEGORIE:any;
     IMAGEN_PREVISUALIZA: any;
     isLoading:any;
@@ -47,7 +47,7 @@ export class EditProductCategorieComponent implements OnInit {
         return;
       }
       this.IMAGEN_CATEGORIE = $event.target.files[0];
-      let reader = new FileReader();
+      const reader = new FileReader();
       reader.readAsDataURL(this.IMAGEN_CATEGORIE);
       reader.onloadend = () => this.IMAGEN_PREVISUALIZA = reader.result;
     }
@@ -58,7 +58,7 @@ export class EditProductCategorieComponent implements OnInit {
         this.toast.error("Validación","La categoría de producto ya existe");
         return false;
       }
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append('name',this.name);
       if (this.IMAGEN_CATEGORIE)
       {

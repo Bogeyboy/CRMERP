@@ -10,10 +10,10 @@ import { LayoutService } from '../../../core/layout.service';
 })
 export class SidebarLogoComponent implements OnInit, OnDestroy {
   private unsubscribe: Subscription[] = [];
-  @Input() toggleButtonClass: string = '';
+  @Input() toggleButtonClass = '';
   @Input() toggleEnabled: boolean;
-  @Input() toggleType: string = '';
-  @Input() toggleState: string = '';
+  @Input() toggleType = '';
+  @Input() toggleState = '';
   currentLayoutType: LayoutType | null;
 
   toggleAttr: string;

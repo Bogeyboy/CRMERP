@@ -22,17 +22,17 @@ export class SucursalService {
 
   registerSucursal(data:any) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/sucursales";
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/sucursales";
     return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
 
-  listSucursales(page = 1,search:string = ''){
+  listSucursales(page = 1,search = ''){
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS+"/sucursales?page="+page+"&search="+search;
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/sucursales?page="+page+"&search="+search;
     return this.http.get(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
@@ -40,9 +40,9 @@ export class SucursalService {
 
   updateSucursal(ID_SUCURSAL:string,data:any) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     //console.log(data);
-    let URL = URL_SERVICIOS + '/sucursales/' + ID_SUCURSAL;
+    const URL = URL_SERVICIOS + '/sucursales/' + ID_SUCURSAL;
     //console.log(URL);
     return this.http.put(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
@@ -51,8 +51,8 @@ export class SucursalService {
 
   deleteSucursal(ID_SUCURSAL:string) {
     this.isLoadingSubject.next(true);
-    let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    let URL = URL_SERVICIOS + '/sucursales/' + ID_SUCURSAL;
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS + '/sucursales/' + ID_SUCURSAL;
     return this.http.delete(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );

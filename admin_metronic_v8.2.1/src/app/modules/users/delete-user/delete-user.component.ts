@@ -11,10 +11,10 @@ import { SIDEBAR } from 'src/app/config/config';
 })
 export class DeleteUserComponent implements OnInit {
 
-  @Output() UserD: EventEmitter<any> = new EventEmitter();
+  @Output() UserD = new EventEmitter<any>();
   @Input()  USER_SELECTED:any;
 
-  name:string = '';
+  name = '';
   isLoading:any;
 
   constructor(

@@ -87,9 +87,7 @@ export class RegistrationComponent implements OnInit, OnDestroy {
 
   submit() {
     this.hasError = false;
-    const result: {
-      [key: string]: string;
-    } = {};
+    const result: Record<string, string> = {};
     Object.keys(this.f).forEach((key) => {
       result[key] = this.f[key].value;
     });

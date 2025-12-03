@@ -12,19 +12,19 @@ import { ProvidersService } from '../service/providers.service';
   styleUrls: ['./edit-providers.component.scss']
 })
 export class EditProvidersComponent implements OnInit {
-  @Output() ProviderE:EventEmitter<any> = new EventEmitter();
+  @Output() ProviderE = new EventEmitter<any>();
   @Input() PROVIDER_SELECTED:any;
     
     //Variables
-    full_name: string ='';
-    comercial_name: string ='';
-    nif: string ='';
-    email: string ='';
-    phone: string ='';
-    address: string = '';
-    state: number = 1;
+    full_name ='';
+    comercial_name ='';
+    nif ='';
+    email ='';
+    phone ='';
+    address = '';
+    state = 1;
 
-    imagen: string = '';
+    imagen = '';
     IMAGEN_PROVIDER:any;
     IMAGEN_PREVISUALIZA: any;
     isLoading:any;
@@ -59,7 +59,7 @@ export class EditProvidersComponent implements OnInit {
         return;
       }
       this.IMAGEN_PROVIDER = $event.target.files[0];
-      let reader = new FileReader();
+      const reader = new FileReader();
       reader.readAsDataURL(this.IMAGEN_PROVIDER);
       reader.onloadend = () => this.IMAGEN_PREVISUALIZA = reader.result;
     }
@@ -75,7 +75,7 @@ export class EditProvidersComponent implements OnInit {
         this.toast.error("Validación","El NIF de proveedor ya existe.");
         return false;
       }
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append('full_name',this.full_name);
       formData.append('comercial_name',this.comercial_name);
       formData.append('nif',this.nif);

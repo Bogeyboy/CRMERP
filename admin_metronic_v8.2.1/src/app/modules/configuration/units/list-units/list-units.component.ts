@@ -13,12 +13,12 @@ import { CreateTransformUnitsComponent } from '../create-transform-units/create-
   styleUrls: ['./list-units.component.scss']
 })
 export class ListUnitsComponent implements OnInit {
-  search:string = '';
+  search = '';
   UNITS:any = [];
   isLoading$:any;
 
-  totalPages:number = 0;
-  currentPage:number = 1;
+  totalPages = 0;
+  currentPage = 1;
   constructor(
     public modalService: NgbModal,
     public unitService: UnitsService,
@@ -59,7 +59,7 @@ export class ListUnitsComponent implements OnInit {
     modalRef.componentInstance.UNIT_SELECTED = UNIT;
 
     modalRef.componentInstance.UnitE.subscribe((unit:any) => {
-      let INDEX = this.UNITS.findIndex((un:any) => un.id == UNIT.id);
+      const INDEX = this.UNITS.findIndex((un:any) => un.id == UNIT.id);
       if(INDEX != -1){
         this.UNITS[INDEX] = unit;
       }
@@ -71,7 +71,7 @@ export class ListUnitsComponent implements OnInit {
     modalRef.componentInstance.UNIT_SELECTED = UNIT;
 
     modalRef.componentInstance.UnitD.subscribe((unit:any) => {
-      let INDEX = this.UNITS.findIndex((un:any) => un.id == UNIT.id);
+      const INDEX = this.UNITS.findIndex((un:any) => un.id == UNIT.id);
       if(INDEX != -1){
         this.UNITS.splice(INDEX,1);
       }

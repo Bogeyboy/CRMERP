@@ -9,8 +9,8 @@ export interface PageLink {
 }
 
 export class PageInfo {
-  breadcrumbs: Array<PageLink> = [];
-  title: string = '';
+  breadcrumbs: PageLink[] = [];
+  title = '';
 }
 
 @Injectable({
@@ -21,8 +21,8 @@ export class PageInfoService {
     'Dashboard'
   );
   public description: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  public breadcrumbs: BehaviorSubject<Array<PageLink>> = new BehaviorSubject<
-    Array<PageLink>
+  public breadcrumbs: BehaviorSubject<PageLink[]> = new BehaviorSubject<
+    PageLink[]
   >([]);
 
   constructor() {}
@@ -47,11 +47,11 @@ export class PageInfoService {
     }, 1);
   }
 
-  public setBreadcrumbs(_bs: Array<PageLink>) {
+  public setBreadcrumbs(_bs: PageLink[]) {
     this.breadcrumbs.next(_bs);
   }
 
-  public updateBreadcrumbs(_bs: Array<PageLink>) {
+  public updateBreadcrumbs(_bs: PageLink[]) {
     setTimeout(() => {
       this.setBreadcrumbs(_bs);
     }, 20);
@@ -102,8 +102,8 @@ export class PageInfoService {
 
   public calculateBreadcrumbsInMenu(
     menuId: string
-  ): Array<PageLink> | undefined {
-    const result: Array<PageLink> = [];
+  ): PageLink[] | undefined {
+    const result: PageLink[] = [];
     const menu = document.getElementById(menuId);
     if (!menu) {
       return;

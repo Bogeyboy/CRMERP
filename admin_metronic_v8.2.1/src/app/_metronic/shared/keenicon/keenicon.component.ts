@@ -9,9 +9,9 @@ import icons from './icons.json';
 export class KeeniconComponent implements OnInit {
   @Input() name: string;
   @Input() class: string;
-  @Input() type: string = 'duotone';
+  @Input() type = 'duotone';
 
-  pathsNumber: number = 0;
+  pathsNumber = 0;
 
   constructor() {
   }

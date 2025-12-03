@@ -11,7 +11,7 @@ export class TopbarComponent implements OnInit {
   toolbarButtonHeightClass = 'w-30px h-30px w-md-40px h-md-40px';
   toolbarUserAvatarHeightClass = 'symbol-30px symbol-md-40px';
   toolbarButtonIconSizeClass = 'svg-icon-1';
-  headerLeft: string = 'menu';
+  headerLeft = 'menu';
 
   constructor(private layout: LayoutService) {}
 

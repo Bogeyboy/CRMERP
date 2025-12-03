@@ -10,10 +10,10 @@ import { ProductCategoriesService } from '../service/product-categories.service'
   styleUrls: ['./delete-product-categorie.component.scss']
 })
 export class DeleteProductCategorieComponent implements OnInit {
-  @Output() ProductCategorieD: EventEmitter<any> = new EventEmitter();
+  @Output() ProductCategorieD = new EventEmitter<any>();
   @Input()  CATEGORIE_SELECTED:any;
 
-  name:string = '';
+  name = '';
   isLoading:any;
 
   constructor(

@@ -25,9 +25,9 @@ class StepperComponent {
   btnNext: HTMLElement | null;
   btnPrev: HTMLElement | null;
   btnSubmit: HTMLElement | null;
-  totatStepsNumber: number = 0;
-  passedStepIndex: number = 0;
-  currentStepIndex: number = 1;
+  totatStepsNumber = 0;
+  passedStepIndex = 0;
+  currentStepIndex = 1;
 
   constructor(_element: HTMLElement, options: IStepperOptions) {
     this.element = _element;
@@ -111,7 +111,7 @@ class StepperComponent {
         if (this.steps && this.steps.length > 0) {
           for (let i = 0; i < this.steps.length; i++) {
             if ((this.steps[i] as HTMLElement) === this.element) {
-              let index = i + 1;
+              const index = i + 1;
 
               const stepDirection = this._getStepDirection(index);
               EventHandlerUtil.trigger(
@@ -181,9 +181,9 @@ class StepperComponent {
       return;
     }
 
-    for (var i = 0, len = elements.length; i < len; i++) {
-      var element = elements[i] as HTMLElement;
-      var index = getElementIndex(element) + 1;
+    for (let i = 0, len = elements.length; i < len; i++) {
+      const element = elements[i] as HTMLElement;
+      const index = getElementIndex(element) + 1;
 
       element.classList.remove('current');
       element.classList.remove('completed');
@@ -346,7 +346,7 @@ class StepperComponent {
     return stepper;
   };
 
-  public static bootstrap(attr: string = '[data-kt-stepper]') {
+  public static bootstrap(attr = '[data-kt-stepper]') {
     StepperComponent.createInstances(attr);
   }
 }

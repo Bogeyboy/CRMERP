@@ -16,7 +16,7 @@ export class CrudComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() datatableConfig: DataTables.Settings = {};
 
-  @Input() route: string = '/';
+  @Input() route = '/';
 
   // Reload emitter inside datatable
   @Input() reload: EventEmitter<boolean>;

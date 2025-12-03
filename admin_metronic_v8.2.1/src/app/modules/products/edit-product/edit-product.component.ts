@@ -11,69 +11,69 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class EditProductComponent implements OnInit {
 isLoading$:any;
-  is_discount:number = 1;
-  tab_selected:number = 1;
+  is_discount = 1;
+  tab_selected = 1;
   
   //SECCION GENERAL
-  title:string = '';
-  description:string = '';
+  title = '';
+  description = '';
   //SECCIÓN IMAGEN DE PRODUCTO
   imagen_product:any;
   imagen_previzualiza:any = 'assets/media/svg/files/blank-image.svg';
   //SECCIÓN ADICIONALES
   
-  price_general:number = 0;
-  disponibilidad:string = '';
-  tiempo_de_abastecimiento:number = 0;
-  min_discount:number = 0;
-  max_discount:number = 0;
-  tax_selected:string = '1';
-  importe_iva:number = 0;
+  price_general = 0;
+  disponibilidad = '';
+  tiempo_de_abastecimiento = 0;
+  min_discount = 0;
+  max_discount = 0;
+  tax_selected = '1';
+  importe_iva = 0;
   //SECCIÓN ESTADO DE PRODUCTO
-  state:string = '1';
+  state = '1';
   //SECCIÓN CATEGORÍA DE PRODUCTO
-  product_categorie_id:string = '';
+  product_categorie_id = '';
 
   //PESTAÑA ADVANCED
   //SECCIÓN INVENTARIO
-  sku:string = '';
-  is_gift:number = 1;
-  umbral:number = 0;
-  umbral_unit_id:string = '';
+  sku = '';
+  is_gift = 1;
+  umbral = 0;
+  umbral_unit_id = '';
 
   //SECCIÓN SHIPPING
-  weight:number = 0;
-  width:number = 0;
-  height:number = 0;
-  length:number = 0;
+  weight = 0;
+  width = 0;
+  height = 0;
+  length = 0;
 
-  key_v:string = '';
-  value_v:string = '';
+  key_v = '';
+  value_v = '';
 
 
   // SECTION WAREHOUSES
-  almacen_warehouse:string = '';
-  unit_warehouse:string = '';
-  quantity_warehouse:number = 0;
+  almacen_warehouse = '';
+  unit_warehouse = '';
+  quantity_warehouse = 0;
   // LISTA DE EXISTENCIAS DEL PRODUCTO , DANDO UN ALMACEN Y UNA UNIDAD
   WAREHOUSES_PRODUCT:any = [];
   // SECTION PRICE MULTIPLES  
-  unit_price_multiple:string = '';
-  sucursale_price_multiple:string = '';
-  client_segment_price_multiple:string = '';
-  quantity_price_multiple:number = 0;
+  unit_price_multiple = '';
+  sucursale_price_multiple = '';
+  client_segment_price_multiple = '';
+  quantity_price_multiple = 0;
   WALLETS_PRODUCT:any = [];
 
   WAREHOUSES:any = [];
   SUCURSALES:any = [];
   PROVIDERS:any = [];
-  provider_id:string ='';
+  provider_id ='';
   
   UNITS:any = [];
   CLIENT_SEGMENTS:any = [];
   CATEGORIES:any = [];
 
-  PRODUCT_ID:string = '';
+  PRODUCT_ID = '';
   PRODUCT_SELECTED:any = null;
 
   ESPECIFICACIONES:any = [];
@@ -146,10 +146,10 @@ isLoading$:any;
       return;
     }
 
-    let UNIT_SELECTED = this.UNITS.find((unit:any) => unit.id == this.unit_warehouse);
-    let WAREHOUSE_SELECTED = this.WAREHOUSES.find((wareh:any) => wareh.id == this.almacen_warehouse);
+    const UNIT_SELECTED = this.UNITS.find((unit:any) => unit.id == this.unit_warehouse);
+    const WAREHOUSE_SELECTED = this.WAREHOUSES.find((wareh:any) => wareh.id == this.almacen_warehouse);
 
-    let INDEX_WAREHOUSE = this.WAREHOUSES_PRODUCT.findIndex((wh_prod:any) => (wh_prod.unit.id == this.unit_warehouse)
+    const INDEX_WAREHOUSE = this.WAREHOUSES_PRODUCT.findIndex((wh_prod:any) => (wh_prod.unit.id == this.unit_warehouse)
                                                                             && (wh_prod.warehouse.id == this.almacen_warehouse));
 
     if(INDEX_WAREHOUSE != -1)
@@ -173,7 +173,7 @@ isLoading$:any;
     // EL OBJETO QUE QUIERO ELIMINAR
     // LA LISTA DONDE SE ENCUENTRA EL OBJECTO QUE QUIERO ELIMINAR
     //  OBTENER LA POSICIÓN DEL ELEMENTO A ELIMINAR
-    let INDEX_WAREHOUSE = this.WAREHOUSES_PRODUCT.findIndex((wh_prod:any) => (wh_prod.unit.id == WAREHOUSES_PROD.unit.id)
+    const INDEX_WAREHOUSE = this.WAREHOUSES_PRODUCT.findIndex((wh_prod:any) => (wh_prod.unit.id == WAREHOUSES_PROD.unit.id)
       && (wh_prod.warehouse.id == WAREHOUSES_PROD.warehouse.id));
     //  LA ELIMINACIÓN DEL OBJECTO
     if(INDEX_WAREHOUSE != -1){
@@ -191,11 +191,11 @@ isLoading$:any;
     // sucursale_price_multiple
     // client_segment_price_multiple
     // quantity_price_multiple
-    let UNIT_SELECTED = this.UNITS.find((unit:any) => unit.id == this.unit_price_multiple);
-    let SUCURSALE_SELECTED = this.SUCURSALES.find((sucurs:any) => sucurs.id == this.sucursale_price_multiple);
-    let CLIENT_SEGMENT_SELECTED = this.CLIENT_SEGMENTS.find((clisg:any) => clisg.id == this.client_segment_price_multiple);
+    const UNIT_SELECTED = this.UNITS.find((unit:any) => unit.id == this.unit_price_multiple);
+    const SUCURSALE_SELECTED = this.SUCURSALES.find((sucurs:any) => sucurs.id == this.sucursale_price_multiple);
+    const CLIENT_SEGMENT_SELECTED = this.CLIENT_SEGMENTS.find((clisg:any) => clisg.id == this.client_segment_price_multiple);
     
-    let INDEX_PRICE_MULTIPLE = this.WALLETS_PRODUCT.findIndex((wh_prod:any) => 
+    const INDEX_PRICE_MULTIPLE = this.WALLETS_PRODUCT.findIndex((wh_prod:any) => 
                           (wh_prod.unit.id == this.unit_price_multiple)
                           && (wh_prod.sucursale_price_multiple == this.sucursale_price_multiple)
                           && (wh_prod.client_segment_price_multiple == this.client_segment_price_multiple));
@@ -228,7 +228,7 @@ isLoading$:any;
     // EL OBJETO QUE QUIERO ELIMINAR
     // LA LISTA DONDE SE ENCUENTRA EL OBJECTO QUE QUIERO ELIMINAR
     //  OBTENER LA POSICIÓN DEL ELEMENTO A ELIMINAR
-    let INDEX_WALLETS_PROD = this.WALLETS_PRODUCT.findIndex((wh_prod:any) => 
+    const INDEX_WALLETS_PROD = this.WALLETS_PRODUCT.findIndex((wh_prod:any) => 
       (wh_prod.unit.id == WALLETS_PROD.unit.id)
       && (wh_prod.sucursale_price_multiple == WALLETS_PROD.sucursale_price_multiple)
       && (wh_prod.client_segment_price_multiple == WALLETS_PROD.client_segment_price_multiple));
@@ -268,7 +268,7 @@ isLoading$:any;
       return;
     }
     this.imagen_product = $event.target.files[0];
-    let reader = new FileReader();
+    const reader = new FileReader();
     reader.readAsDataURL(this.imagen_product);
     reader.onloadend = () => this.imagen_previzualiza = reader.result;
     this.isLoadingProcess();
@@ -316,7 +316,7 @@ isLoading$:any;
       return;
     }
 
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append("title",this.title);
     formData.append("description",this.description);
     formData.append("state",this.state);

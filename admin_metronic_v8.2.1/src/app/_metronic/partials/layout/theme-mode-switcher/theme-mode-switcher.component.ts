@@ -7,10 +7,10 @@ import { ThemeModeService, ThemeModeType } from './theme-mode.service';
   templateUrl: './theme-mode-switcher.component.html',
 })
 export class ThemeModeSwitcherComponent implements OnInit {
-  @Input() toggleBtnClass: string = '';
-  @Input() toggleBtnIconClass: string = 'svg-icon-2';
-  @Input() menuPlacement: string = 'bottom-end';
-  @Input() menuTrigger: string = "{default: 'click', lg: 'hover'}";
+  @Input() toggleBtnClass = '';
+  @Input() toggleBtnIconClass = 'svg-icon-2';
+  @Input() menuPlacement = 'bottom-end';
+  @Input() menuTrigger = "{default: 'click', lg: 'hover'}";
   mode$: Observable<ThemeModeType>;
   menuMode$: Observable<ThemeModeType>;
 

@@ -12,13 +12,13 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./list-warehouse.component.scss']
 })
 export class ListWarehouseComponent implements OnInit {
-    search:string = '';
+    search = '';
     WAREHOUSES:any = [];
     SUCURSALES:any = [];
     isLoading$:any;
   
-    totalPages:number = 0;
-    currentPage:number = 1;
+    totalPages = 0;
+    currentPage = 1;
   
     constructor(
       public modalService: NgbModal,
@@ -70,7 +70,7 @@ export class ListWarehouseComponent implements OnInit {
   
       //Recibimos los datos del componente hijo
       modalRef.componentInstance.WarehouseE.subscribe((warehouse:any) => {
-        let INDEX = this.WAREHOUSES.findIndex((wareho:any) => wareho.id == WAREHOUSE.id);
+        const INDEX = this.WAREHOUSES.findIndex((wareho:any) => wareho.id == WAREHOUSE.id);
         if(INDEX!=-1)
         {
           this.WAREHOUSES[INDEX] = warehouse;
@@ -86,7 +86,7 @@ export class ListWarehouseComponent implements OnInit {
 
       //Recibimos los datos del componente hijo
       modalRef.componentInstance.WarehouseD.subscribe((sucursal:any) => {
-        let INDEX = this.WAREHOUSES.findIndex((wareho:any) => wareho.id == WAREHOUSE.id);
+        const INDEX = this.WAREHOUSES.findIndex((wareho:any) => wareho.id == WAREHOUSE.id);
         if(INDEX!=-1)
         {
           this.WAREHOUSES.splice(INDEX,1); //para eliminar un rol

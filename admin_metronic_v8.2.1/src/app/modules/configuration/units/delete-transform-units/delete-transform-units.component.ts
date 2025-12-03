@@ -15,7 +15,7 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./delete-transform-units.component.scss']
 })
 export class DeleteTransformUnitsComponent implements OnInit {
-  @Output() UnitD:EventEmitter<any> = new EventEmitter();
+  @Output() UnitD = new EventEmitter<any>();
   //@Output() UnitTD:EventEmitter<any> = new EventEmitter();
     //recibiendo datos del componente padre
   @Input() TRANSFORM_SELECTED:any;

@@ -6,7 +6,7 @@ interface MessageModel {
   template?: boolean;
 }
 
-const defaultMessages: Array<MessageModel> = [
+const defaultMessages: MessageModel[] = [
   {
     user: 4,
     type: 'in',
@@ -77,7 +77,7 @@ interface UserInfoModel {
   online: boolean;
 }
 
-const defaultUserInfos: Array<UserInfoModel> = [
+const defaultUserInfos: UserInfoModel[] = [
   {
     name: 'Emma Smith',
     avatar: 'avatars/300-6.jpg',

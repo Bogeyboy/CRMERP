@@ -29,22 +29,22 @@ export class RolesService {
   {
     this.isLoadingSubject.next(true);
 
-    let URL =URL_SERVICIOS + '/roles';
+    const URL =URL_SERVICIOS + '/roles';
     //let headers = new HttpHeaders('Authorization': 'Bearer '+ this.authservice.token);
-    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authservice.token);
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authservice.token);
 
     return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
   //Funcion para el listado de roles
-  listRoles(page = 1, search:string = '')
+  listRoles(page = 1, search = '')
   {
     this.isLoadingSubject.next(true);
 
-    let URL =URL_SERVICIOS + '/roles?page' + page +'&search=' + search;
+    const URL =URL_SERVICIOS + '/roles?page' + page +'&search=' + search;
     //let headers = new HttpHeaders('Authorization': 'Bearer '+ this.authservice.token);
-    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authservice.token);
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authservice.token);
 
     return this.http.get(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
@@ -55,9 +55,9 @@ export class RolesService {
   {
     this.isLoadingSubject.next(true);
 
-    let URL =URL_SERVICIOS + '/roles/' + ID_ROL;
+    const URL =URL_SERVICIOS + '/roles/' + ID_ROL;
     //let headers = new HttpHeaders('Authorization': 'Bearer '+ this.authservice.token);
-    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authservice.token);
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authservice.token);
 
     return this.http.put(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
@@ -69,9 +69,9 @@ export class RolesService {
   {
     this.isLoadingSubject.next(true);
 
-    let URL =URL_SERVICIOS + '/roles/' + ID_ROL;
+    const URL =URL_SERVICIOS + '/roles/' + ID_ROL;
     //let headers = new HttpHeaders('Authorization': 'Bearer '+ this.authservice.token);
-    let headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authservice.token);
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authservice.token);
 
     return this.http.delete(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))

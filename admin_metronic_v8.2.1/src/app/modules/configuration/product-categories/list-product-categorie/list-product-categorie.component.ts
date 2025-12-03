@@ -12,12 +12,12 @@ import { ProductCategoriesService } from '../service/product-categories.service'
 })
 export class ListProductCategorieComponent implements OnInit {
 
-  search:string = '';
+  search = '';
   PRODUCT_CATEGORIES:any = [];
   isLoading$:any;
 
-  totalPages:number = 0;
-  currentPage:number = 1;
+  totalPages = 0;
+  currentPage = 1;
   constructor(
     public modalService: NgbModal,
     public productCategorieService: ProductCategoriesService,
@@ -58,7 +58,7 @@ export class ListProductCategorieComponent implements OnInit {
     modalRef.componentInstance.CATEGORIE_SELECTED = CATEGORIE;
 
     modalRef.componentInstance.ProductCategorieE.subscribe((categorie:any) => {
-      let INDEX = this.PRODUCT_CATEGORIES.findIndex((cat_prod:any) => cat_prod.id == CATEGORIE.id);
+      const INDEX = this.PRODUCT_CATEGORIES.findIndex((cat_prod:any) => cat_prod.id == CATEGORIE.id);
       if(INDEX != -1){
         this.PRODUCT_CATEGORIES[INDEX] = categorie;
       }
@@ -70,7 +70,7 @@ export class ListProductCategorieComponent implements OnInit {
     modalRef.componentInstance.CATEGORIE_SELECTED = CATEGORIE;
 
     modalRef.componentInstance.ProductCategorieD.subscribe((categorie:any) => {
-      let INDEX = this.PRODUCT_CATEGORIES.findIndex((cat_prod:any) => cat_prod.id == CATEGORIE.id);
+      const INDEX = this.PRODUCT_CATEGORIES.findIndex((cat_prod:any) => cat_prod.id == CATEGORIE.id);
       if(INDEX != -1){
         this.PRODUCT_CATEGORIES.splice(INDEX,1);
       }

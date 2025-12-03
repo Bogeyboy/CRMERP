@@ -9,7 +9,7 @@ export class HorizontalComponent implements OnInit, OnDestroy {
   formsCount = 5;
   account$: BehaviorSubject<ICreateAccount> =
     new BehaviorSubject<ICreateAccount>(inits);
-  currentStep$: BehaviorSubject<number> = new BehaviorSubject(1);
+  currentStep$ = new BehaviorSubject<number>(1);
   isCurrentFormValid$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false
   );

@@ -7,7 +7,7 @@ import {
 } from '../_utils/index'
 
 export class SwapperStore {
-  static store: Map<string, SwapperComponent> = new Map()
+  static store = new Map<string, SwapperComponent>()
 
   public static set(instanceId: string, drawerComponentObj: SwapperComponent): void {
     if (SwapperStore.has(instanceId)) {
@@ -80,7 +80,7 @@ class SwapperComponent {
   private getOption(name: string) {
     const attr = this.element.getAttribute(`${this.queries.attrQuery}${name}`)
     if (attr) {
-      let value = getAttributeValueByBreakpoint(attr)
+      const value = getAttributeValueByBreakpoint(attr)
       if (attr != null && String(value) === 'true') {
         return true
       } else if (value !== null && String(value) === 'false') {

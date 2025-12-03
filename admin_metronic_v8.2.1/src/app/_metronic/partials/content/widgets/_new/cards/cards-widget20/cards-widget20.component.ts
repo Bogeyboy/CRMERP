@@ -6,10 +6,10 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./cards-widget20.component.scss'],
 })
 export class CardsWidget20Component implements OnInit {
-  @Input() cssClass: string = '';
-  @Input() description: string = '';
-  @Input() color: string = '';
-  @Input() img: string = '';
+  @Input() cssClass = '';
+  @Input() description = '';
+  @Input() color = '';
+  @Input() img = '';
   constructor() {}
 
   ngOnInit(): void {}

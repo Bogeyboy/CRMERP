@@ -11,7 +11,7 @@ import {
 } from '../_utils/index'
 
 export class DrawerStore {
-  static store: Map<string, DrawerComponent> = new Map()
+  static store = new Map<string, DrawerComponent>()
 
   public static set(instanceId: string, drawerComponentObj: DrawerComponent): void {
     if (DrawerStore.has(instanceId)) {
@@ -65,9 +65,9 @@ class DrawerComponent {
   toggleElement: HTMLElement | null = null
   options: DrawerOptions
   instanceUid: string
-  name: string = ''
-  shown: boolean = false
-  lastWidth: number = 0
+  name = ''
+  shown = false
+  lastWidth = 0
   closeElement: HTMLElement | null = null
 
   constructor(_element: HTMLElement, options: DrawerOptions) {
@@ -140,7 +140,7 @@ class DrawerComponent {
   private _getOption = (name: string) => {
     const attr = this.element.getAttribute(`data-kt-drawer-${name}`)
     if (attr) {
-      let value = getAttributeValueByBreakpoint(attr)
+      const value = getAttributeValueByBreakpoint(attr)
       if (value !== null && String(value) === 'true') {
         return true
       } else {

@@ -16,7 +16,7 @@ export class RoleDetailsComponent implements OnInit {
   datatableConfig: DataTables.Settings = {};
 
   // Reload emitter inside datatable
-  reloadEvent: EventEmitter<boolean> = new EventEmitter();
+  reloadEvent = new EventEmitter<boolean>();
 
   constructor(private route: ActivatedRoute, private apiService: RoleService) { }
 

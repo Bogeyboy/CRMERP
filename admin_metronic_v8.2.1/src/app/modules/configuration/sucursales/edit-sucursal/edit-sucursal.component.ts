@@ -13,14 +13,14 @@ import { SucursalService } from '../service/sucursal.service';
 })
 export class EditSucursalComponent implements OnInit {
 
-  @Output() SucursalE:EventEmitter<any> = new EventEmitter();
+  @Output() SucursalE = new EventEmitter<any>();
   @Input() SUCURSAL_SELECTED:any;
   
     //Variables
-    name: string ='';
-    address: string = '';
-    state: number = 1;
-    id: number = 0;
+    name ='';
+    address = '';
+    state = 1;
+    id = 0;
     isLoading:any;
   
     constructor(
@@ -51,7 +51,7 @@ export class EditSucursalComponent implements OnInit {
         return false;
       }
       
-      let data = {
+      const data = {
         name: this.name,
         address: this.address,
         state: this.state,

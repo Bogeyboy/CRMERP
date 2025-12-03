@@ -5,14 +5,14 @@ import { Component, HostBinding, Input } from '@angular/core';
   templateUrl: './card5.component.html',
 })
 export class Card5Component {
-  @Input() image: string = '';
-  @Input() title: string = '';
-  @Input() description: string = '';
+  @Input() image = '';
+  @Input() title = '';
+  @Input() description = '';
   @Input() status: 'up' | 'down' = 'up';
   @Input() statusValue: number;
-  @Input() statusDesc: string = '';
-  @Input() progress: number = 100;
-  @Input() progressType: string = '';
+  @Input() statusDesc = '';
+  @Input() progress = 100;
+  @Input() progressType = '';
   @HostBinding('class') class = 'card h-100';
 
   constructor() {}

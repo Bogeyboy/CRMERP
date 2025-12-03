@@ -12,12 +12,12 @@ import { DeleteRolesComponent } from '../delete-roles/delete-roles.component';
 })
 export class ListRolesComponent implements OnInit {
   
-  search:string = '';
+  search = '';
   ROLES:any[] = [];
   isLoading$:any;
 
-  totalPages:number = 0;
-  currentPage:number = 1;
+  totalPages = 0;
+  currentPage = 1;
 
   constructor(
     public modalService: NgbModal,
@@ -67,7 +67,7 @@ export class ListRolesComponent implements OnInit {
     modalRef.componentInstance.RoleE.subscribe((rol:any) => {
       //this.ROLES.push(rol);//Se agrega al final del listado
       //this.ROLES.unshift(rol);//Se agrega al principio del listado
-      let INDEX = this.ROLES.findIndex((rol:any) => rol.id == ROL.id);
+      const INDEX = this.ROLES.findIndex((rol:any) => rol.id == ROL.id);
       if(INDEX!=-1)
       {
         this.ROLES[INDEX] = rol;
@@ -85,7 +85,7 @@ export class ListRolesComponent implements OnInit {
       modalRef.componentInstance.RoleD.subscribe((rol:any) => {
         //this.ROLES.push(rol);//Se agrega al final del listado
         //this.ROLES.unshift(rol);//Se agrega al principio del listado
-        let INDEX = this.ROLES.findIndex((rol:any) => rol.id == ROL.id);
+        const INDEX = this.ROLES.findIndex((rol:any) => rol.id == ROL.id);
         if(INDEX!=-1)
         {
           //this.ROLES[INDEX] = rol;

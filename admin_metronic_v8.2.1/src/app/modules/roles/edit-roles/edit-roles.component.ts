@@ -14,13 +14,13 @@ import { RolesService } from '../service/roles.service';
 export class EditRolesComponent implements OnInit {
 //Definimos este ouput para que se actualice la lista de roles en la vista de list-roles
   //enviando datos desde el componente hijo al padre
-  @Output() RoleE:EventEmitter<any> = new EventEmitter();
+  @Output() RoleE = new EventEmitter<any>();
 
   //recibiendo datos del componente padre
   @Input() ROL_SELECTED:any;
 
   //Variables
-  name: string ='';
+  name ='';
   isLoading:any;
   SIDEBAR:any = SIDEBAR;
   permissions:any = [];
@@ -45,7 +45,7 @@ export class EditRolesComponent implements OnInit {
   //Función para añadir permisos
   addPermission(permiso:string)
   {
-    let INDEX = this.permissions.findIndex((perm:string) => perm == permiso);
+    const INDEX = this.permissions.findIndex((perm:string) => perm == permiso);
     // Si encuentra una coincidencia, elimina el permiso, si no la encuentra lo añade
     if (INDEX != -1) {
       this.permissions.splice(INDEX,1);
@@ -71,7 +71,7 @@ export class EditRolesComponent implements OnInit {
       return false;
     }
     
-    let data = {
+    const data = {
       name: this.name,
       permissions: this.permissions,
     }

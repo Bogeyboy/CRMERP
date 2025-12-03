@@ -12,14 +12,14 @@ import { SucursalDeliverieService } from '../service/sucursal-deliverie.service'
   styleUrls: ['./edit-sucursal-deliverie.component.scss']
 })
 export class EditSucursalDeliverieComponent implements OnInit {
-  @Output() SucursalE:EventEmitter<any> = new EventEmitter();
+  @Output() SucursalE = new EventEmitter<any>();
     @Input() SUCURSAL_SELECTED:any;
     
       //Variables
-      name: string ='';
-      address: string = '';
-      state: number = 1;
-      id: number = 0;
+      name ='';
+      address = '';
+      state = 1;
+      id = 0;
       isLoading:any;
     
       constructor(
@@ -50,7 +50,7 @@ export class EditSucursalDeliverieComponent implements OnInit {
           return false;
         }
         
-        let data = {
+        const data = {
           name: this.name,
           address: this.address,
           state: this.state,

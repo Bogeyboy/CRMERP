@@ -23,14 +23,14 @@ export class ToolbarComponent implements OnInit, OnDestroy {
   // toolbar
   appToolbarDisplay: boolean;
   appToolbarContainer: 'fixed' | 'fluid';
-  appToolbarContainerCSSClass: string = '';
+  appToolbarContainerCSSClass = '';
   appToolbarFixedDesktop: boolean;
   appToolbarFixedMobile: boolean;
   appPageTitleDisplay: boolean;
 
   // page title
-  appPageTitleDirection: string = '';
-  appPageTitleCSSClass: string = '';
+  appPageTitleDirection = '';
+  appPageTitleCSSClass = '';
   appPageTitleBreadcrumb: boolean;
   appPageTitleDescription: boolean;
 

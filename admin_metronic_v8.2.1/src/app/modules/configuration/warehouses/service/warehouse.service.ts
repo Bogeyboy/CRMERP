@@ -22,17 +22,17 @@ export class WarehouseService {
   
     registerWarehouse(data:any) {
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS+"/warehouses";
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS+"/warehouses";
       return this.http.post(URL,data,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );
     }
   
-    listWarehouses(page = 1,search:string = ''){
+    listWarehouses(page = 1,search = ''){
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS+"/warehouses?page="+page+"&search="+search;
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS+"/warehouses?page="+page+"&search="+search;
       return this.http.get(URL,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );
@@ -40,8 +40,8 @@ export class WarehouseService {
 
     configAll(){
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS+"/warehouses/config";
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS+"/warehouses/config";
       return this.http.get(URL,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );
@@ -49,9 +49,9 @@ export class WarehouseService {
   
     updateWarehouse(ID_WAREHOUSE:string,data:any) {
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
       //console.log(data);
-      let URL = URL_SERVICIOS + '/warehouses/' + ID_WAREHOUSE;
+      const URL = URL_SERVICIOS + '/warehouses/' + ID_WAREHOUSE;
       //console.log(URL);
       return this.http.put(URL,data,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
@@ -60,8 +60,8 @@ export class WarehouseService {
   
     deleteWarehouse(ID_WAREHOUSE:string) {
       this.isLoadingSubject.next(true);
-      let headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-      let URL = URL_SERVICIOS + '/warehouses/' + ID_WAREHOUSE;
+      const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+      const URL = URL_SERVICIOS + '/warehouses/' + ID_WAREHOUSE;
       return this.http.delete(URL,{headers: headers}).pipe(
         finalize(() => this.isLoadingSubject.next(false))
       );

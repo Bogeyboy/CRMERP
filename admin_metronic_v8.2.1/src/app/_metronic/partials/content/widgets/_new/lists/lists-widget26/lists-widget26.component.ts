@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./lists-widget26.component.scss'],
 })
 export class ListsWidget26Component implements OnInit {
-  rows: Array<{ description: string }>;
+  rows: { description: string }[];
 
   constructor() {}
 

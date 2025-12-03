@@ -21,7 +21,7 @@ export class CreateTransformUnitsComponent implements OnInit {
   @Input() UNITS:any = [];
   
   //Variables
-  unit_to_id: string ='';
+  unit_to_id ='';
   isLoading:any;
 
   constructor(
@@ -50,7 +50,7 @@ export class CreateTransformUnitsComponent implements OnInit {
       return false;
     }
     
-    let data = {
+    const data = {
       unit_id: this.UNIT_SELECTED.id,
       unit_to_id: this.unit_to_id,
     }
@@ -76,7 +76,7 @@ export class CreateTransformUnitsComponent implements OnInit {
     const modalRef = this.modalService.open(DeleteTransformUnitsComponent,{centered:true, size: 'sm'});
     modalRef.componentInstance.TRANSFORM_SELECTED = transform;
     modalRef.componentInstance.UnitD.subscribe((transf:any) => {
-      let INDEX = this.UNIT_SELECTED.transforms.findIndex((tran:any) => tran.id == transform.id);
+      const INDEX = this.UNIT_SELECTED.transforms.findIndex((tran:any) => tran.id == transform.id);
       if(INDEX != -1){
         this.UNIT_SELECTED.transforms.splice(INDEX,1);
       }

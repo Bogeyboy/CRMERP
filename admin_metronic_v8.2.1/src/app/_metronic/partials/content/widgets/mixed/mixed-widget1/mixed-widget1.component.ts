@@ -5,6 +5,6 @@ import { Component, Input } from '@angular/core';
   templateUrl: './mixed-widget1.component.html',
 })
 export class MixedWidget1Component {
-  @Input() color: string = '';
+  @Input() color = '';
   constructor() {}
 }

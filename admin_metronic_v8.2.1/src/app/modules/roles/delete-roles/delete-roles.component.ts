@@ -13,13 +13,13 @@ import { RolesService } from '../service/roles.service';
   styleUrls: ['./delete-roles.component.scss']
 })
 export class DeleteRolesComponent implements OnInit {
-    @Output() RoleD:EventEmitter<any> = new EventEmitter();
+    @Output() RoleD = new EventEmitter<any>();
   
     //recibiendo datos del componente padre
     @Input() ROL_SELECTED:any;
   
     //Variables
-    name: string ='';
+    name ='';
     isLoading:any;
     SIDEBAR:any = SIDEBAR;
     permissions:any = [];

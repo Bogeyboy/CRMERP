@@ -5,13 +5,13 @@ import { Component, HostBinding, Input } from '@angular/core';
   templateUrl: './card3.component.html',
 })
 export class Card3Component {
-  @Input() color: string = '';
-  @Input() avatar: string = '';
-  @Input() online: boolean = false;
-  @Input() name: string = '';
-  @Input() job: string = '';
-  @Input() avgEarnings: string = '';
-  @Input() totalEarnings: string = '';
+  @Input() color = '';
+  @Input() avatar = '';
+  @Input() online = false;
+  @Input() name = '';
+  @Input() job = '';
+  @Input() avgEarnings = '';
+  @Input() totalEarnings = '';
   @HostBinding('class') class = 'card';
 
   constructor() {}

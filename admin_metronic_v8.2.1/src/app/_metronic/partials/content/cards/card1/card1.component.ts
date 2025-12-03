@@ -6,13 +6,13 @@ import { Component, HostBinding, Input, OnInit } from '@angular/core';
 })
 export class Card1Component implements OnInit {
   @HostBinding('class') class = 'card';
-  @Input() color: string = '';
-  @Input() avatar: string = '';
-  @Input() online: boolean = false;
-  @Input() name: string = '';
-  @Input() job: string = '';
-  @Input() avgEarnings: string = '';
-  @Input() totalEarnings: string = '';
+  @Input() color = '';
+  @Input() avatar = '';
+  @Input() online = false;
+  @Input() name = '';
+  @Input() job = '';
+  @Input() avgEarnings = '';
+  @Input() totalEarnings = '';
   constructor() {}
 
   ngOnInit(): void {}

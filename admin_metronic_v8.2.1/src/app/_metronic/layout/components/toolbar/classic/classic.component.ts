@@ -10,19 +10,19 @@ import { LayoutService } from '../../../core/layout.service';
 export class ClassicComponent implements OnInit, OnDestroy {
   private unsubscribe: Subscription[] = [];
   appToolbarPrimaryButton: boolean;
-  appToolbarPrimaryButtonLabel: string = '';
-  appToolbarPrimaryButtonUrl: string = '';
-  appToolbarPrimaryButtonModal: string = '';
+  appToolbarPrimaryButtonLabel = '';
+  appToolbarPrimaryButtonUrl = '';
+  appToolbarPrimaryButtonModal = '';
   appToolbarSecondaryButton: boolean;
   appToolbarFixedDesktop: boolean;
-  appToolbarSecondaryButtonLabel: string = '';
-  appToolbarSecondaryButtonUrl: string = '';
-  appToolbarSecondaryButtonModal: string = '';
+  appToolbarSecondaryButtonLabel = '';
+  appToolbarSecondaryButtonUrl = '';
+  appToolbarSecondaryButtonModal = '';
   appToolbarFilterButton: boolean;
   appToolbarDaterangepickerButton: boolean;
-  secondaryButtonClass: string = '';
-  filterButtonClass: string = '';
-  daterangepickerButtonClass: string = '';
+  secondaryButtonClass = '';
+  filterButtonClass = '';
+  daterangepickerButtonClass = '';
 
   constructor(private layout: LayoutService) {}
 

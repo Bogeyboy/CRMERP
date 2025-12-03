@@ -10,7 +10,7 @@ import { locale as frLang } from './modules/i18n/vocabs/fr';
 import { ThemeModeService } from './_metronic/partials/layout/theme-mode-switcher/theme-mode.service';
 
 @Component({
-  // tslint:disable-next-line:component-selector
+ 
   // eslint-disable-next-line @angular-eslint/component-selector
   selector: 'body[root]',
   templateUrl: './app.component.html',

@@ -6,16 +6,16 @@ import { IconUserModel } from '../icon-user.model';
   templateUrl: './card2.component.html',
 })
 export class Card2Component {
-  @Input() icon: string = '';
-  @Input() badgeColor: string = '';
-  @Input() status: string = '';
-  @Input() statusColor: string = '';
-  @Input() title: string = '';
-  @Input() description: string = '';
-  @Input() date: string = '';
-  @Input() budget: string = '';
-  @Input() progress: number = 50;
-  @Input() users: Array<IconUserModel> = [];
+  @Input() icon = '';
+  @Input() badgeColor = '';
+  @Input() status = '';
+  @Input() statusColor = '';
+  @Input() title = '';
+  @Input() description = '';
+  @Input() date = '';
+  @Input() budget = '';
+  @Input() progress = 50;
+  @Input() users: IconUserModel[] = [];
 
   constructor() {}
 }

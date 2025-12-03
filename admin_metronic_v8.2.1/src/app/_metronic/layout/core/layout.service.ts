@@ -72,7 +72,7 @@ export class LayoutService {
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
-  getProp(path: string, config?: ILayout): string | boolean | undefined | Object {
+  getProp(path: string, config?: ILayout): string | boolean | undefined | object {
     if (config) {
       return objectPath.get(config, path);
     }
@@ -107,9 +107,7 @@ export class LayoutService {
     return this.getCSSClasses(path).join(' ');
   }
 
-  getHTMLAttributes(path: string): {
-    [attrName: string]: string | boolean;
-  } {
+  getHTMLAttributes(path: string): Record<string, string | boolean> {
     const attributesObj = this.attrs.value[path];
     if (!attributesObj) {
       return {};
