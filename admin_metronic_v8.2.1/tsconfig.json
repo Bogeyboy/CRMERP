@@ -1,34 +1,38 @@
 {
-    "compileOnSave":  false,
-    "compilerOptions":  {
-                            "outDir":  "./out-tsc",
-                            "forceConsistentCasingInFileNames":  true,
-                            "strict":  false,
-                            "noImplicitOverride":  true,
-                            "noPropertyAccessFromIndexSignature":  false,
-                            "noImplicitReturns":  false,
-                            "skipLibCheck":  true,
-                            "target":  "ES2022",
-                            "useDefineForClassFields":  false,
-                            "module":  "ES2022",
-                            "moduleResolution":  "node",
-                            "resolveJsonModule":  true,
-                            "types":  [
-                                          "node",
-                                          "jquery"
-                                      ]
-                        },
-    "files":  [
-                  "src/main.ts",
-                  "src/polyfills.ts"
-              ],
-    "include":  [
-                    "src/**/*.d.ts",
-                    "src/**/*.ts"
-                ],
-    "angularCompilerOptions":  {
-                                   "strictInputAccessModifiers":  false,
-                                   "strictInjectionParameters":  false,
-                                   "strictTemplates":  false
-                               }
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist/out-tsc",
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,// Cambiado de true a false
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": false,// Cambiado de true a false
+    "strictPropertyInitialization": false,// Añadida esta línea y Cambiado de true a false
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "declaration": false,
+    "downlevelIteration": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "target": "es2022",
+    "module": "es2020",
+    "lib": ["es2020", "dom"],
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": ["jest","node", "jquery", "datatables.net"],
+  },
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts",
+    "node_modules"
+  ],
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
 }

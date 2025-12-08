@@ -84,8 +84,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
         const currentLayoutType = this.layout.currentLayoutTypeSubject.value;
 
         const nextLayoutType: LayoutType =
-          this.activatedRoute?.firstChild?.snapshot.data.layout ||
-          this.layout.getBaseLayoutTypeFromLocalStorage();
+          /* this.activatedRoute?.firstChild?.snapshot.data.layout || this.layout.getBaseLayoutTypeFromLocalStorage(); */
+          this.activatedRoute?.firstChild?.snapshot.data['layout']
 
         if (currentLayoutType !== nextLayoutType || !currentLayoutType) {
           this.layout.currentLayoutTypeSubject.next(nextLayoutType);

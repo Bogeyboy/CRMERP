@@ -54,15 +54,15 @@ const mockImports = environment.isMockEnabled
         InlineSVGModule.forRoot(),
         ClipboardModule,
         AppRoutingModule,
-        // Elimina esta línea duplicada: InlineSVGModule.forRoot(),
+        InlineSVGModule.forRoot(),
         NgbModule,
         NgApexchartsModule,
         ToastrModule.forRoot({
-  timeOut: 3000,
-  progressBar: true,
-  closeButton: true,
-  positionClass: 'toast-bottom-right'
-}),
+          timeOut: 3000,
+          progressBar: true,
+          closeButton: true,
+          positionClass: 'toast-bottom-right'
+        }),
         NgbPaginationModule,
         ...mockImports
     ],
@@ -77,4 +77,3 @@ const mockImports = environment.isMockEnabled
     ]
 })
 export class AppModule { }
-

@@ -16,12 +16,12 @@
         <li class="nav-item">
           <a class="nav-link btn btn-sm btn-color-muted btn-active btn-active-light fw-bold px-4 me-1"
             [ngClass]="{'active': tab === 'Week'}" data-bs-toggle="tab" (click)="setTab('Week')"
-            id="kt_chart_widget_8_month_toggle">Week</a>
+          id="kt_chart_widget_8_month_toggle">Week</a>
         </li>
         <li class="nav-item">
           <a class="nav-link btn btn-sm btn-color-muted btn-active btn-active-light fw-bold px-4 me-1"
             [ngClass]="{'active': tab === 'Month'}" data-bs-toggle="tab" (click)="setTab('Month')"
-            id="kt_chart_widget_8_week_toggle">Month</a>
+          id="kt_chart_widget_8_week_toggle">Month</a>
         </li>
 
       </ul>
@@ -59,13 +59,13 @@
 
         <!--begin::Chart-->
         <div id="kt_chart_widget_8_week_chart" class="ms-n5 min-h-auto" [ngStyle]="{'height': chartHeight}">
-          <ng-container *ngIf="hadDelay">
+          @if (hadDelay) {
             <apx-chart [series]="chart1Options.series" [chart]="chart1Options.chart"
               [xaxis]="chart1Options.xaxis" [yaxis]="chart1Options.yaxis" [dataLabels]="chart1Options.dataLabels"
               [stroke]="chart1Options.stroke" [legend]="chart1Options.legend" [fill]="chart1Options.fill"
               [states]="chart1Options.states" [tooltip]="chart1Options.tooltip" [colors]="chart1Options.colors"
-              [markers]="chart1Options.markers" [plotOptions]="chart1Options.plotOptions"></apx-chart>
-          </ng-container>
+            [markers]="chart1Options.markers" [plotOptions]="chart1Options.plotOptions"></apx-chart>
+          }
 
 
         </div>
@@ -188,15 +188,13 @@
 
         <!--begin::Chart-->
         <div id="kt_chart_widget_8_month_chart" class="ms-n5 min-h-auto" [ngStyle]="{'height': chartHeight}">
-          <ng-container *ngIf="hadDelay">
-
+          @if (hadDelay) {
             <apx-chart #monthChart [series]="chart2Options.series" [chart]="chart2Options.chart"
               [xaxis]="chart2Options.xaxis" [yaxis]="chart2Options.yaxis" [dataLabels]="chart2Options.dataLabels"
               [stroke]="chart2Options.stroke" [legend]="chart2Options.legend" [fill]="chart2Options.fill"
               [states]="chart2Options.states" [tooltip]="chart2Options.tooltip" [colors]="chart2Options.colors"
-              [markers]="chart2Options.markers" [plotOptions]="chart2Options.plotOptions"></apx-chart>
-
-          </ng-container>
+            [markers]="chart2Options.markers" [plotOptions]="chart2Options.plotOptions"></apx-chart>
+          }
 
         </div>
         <!--end::Chart-->

@@ -127,10 +127,12 @@ export class LayoutService {
 
   getBaseLayoutTypeFromRouteOrLocalStorage(): LayoutType {
     const routeData = this.activatedRoute?.firstChild?.snapshot?.data;
-    if (routeData && routeData.layout) {
+    /* if (routeData && routeData.layout) {
       return routeData.layout as LayoutType;
+    } */
+    if (routeData && routeData['layout']) {
+      return routeData['layout'] as LayoutType;
     }
-
     return this.getBaseLayoutTypeFromLocalStorage();
   }
 

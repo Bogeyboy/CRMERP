@@ -75,7 +75,15 @@ export class LoginComponent implements OnInit, OnDestroy {
   submit() {
     this.hasError = false;
     const loginSubscr = this.authService
-      .login(this.f.email.value, this.f.password.value)
+      //.login(this.f.email.value, this.f.password.value)
+      /* .login(
+          this.f['get']('email')?.value || '',
+          this.f['get']('password')?.value || ''
+      ) */
+        .login(
+          this.loginForm.get('email')?.value || '',
+          this.loginForm.get('password')?.value || ''
+        )
       .pipe(first())
       .subscribe((user: any) => {
         console.log(user);

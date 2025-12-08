@@ -7,7 +7,7 @@ export const URL_BACKEND = environment.URL_BACKEND;
 export const URL_FRONTEND = environment.URL_FRONTEND;
 
 export const SIDEBAR:any = [
-  //Permisos sobre roles  
+  //Permisos sobre roles
     {
       'name': 'Roles',
       'permisos': [
@@ -45,7 +45,7 @@ export const SIDEBAR:any = [
     },
     //Esto nuevo habría que registrarlo en la BD
     //Permisos sobre sucursales
-    /* {
+    {
       'name': 'Sucursales',
       'permisos': [
         {
@@ -61,7 +61,7 @@ export const SIDEBAR:any = [
           permiso: 'delete_sucursal',
         }
       ]
-    }, */
+    },
     //Permisos sobre productos
     {
       'name': 'Productos',

@@ -4,14 +4,14 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { AuthService } from 'src/app/modules/auth';
 import { UnitsService } from '../service/units.service';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { DeleteTransformUnitsComponent } from '../delete-transform-units/delete-transform-units.component';
 
 @Component({
   selector: 'app-create-transform-units',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule],
   templateUrl: './create-transform-units.component.html',
   styleUrls: ['./create-transform-units.component.scss']
 })

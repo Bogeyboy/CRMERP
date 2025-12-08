@@ -14,22 +14,25 @@
 
     <!-- Layout builder -->
     <!-- <div class="menu-item">
-      <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
-        <span class="menu-icon">
-          <app-keenicon name="switch" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title">Layout Builder</span>
-      </a>
-    </div> -->
+    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
+      <span class="menu-icon">
+        <app-keenicon name="switch" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title">Layout Builder</span>
+    </a>
+  </div> -->
 
-    <!-- Apartado para las configuraciones con validación por ROL -->
-    <div class="menu-item" *ngIf="isRole()">
+  <!-- Apartado para las configuraciones con validación por ROL -->
+  @if (isRole()) {
+    <div class="menu-item">
       <div class="menu-content pt-8 pb-2">
         <span class="menu-section text-muted text-uppercase fs-8 ls-1">Configuraciones</span>
       </div>
     </div>
+  }
 
-    <div class="menu-item menu-accordion" *ngIf="isRole()" data-kt-menu-trigger="click" routerLinkActive="here show">
+  @if (isRole()) {
+    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
       <span class="menu-link">
         <span class="menu-icon">
           <app-keenicon name="setting-3" class="fs-2"></app-keenicon>
@@ -127,22 +130,25 @@
             </span>
           </a>
         </div>
-
       </div>
     </div>
-    <!-- Fin del apartado de las configuraciones -->
+  }
+  <!-- Fin del apartado de las configuraciones -->
 
-    <!-- Separator -->
-     <!-- Inicio sección Roles y accesos -->
-    <div class="menu-item" *ngIf="showMenu(['register_role','edit_role']) || showMenu(['register_user','edit_user'])">
+  <!-- Separator -->
+  <!-- Inicio sección Roles y accesos -->
+  @if (showMenu(['register_role','edit_role']) || showMenu(['register_user','edit_user'])) {
+    <div class="menu-item">
       <div class="menu-content pt-8 pb-2">
         <span class="menu-section text-muted text-uppercase fs-8 ls-1">Roles y Accesos</span>
       </div>
     </div>
+  }
 
-    <!-- Pages -->
-    <!-- La función showMenu() se va a encargar de hacer las comprbaciones de los permisos asignados -->
-    <div class="menu-item" *ngIf="showMenu(['register_role','edit_role'])">
+  <!-- Pages -->
+  <!-- La función showMenu() se va a encargar de hacer las comprbaciones de los permisos asignados -->
+  @if (showMenu(['register_role','edit_role'])) {
+    <div class="menu-item">
       <a class="menu-link without-sub" routerLink="/roles/list" routerLinkActive="active">
         <span class="menu-icon">
           <app-keenicon name="people" class="fs-2"></app-keenicon>
@@ -150,8 +156,10 @@
         <span class="menu-title">Roles</span>
       </a>
     </div>
-    <!-- Customers -->
-    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show" *ngIf="showMenu(['register_user','edit_user'])">
+  }
+  <!-- Customers -->
+  @if (showMenu(['register_user','edit_user'])) {
+    <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
       <span class="menu-link">
         <span class="menu-icon">
           <app-keenicon name="profile-user" class="fs-2"></app-keenicon>
@@ -162,91 +170,95 @@
       </span>
       <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
         <!-- <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/usuarios/users">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Crear
-            </span>
-          </a>
-        </div> -->
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/usuarios/list">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Lista
-            </span>
-          </a>
-        </div>
-
+        <a class="menu-link without-sub" routerLinkActive="active" routerLink="/usuarios/users">
+          <span
+            class="menu-bullet">
+            <span class="bullet bullet-dot"></span>
+          </span>
+          <span class="menu-title">Crear
+          </span>
+        </a>
+      </div> -->
+      <div class="menu-item">
+        <a class="menu-link without-sub" routerLinkActive="active" routerLink="/usuarios/list">
+          <span
+            class="menu-bullet">
+            <span class="bullet bullet-dot"></span>
+          </span>
+          <span class="menu-title">Lista
+          </span>
+        </a>
       </div>
     </div>
-    <!-- Accounts -->
-    <!-- <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
-      <span class="menu-link">
-        <span class="menu-icon">
-          <app-keenicon name="profile-circle" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title"
-              data-link="/crafted/account">Accounts
-        </span>
-        <span class="menu-arrow"></span>
+  </div>
+}
+<!-- Accounts -->
+<!-- <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+<span class="menu-link">
+  <span class="menu-icon">
+    <app-keenicon name="profile-circle" class="fs-2"></app-keenicon>
+  </span>
+  <span class="menu-title"
+    data-link="/crafted/account">Accounts
+  </span>
+  <span class="menu-arrow"></span>
+</span>
+<div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
       </span>
-      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/overview">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span
-              class="menu-title">Overview
-            </span>
-          </a>
-        </div>
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span
-              class="menu-title">Settings
-            </span>
-          </a>
-        </div>
-      </div>
-    </div> -->
-    <!-- Inicio Sección comercial -->
-    <div class="menu-item" *ngIf="showMenu(['register_product']) ||
-                                  showMenu(['list_product']) ||
-                                  showMenu(['register_clientes', 'edit_clientes']) ||
-                                  showMenu(['valid_payments', 'reports_caja']) ||
-                                  showMenu(['register_proforma']) ||
-                                  showMenu(['list_proforma']) ||
-                                  showMenu(['cronograma']) ||
-                                  showMenu(['comisiones'])
-                                  ">
-      <div class="menu-content pt-8 pb-2">
-        <span class="menu-section text-muted text-uppercase fs-8 ls-1">Sección Comercial</span>
-      </div>
+      <span
+        class="menu-title">Overview
+      </span>
+    </a>
+  </div>
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/account/settings">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
+      </span>
+      <span
+        class="menu-title">Settings
+      </span>
+    </a>
+  </div>
+</div>
+</div> -->
+<!-- Inicio Sección comercial -->
+@if (showMenu(['register_product']) ||
+  showMenu(['list_product']) ||
+  showMenu(['register_clientes', 'edit_clientes']) ||
+  showMenu(['valid_payments', 'reports_caja']) ||
+  showMenu(['register_proforma']) ||
+  showMenu(['list_proforma']) ||
+  showMenu(['cronograma']) ||
+  showMenu(['comisiones'])
+  ) {
+  <div class="menu-item">
+    <div class="menu-content pt-8 pb-2">
+      <span class="menu-section text-muted text-uppercase fs-8 ls-1">Sección Comercial</span>
     </div>
-    <!-- Inicio de gestión de productos -->
-    <div class="menu-item menu-accordion" *ngIf="showMenu(['register_product']) || showMenu(['list_product'])" data-kt-menu-trigger="click" routerLinkActive="here show">
-      <span class="menu-link">
-        <span class="menu-icon">
-          <app-keenicon name="parcel" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title" data-link="/productos">Productos
-        </span>
-        <span class="menu-arrow"></span>
+  </div>
+}
+<!-- Inicio de gestión de productos -->
+@if (showMenu(['register_product']) || showMenu(['list_product'])) {
+  <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+    <span class="menu-link">
+      <span class="menu-icon">
+        <app-keenicon name="parcel" class="fs-2"></app-keenicon>
       </span>
-      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
-        <!-- Registro de productos -->
-        <div class="menu-item" *ngIf="showMenu(['register_product'])">
+      <span class="menu-title" data-link="/productos">Productos
+      </span>
+      <span class="menu-arrow"></span>
+    </span>
+    <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+      <!-- Registro de productos -->
+      @if (showMenu(['register_product'])) {
+        <div class="menu-item">
           <a class="menu-link without-sub" routerLinkActive="active" routerLink="/productos/register">
             <span
               class="menu-bullet">
@@ -256,8 +268,10 @@
             </span>
           </a>
         </div>
-        <!-- Listado de productos -->
-        <div class="menu-item" *ngIf="showMenu(['list_product'])">
+      }
+      <!-- Listado de productos -->
+      @if (showMenu(['list_product'])) {
+        <div class="menu-item">
           <a class="menu-link without-sub" routerLinkActive="active" routerLink="/productos/list">
             <span
               class="menu-bullet">
@@ -267,45 +281,53 @@
             </span>
           </a>
         </div>
-      </div>
+      }
     </div>
-    <!-- Fin de gestión de productos -->
+  </div>
+}
+<!-- Fin de gestión de productos -->
 
-    <!-- Inicio de gestión de clientes -->
-    <div class="menu-item" *ngIf="showMenu(['register_clientes', 'edit_clientes'])">
-      <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
-        <span class="menu-icon">
-          <app-keenicon name="badge" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title">Clientes</span>
-      </a>
-    </div>
-    <!-- Fin de gestión de clientes -->
-
-    <!-- Inicio de gestión de caja -->
-    <div class="menu-item" *ngIf="showMenu(['valid_payments', 'reports_caja'])">
-      <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
-        <span class="menu-icon">
-          <app-keenicon name="save-deposit" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title">Caja</span>
-      </a>
-    </div>
-    <!-- Fin de gestión de caja -->
-
-    <!-- Inicio de sección Proforma -->
-    <div class="menu-item menu-accordion"  *ngIf="showMenu(['register_proforma']) || showMenu(['list_proforma'])" data-kt-menu-trigger="click" routerLinkActive="here show">
-      <span class="menu-link">
-        <span class="menu-icon">
-          <app-keenicon name="tablet-text-down" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title" data-link="/apps">Proforma
-        </span>
-        <span class="menu-arrow"></span>
+<!-- Inicio de gestión de clientes -->
+@if (showMenu(['register_clientes', 'edit_clientes'])) {
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
+      <span class="menu-icon">
+        <app-keenicon name="badge" class="fs-2"></app-keenicon>
       </span>
-      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
-        <!-- Crear Proforma -->
-        <div class="menu-item" *ngIf="showMenu(['register_proforma'])">
+      <span class="menu-title">Clientes</span>
+    </a>
+  </div>
+}
+<!-- Fin de gestión de clientes -->
+
+<!-- Inicio de gestión de caja -->
+@if (showMenu(['valid_payments', 'reports_caja'])) {
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
+      <span class="menu-icon">
+        <app-keenicon name="save-deposit" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title">Caja</span>
+    </a>
+  </div>
+}
+<!-- Fin de gestión de caja -->
+
+<!-- Inicio de sección Proforma -->
+@if (showMenu(['register_proforma']) || showMenu(['list_proforma'])) {
+  <div class="menu-item menu-accordion"  data-kt-menu-trigger="click" routerLinkActive="here show">
+    <span class="menu-link">
+      <span class="menu-icon">
+        <app-keenicon name="tablet-text-down" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title" data-link="/apps">Proforma
+      </span>
+      <span class="menu-arrow"></span>
+    </span>
+    <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+      <!-- Crear Proforma -->
+      @if (showMenu(['register_proforma'])) {
+        <div class="menu-item">
           <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/users">
             <span
               class="menu-bullet">
@@ -315,8 +337,10 @@
             </span>
           </a>
         </div>
-        <!-- Listado de proformas -->
-        <div class="menu-item" *ngIf="showMenu(['list_proforma'])">
+      }
+      <!-- Listado de proformas -->
+      @if (showMenu(['list_proforma'])) {
+        <div class="menu-item">
           <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/roles">
             <span
               class="menu-bullet">
@@ -326,272 +350,298 @@
             </span>
           </a>
         </div>
-      </div>
+      }
     </div>
-    <!-- Fin de sección Proforma -->
-
-    <!-- Inicio cronograma -->
-    <div class="menu-item" *ngIf="showMenu(['cronograma'])">
-      <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
-        <span class="menu-icon">
-          <app-keenicon name="calendar" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title">Cronograma</span>
-      </a>
-    </div>
-    <!-- Fin cronograma -->
-
-    <!-- Errors -->
-    <!-- <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
-      <span class="menu-link">
-        <span class="menu-icon">
-          <app-keenicon name="phone" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title"
-              data-link="/error">Errors
-        </span>
-        <span class="menu-arrow"></span>
-      </span>
-      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLink="/error/404" routerLinkActive="active">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Error
-              404
-            </span>
-          </a>
-        </div>
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLink="/error/500" routerLinkActive="active">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Error
-              500
-            </span>
-          </a>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- Widgets -->
-    <!-- <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
-      <span class="menu-link">
-        <span class="menu-icon">
-          <app-keenicon name="element-7" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title"
-              data-link="/crafted/widgets">Widgets
-        </span>
-        <span class="menu-arrow"></span>
-      </span>
-      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/lists">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span
-              class="menu-title">Lists
-            </span>
-          </a>
-        </div>
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/statistics">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span
-              class="menu-title">Statistics
-            </span>
-          </a>
-        </div>
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/charts">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span
-              class="menu-title">Charts
-            </span>
-          </a>
-        </div>
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/mixed">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span
-              class="menu-title">Mixed
-            </span>
-          </a>
-        </div>
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/tables">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span
-              class="menu-title">Tables
-            </span>
-          </a>
-        </div>
-        <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/feeds">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span
-              class="menu-title">Feeds
-            </span>
-          </a>
-        </div>
-      </div>
-    </div> -->
-
-    <!-- Inicio sección Comisiones -->
-    <div class="menu-item" *ngIf="showMenu(['comisiones'])">
-      <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
-        <span class="menu-icon">
-          <app-keenicon name="discount" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title">Comisiones</span>
-      </a>
-    </div>
-    <!-- Fin sección Comisiones -->
-
-    <!-- Inicio sección Inventario -->
-    <div class="menu-item" *ngIf="showMenu(['register_compra']) ||
-                                  showMenu(['list_compra']) ||
-                                  showMenu(['register_transporte']) ||
-                                  showMenu(['list_transporte']) ||
-                                  showMenu(['despacho']) ||
-                                  showMenu(['movimientos']) ||
-                                  showMenu(['kardex'])
-                                  ">
-      <div class="menu-content pt-8 pb-2">
-        <span class="menu-section text-muted text-uppercase fs-8 ls-1">Inventario</span>
-      </div>
-    </div>
-    <!-- Fin sección Inventario -->
-
-    <!-- Inicio de la sección de compras -->
-    <div class="menu-item menu-accordion" *ngIf="showMenu(['register_compra']) || showMenu(['list_compra'])" data-kt-menu-trigger="click" routerLinkActive="here show">
-      <span class="menu-link">
-        <span class="menu-icon">
-          <app-keenicon name="delivery-3" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title" data-link="/apps">Compras
-        </span>
-        <span class="menu-arrow"></span>
-      </span>
-      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
-        <!-- Registro de compras -->
-        <div class="menu-item" *ngIf="showMenu(['register_compra'])">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/users">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Registro
-            </span>
-          </a>
-        </div>
-        <!-- Listado de compras -->
-        <div class="menu-item" *ngIf="showMenu(['list_compra'])">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/roles">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Listado
-            </span>
-          </a>
-        </div>
-      </div>
-    </div>
-    <!-- Fin de la sección de compras -->
-
-    <!-- Inicio sección de transporte -->
-    <div class="menu-item menu-accordion" *ngIf="showMenu(['register_transporte']) || showMenu(['list_transporte'])" data-kt-menu-trigger="click" routerLinkActive="here show">
-      <span class="menu-link">
-        <span class="menu-icon">
-          <app-keenicon name="truck" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title" data-link="/apps">Transporte
-        </span>
-        <span class="menu-arrow"></span>
-      </span>
-      <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
-        <!-- Resigtro de transporte -->
-        <div class="menu-item" *ngIf="showMenu(['register_transporte'])">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/users">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Registro
-            </span>
-          </a>
-        </div>
-        <!-- Listado de transportes -->
-        <div class="menu-item" *ngIf="showMenu(['list_transporte'])">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/roles">
-            <span
-              class="menu-bullet">
-              <span class="bullet bullet-dot"></span>
-            </span>
-            <span class="menu-title">Listado
-            </span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-    <!-- Inicio sección de despacho -->
-    <div class="menu-item" *ngIf="showMenu(['despacho'])">
-      <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
-        <span class="menu-icon">
-          <app-keenicon name="courier-express" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title">Despacho</span>
-      </a>
-    </div>
-    <!-- Fin sección de despacho -->
-
-    <!-- Inicio sección de movimientos -->
-    <div class="menu-item" *ngIf="showMenu(['movimientos'])">
-      <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
-        <span class="menu-icon">
-          <app-keenicon name="delivery-2" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title">Movimientos</span>
-      </a>
-    </div>
-    <!-- Fin sección de movimientos -->
-
-    <!-- Inicio sección de Kardex -->
-    <div class="menu-item" *ngIf="showMenu(['kardex'])">
-      <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
-        <span class="menu-icon">
-          <app-keenicon name="parcel-tracking" class="fs-2"></app-keenicon>
-        </span>
-        <span class="menu-title">Kardex</span>
-      </a>
-    </div>
-    <!-- Fin sección de Kardex -->
-
   </div>
-  <!--end::Menu-->
+}
+<!-- Fin de sección Proforma -->
+
+<!-- Inicio cronograma -->
+@if (showMenu(['cronograma'])) {
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
+      <span class="menu-icon">
+        <app-keenicon name="calendar" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title">Cronograma</span>
+    </a>
+  </div>
+}
+<!-- Fin cronograma -->
+
+<!-- Errors -->
+<!-- <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+<span class="menu-link">
+  <span class="menu-icon">
+    <app-keenicon name="phone" class="fs-2"></app-keenicon>
+  </span>
+  <span class="menu-title"
+    data-link="/error">Errors
+  </span>
+  <span class="menu-arrow"></span>
+</span>
+<div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/error/404" routerLinkActive="active">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
+      </span>
+      <span class="menu-title">Error
+        404
+      </span>
+    </a>
+  </div>
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/error/500" routerLinkActive="active">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
+      </span>
+      <span class="menu-title">Error
+        500
+      </span>
+    </a>
+  </div>
+</div>
+</div> -->
+
+<!-- Widgets -->
+<!-- <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+<span class="menu-link">
+  <span class="menu-icon">
+    <app-keenicon name="element-7" class="fs-2"></app-keenicon>
+  </span>
+  <span class="menu-title"
+    data-link="/crafted/widgets">Widgets
+  </span>
+  <span class="menu-arrow"></span>
+</span>
+<div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/lists">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
+      </span>
+      <span
+        class="menu-title">Lists
+      </span>
+    </a>
+  </div>
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/statistics">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
+      </span>
+      <span
+        class="menu-title">Statistics
+      </span>
+    </a>
+  </div>
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/charts">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
+      </span>
+      <span
+        class="menu-title">Charts
+      </span>
+    </a>
+  </div>
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/mixed">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
+      </span>
+      <span
+        class="menu-title">Mixed
+      </span>
+    </a>
+  </div>
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/tables">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
+      </span>
+      <span
+        class="menu-title">Tables
+      </span>
+    </a>
+  </div>
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLinkActive="active" routerLink="/crafted/widgets/feeds">
+      <span
+        class="menu-bullet">
+        <span class="bullet bullet-dot"></span>
+      </span>
+      <span
+        class="menu-title">Feeds
+      </span>
+    </a>
+  </div>
+</div>
+</div> -->
+
+<!-- Inicio sección Comisiones -->
+@if (showMenu(['comisiones'])) {
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
+      <span class="menu-icon">
+        <app-keenicon name="discount" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title">Comisiones</span>
+    </a>
+  </div>
+}
+<!-- Fin sección Comisiones -->
+
+<!-- Inicio sección Inventario -->
+@if (showMenu(['register_compra']) ||
+  showMenu(['list_compra']) ||
+  showMenu(['register_transporte']) ||
+  showMenu(['list_transporte']) ||
+  showMenu(['despacho']) ||
+  showMenu(['movimientos']) ||
+  showMenu(['kardex'])
+  ) {
+  <div class="menu-item">
+    <div class="menu-content pt-8 pb-2">
+      <span class="menu-section text-muted text-uppercase fs-8 ls-1">Inventario</span>
+    </div>
+  </div>
+}
+<!-- Fin sección Inventario -->
+
+<!-- Inicio de la sección de compras -->
+@if (showMenu(['register_compra']) || showMenu(['list_compra'])) {
+  <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+    <span class="menu-link">
+      <span class="menu-icon">
+        <app-keenicon name="delivery-3" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title" data-link="/apps">Compras
+      </span>
+      <span class="menu-arrow"></span>
+    </span>
+    <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+      <!-- Registro de compras -->
+      @if (showMenu(['register_compra'])) {
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/users">
+            <span
+              class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Registro
+            </span>
+          </a>
+        </div>
+      }
+      <!-- Listado de compras -->
+      @if (showMenu(['list_compra'])) {
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/roles">
+            <span
+              class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Listado
+            </span>
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+}
+<!-- Fin de la sección de compras -->
+
+<!-- Inicio sección de transporte -->
+@if (showMenu(['register_transporte']) || showMenu(['list_transporte'])) {
+  <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
+    <span class="menu-link">
+      <span class="menu-icon">
+        <app-keenicon name="truck" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title" data-link="/apps">Transporte
+      </span>
+      <span class="menu-arrow"></span>
+    </span>
+    <div class="menu-sub menu-sub-accordion" routerLinkActive="menu-active-bg">
+      <!-- Resigtro de transporte -->
+      @if (showMenu(['register_transporte'])) {
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/users">
+            <span
+              class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Registro
+            </span>
+          </a>
+        </div>
+      }
+      <!-- Listado de transportes -->
+      @if (showMenu(['list_transporte'])) {
+        <div class="menu-item">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/roles">
+            <span
+              class="menu-bullet">
+              <span class="bullet bullet-dot"></span>
+            </span>
+            <span class="menu-title">Listado
+            </span>
+          </a>
+        </div>
+      }
+    </div>
+  </div>
+}
+
+<!-- Inicio sección de despacho -->
+@if (showMenu(['despacho'])) {
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
+      <span class="menu-icon">
+        <app-keenicon name="courier-express" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title">Despacho</span>
+    </a>
+  </div>
+}
+<!-- Fin sección de despacho -->
+
+<!-- Inicio sección de movimientos -->
+@if (showMenu(['movimientos'])) {
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
+      <span class="menu-icon">
+        <app-keenicon name="delivery-2" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title">Movimientos</span>
+    </a>
+  </div>
+}
+<!-- Fin sección de movimientos -->
+
+<!-- Inicio sección de Kardex -->
+@if (showMenu(['kardex'])) {
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
+      <span class="menu-icon">
+        <app-keenicon name="parcel-tracking" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title">Kardex</span>
+    </a>
+  </div>
+}
+<!-- Fin sección de Kardex -->
+
+</div>
+<!--end::Menu-->
 </div>
 <!--end::Menu wrapper-->
