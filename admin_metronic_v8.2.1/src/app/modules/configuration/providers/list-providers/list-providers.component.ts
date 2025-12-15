@@ -22,7 +22,7 @@ export class ListProvidersComponent implements OnInit {
     public modalService: NgbModal,
     public providerService: ProvidersService,
   ) {
-    
+
   }
 
   ngOnInit(): void {
@@ -34,7 +34,7 @@ export class ListProvidersComponent implements OnInit {
 
   listProviders(page = 1){
     this.providerService.listProviders(page,this.search).subscribe((resp:any) => {
-      console.log(resp);
+      console.log(resp.providers);
       this.PROVIDERS = resp.providers;
       this.totalPages = resp.total;
       this.currentPage = page;

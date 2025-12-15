@@ -30,7 +30,10 @@ class ProviderController extends Controller
                     'phone' => $provider->phone,
                     'address' => $provider->address,
                     'state' => $provider->state,
-                    'imagen' => $provider->imagen ? env('APP_URL') . 'storage/' . $provider->imagen : null,
+                    /* 'imagen' => $provider->imagen ? env('APP_URL') . 'storage/' . $provider->imagen : null, */
+                    'imagen' => $provider->imagen = asset('storage/') . '/'. $provider->imagen,
+                    /* 'logo' => $provider->imagen ? env('APP_URL') . 'storage/' . $provider->imagen : null, */
+                    'logo' => $provider->logo = asset('storage/') . '/'. $provider->imagen,
                     'created_at' => $provider->created_at->format('d-m-Y H:i:s'),
                 ];
             })
@@ -48,7 +51,7 @@ class ProviderController extends Controller
                 'message_text' => 'Ya existe un proveedor con ese nombre.',
             ]);
         }
-        
+
         $if_exists_provider = Provider::where('nif', $request->nif)->first();
         if ($if_exists_provider) {
             return response()->json([

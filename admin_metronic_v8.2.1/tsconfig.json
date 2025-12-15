@@ -18,11 +18,19 @@
     "importHelpers": true,
     "target": "es2022",
     "module": "es2020",
-    "lib": ["es2020", "dom"],
+    "lib": [
+      "es2020",
+      "dom"
+    ],
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["jest","node", "jquery", "datatables.net"],
+    "types": [
+      "jest",
+      "node",
+      "jquery",
+      "datatables.net"
+    ],
   },
   "exclude": [
     "src/**/*.spec.ts",

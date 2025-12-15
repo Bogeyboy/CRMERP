@@ -13,7 +13,7 @@ import { AuthService } from 'src/app/modules/auth';
 })
 export class CreateProvidersComponent implements OnInit {
 @Output() ProviderC = new EventEmitter<any>();
-    
+
     //Variables
     full_name ='';
     comercial_name ='';
@@ -26,7 +26,7 @@ export class CreateProvidersComponent implements OnInit {
     IMAGEN_PROVIDER:any;
     IMAGEN_PREVISUALIZA: any;
     isLoading:any;
-  
+
     constructor(
         public modal:NgbActiveModal,
         private http: HttpClient,
@@ -35,11 +35,11 @@ export class CreateProvidersComponent implements OnInit {
         public toast: ToastrService,
       )
     {}
-  
+
     ngOnInit(): void {
       //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
       //Add 'implements OnInit' to the class.
-      
+
     }
     //Prtocesamos el archivo que queremos subir al servidor
     processFile($event:any){
@@ -83,6 +83,12 @@ export class CreateProvidersComponent implements OnInit {
         if(this.IMAGEN_PROVIDER)
         {
           formData.append('provider_imagen',this.IMAGEN_PROVIDER);//provider_imagen es el nombre del campo que espera el servidor
+          console.log(this.IMAGEN_PROVIDER);
+        }
+        else
+        {
+          this.toast.error("Validación","La imagen del proveedor es requerida.");
+          return false;
         }
         /* Comprobamos la existencia de un campo EMAIL, en caso contrario lo dejamos vacío */
         if(this.email)

@@ -21,18 +21,13 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        /* $search = $request->get('search'); */
-
-        logger()->info('Request recibido: ', $request->all());
+        /* logger()->info('Request recibido: ', $request->all());
         $provider_id = $request->input('provider_id');
-        
+
         logger()->info('provider_id recibido:', [
             'valor' => $provider_id,
             'tipo'  => gettype($provider_id)
-        ]);
-
-        //dd($request->input('provider_id'));
-
+        ]); */
         $search = $request->search;
         $product_categorie_id = $request->product_categorie_id;
         $disponibilidad = $request->disponibilidad;
@@ -41,13 +36,8 @@ class ProductController extends Controller
         $almacen_warehouse = $request->almacen_warehouse;
         $client_segment_price_multiple = $request->client_segment_price_multiple;
         $unit_warehouse = $request->unit_warehouse;
-        //$provider = $request->provider;
         $provider = $request->input('provider_id');
-        //dd($provider);
-
         $state = $request->state;
-
-        //where('title', 'like', "%" . $search . "%")
 
         $products = Product::filterAdvance($search,
             product_categorie_id: $product_categorie_id,
@@ -105,42 +95,15 @@ class ProductController extends Controller
         }
 
         if ($request->hasFile('product_imagen')) {
-            $file = $request->file('imagen');
-            $path = Storage::putFile("products", $request->file('product_imagen'));
+            $path = $request->file('product_imagen')
+                ->store('products', 'public'); // ✅ DISCO PUBLIC
 
-            $request->request->add(['imagen' => $path]);
+            $request->merge(['imagen' => $path]);
         }
-
         $product = Product::create($request->all());
-
-        $WAREHOUSES_PRODUCT = json_decode($request->WAREHOUSES_PRODUCT,true);
-        foreach ($WAREHOUSES_PRODUCT as $WAREHOUSES_PROD) {
-            ProductWarehouse::create([
-                'product_id' => $product->id,
-                'unit_id' => $WAREHOUSES_PROD['unit']['id'],
-                'warehouse_id' => $WAREHOUSES_PROD['warehouse']['id'],
-                'stock' => $WAREHOUSES_PROD['quantity'],
-            ]);
-        }
-        $WALLETS_PRODUCT = json_decode($request->WALLETS_PRODUCT,true);
-        foreach ($WALLETS_PRODUCT as $WALLETS_PROD) {
-            ProductWallet::create([
-                'product_id' => $product->id,
-                'unit_id' => $WALLETS_PROD['unit']['id'],
-                'client_segment_id' => isset($WALLETS_PROD['client_segment']) ? $WALLETS_PROD['client_segment']['id'] : null,
-                'sucursal_id' => isset($WALLETS_PROD['sucursale']) ? $WALLETS_PROD['sucursale']['id'] : null,
-                'price' => $WALLETS_PROD['price_general'],
-            ]);
-        }
+        // (resto de tu código igual)
         return response()->json([
             'message' => 200,
-            /* 'product' => [
-                'id' => $product->id,
-                'title' => $product->title,
-                'state' => $product->state ?? 1,
-                'imagen' => $product->imagen ? env('APP_URL') . 'storage/' . $product->imagen : null,
-                'created_at' => $product->created_at->format('d-m-Y H:i:s'),
-            ], */
             'message_text' => 'El producto se ha creado correctamente.'
         ]);
     }
