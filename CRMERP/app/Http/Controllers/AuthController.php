@@ -5,163 +5,245 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
-use App\Http\Controllers\Controller;
-//use Illuminate\Auth\Access\Gate;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Traits\HasRoles;
-
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-//use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Validator;
-//use Validator;
-
 
 class AuthController extends \Illuminate\Routing\Controller
 {
-    /**
-     * Create a new AuthController instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
-        //$this->middleware('auth', ['except'=> ['login', 'register']]);
     }
 
-
     /**
-     * Register a User.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Registrar un usuario
      */
-    public function register()
+    public function register(Request $request)
     {
-        //$this->authorize('create', User::class);
-        //Gate::authorize('create', User::class);
-        //auth('api')->user()->can('create', User::class);
-        $validator = Validator::make(request()->all(), [
-            'name' => 'required',
-            'email' => 'required|email|unique:users',
-            //'password' => 'required|confirmed|min:8',//se elimina para la creación del usuario con postman
+        $validator = Validator::make($request->all(), [
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users',
             'password' => 'required|min:8',
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json(['errors' => $validator->errors()], 400);
         }
 
-        $user = new User;
-        $user->name = request()->name;
-        $user->email = request()->email;
-        $user->password = bcrypt(request()->password);
-        $user->save();
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
 
         return response()->json($user, 201);
     }
 
-
     /**
-     * Get a JWT via given credentials.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Login y generar JWT
      */
     public function login(Request $request)
     {
-        //$credentials = request(['email', 'password']);
         $credentials = $request->only('email', 'password');
 
-        /* if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
-        } */
-        /* if (! $token = Auth::attempt($credentials)) {
-            //dd(response()->json([]));
-            return response()->json(['error' => 'Unauthorized'], 401);
-        } */
-        if (!$token = JWTAuth::attempt($credentials)) {
+        if (! $token = auth('api')->attempt($credentials))
+        {
             return response()->json(['error' => 'Credenciales inválidas'], 401);
         }
 
         return $this->respondWithToken($token);
     }
 
+
     /**
-     * Get the authenticated User.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Usuario autenticado
      */
-    public function me()
+    /* public function me()
     {
-        //return response()->json(auth()->user());
-        return response()->json(Auth::user());
+        $user = auth('api')->user();
+        if (!$user) {
+            return response()->json(['error' => 'No autenticado'], 401);
+        }
+
+        return response()->json($this->formatUser($user));
+    } */
+   public function me()
+    {
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'No autenticado'], 401);
+        }
+
+        $isSuper = $user->hasRole('Super-Admin');
+        $permissions = $isSuper ? ['*'] : $user->getAllPermissions()->pluck('name')->toArray();
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            'username' => $user->email,
+            'firstName' => $user->name,
+            'lastName' => '',
+            'fullname' => $user->name,
+            'occupation' => 'Administrador',
+            'companyName' => 'Company',
+            'phone' => '',
+            'roles' => $user->getRoleNames()->toArray(),
+            'is_super' => $isSuper,
+            'permissions' => $permissions,
+            'pic' => $user->avatar
+                ? env('APP_URL').'storage/'.$user->avatar
+                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+            'logo' => $user->avatar
+                ? env('APP_URL').'storage/'.$user->avatar
+                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+        ]);
     }
 
     /**
-     * Log the user out (Invalidate the token).
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Logout
      */
     public function logout()
     {
-        //auth()->logout();
-        Auth::logout();
-
-        /* return response()->json(['message' => 'Successfully logged out']); */
-        return response()->json(['message' => 'Correctamente desconectado']);
+        auth('api')->logout();
+        return response()->json(['message' => 'Sesión cerrada correctamente']);
     }
 
     /**
-     * Refresh a token.
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Refrescar token
      */
     public function refresh()
     {
-        //return $this->respondWithToken(auth()->refresh());
+        $token = auth('api')->refresh();
+        $user = auth('api')->user();
         return response()->json([
-            'status' => 'success',
-            'user' => Auth::user(),
-            'Authorization' => [
-                'token' => Auth::refresh(),
-                'type' => 'bearer'
-            ]
+            'access_token' => $token,
+            'token_type'   => 'bearer',
+            'expires_in'   => auth('api')->factory()->getTTL() * 60,
+            'user'         => $this->formatUser($user),
         ]);
     }
 
     /**
-     * Get the token array structure.
-     *
-     * @param  string $token
-     *
-     * @return \Illuminate\Http\JsonResponse
+     * Formatear usuario para frontend
      */
-    protected function respondWithToken($token)
+    protected function formatUser(User $user)
     {
-        $permissions = Auth::user()->getAllPermissions()->map(function($perm){
-            return $perm->name;
-        });
+        $permissions = $user->hasRole('Super-Admin')
+            ? ['all-access']   // Super-Admin tiene acceso total
+            : $user->getAllPermissions()->pluck('name')->toArray();
 
-        /* $user = Auth::user();
-        $permissions = $user->permission->map(function ($perm) {
-            return $perm->name;
-        }); */
+        return [
+            'id'          => $user->id,
+            'name'        => $user->name,
+            'email'       => $user->email,
+            'avatar'      => $user->avatar
+                                ? env('APP_URL').'storage/'.$user->avatar
+                                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+            'roles'       => $user->getRoleNames(),
+            'is_super'    => $user->hasRole('Super-Admin'),
+            /* 'permissions' => $permissions, */
+            'permissions'=> $user->hasRole('Super-Admin')
+                ? [] // NO se usan
+                : $user->getAllPermissions()->pluck('name'),
+        ];
+    }
+
+    /**
+     * Responder con token
+     */
+    /* protected function respondWithToken($token)
+    {
+        $user = auth('api')->user();
 
         return response()->json([
             'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => JWTAuth::factory()->getTTL() * 60,
-            //'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'token_type'   => 'bearer',
+            'expires_in'   => auth('api')->factory()->getTTL() * 60,
+            'user'         => $this->formatUser($user),
+        ]);
+    } */
+    /* protected function respondWithToken($token)
+    {
+        $user = auth('api')->user();
+        $isSuperAdmin = $user->hasRole('Super-Admin');
 
-            'user' =>[
-                'name' => Auth::user()->name . ' ' . Auth::user()->surname,
-                'email' => Auth::user()->email,
-                'avatar' => Auth::user()->avatar ? env('APP_URL') . 'storage/' . Auth::user()->avatar : "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
-                'rol_name' => Auth::user()->rol->name,
-                'permissions' => $permissions
-                /* 'name' => auth("api")->user()->name,
-                'email' => auth("api")->user()->email  */
+        return response()->json([
+            'access_token' => $token,
+            'token_type'   => 'bearer',
+            'expires_in'   => auth('api')->factory()->getTTL() * 60,
+            'user' => [
+                'id'          => $user->id,
+                'name'        => $user->name,
+                'email'       => $user->email,
+                'roles'       => $user->getRoleNames(),
+                'is_super'    => $isSuperAdmin,
+                'permissions' => $isSuperAdmin
+                    ? [] // el frontend NO debe usarlos
+                    : $user->getAllPermissions()->pluck('name'),
+            ],
+        ]);
+    } */
+
+    /* protected function respondWithToken($token)
+    {
+        $user = auth('api')->user();
+        $isSuper = $user->hasRole('Super-Admin');
+
+        $permissions = [];
+
+        if ($user->hasRole('Super-Admin')) {
+            $permissions = ['*'];
+        } else {
+            $permissions = $user->getAllPermissions()->pluck('name');
+        }
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type'   => 'bearer',
+            'expires_in'   => auth('api')->factory()->getTTL() * 60,
+            'user' => [
+                'id'          => $user->id,
+                'name'        => $user->name,
+                'email'       => $user->email,
+                'roles'       => $user->getRoleNames()->toArray(),
+                'is_super'    => $isSuper,
+
+                // 🔥 CLAVE PARA METRONIC
+                //'permissions' => $isSuper ? ['*'] : $user->getAllPermissions()->pluck('name')->toArray(),
+                'permissions' => $permissions,
             ]
         ]);
-    }
+    } */
+
+    protected function respondWithToken($token)
+{
+    $user = auth('api')->user();
+    $isSuper = $user->hasRole('Super-Admin');
+
+    // Asegurar que permissions sea un array
+    $permissions = $isSuper ? ['*'] : $user->getAllPermissions()->pluck('name')->toArray();
+
+    // Asegurar que roles sea un array
+    $roles = $user->getRoleNames()->toArray();
+
+    return response()->json([
+        'access_token' => $token,
+        'token_type' => 'bearer',
+        'expires_in' => auth('api')->factory()->getTTL() * 60,
+        'user' => [
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+            // Campos que sidebar necesita
+            'roles' => $roles,
+            'is_super' => $isSuper,
+            'permissions' => $permissions,
+            // Campos adicionales para compatibilidad
+            'rol_name' => $isSuper ? 'Super-Admin' : (count($roles) > 0 ? $roles[0] : ''),
+        ]
+    ]);
+}
+
 }

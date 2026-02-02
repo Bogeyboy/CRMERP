@@ -183,4 +183,9 @@ return [
 
         'store' => 'default',
     ],
+
+    'defaults' =>
+    [
+        'guard' => 'api',
+    ],
 ];

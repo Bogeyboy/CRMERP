@@ -47,11 +47,56 @@ class UserAccessController extends Controller
         ]);
     }
 
-    public function config()
+    /* public function config()
     {
         return response()->json([
             'roles' => Role::all(),
         ]);
+    } */
+   public function config(Request $request)
+    {
+        try {
+            $user = auth()->user();
+
+            // Si es Super-Admin, mostrar todos los roles
+            if ($user->hasRole('Super-Admin')) {
+                $roles = Role::all();
+            } else {
+                // Si no es Super-Admin, mostrar solo roles que no sean Super-Admin
+                $roles = Role::where('name', '!=', 'Super-Admin')->get();
+            }
+
+            return response()->json([
+                'roles' => $roles,
+                'success' => true
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error en la configuración',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function listRoles(Request $request)
+    {
+        try {
+            // Obtener todos los roles (excepto Super-Admin si quieres restringirlo)
+            $roles = Role::where('name', '!=', 'Super-Admin')->get();
+
+            return response()->json([
+                'roles' => $roles,
+                'success' => true
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error al obtener roles',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -71,7 +116,7 @@ class UserAccessController extends Controller
                 'message_text' => 'El correo electrónico ya se encuentra registrado, con lo que el usuario ya existe',
             ]);
         }
-        
+
        //Seteamos la contraseña
        if($request->password)
        {
@@ -89,7 +134,7 @@ class UserAccessController extends Controller
         $rol = Role::findOrFail($request->rol_id);
         $user = User::create($request->all());
         $user->assignRole($rol);
-        
+
         return response()->json([
             'message' => 200,
             'message_text' => 'Usuario creado correctamente',
@@ -143,7 +188,7 @@ class UserAccessController extends Controller
         {
             // return response()->json([
             //    'message' => 'Las contraseñas no coinciden',
-            //], 403); 
+            //], 403);
             return response()->json([
                 'message' => 403,
                 'message_text' => 'Las contraseñas no coinciden',
@@ -177,7 +222,7 @@ class UserAccessController extends Controller
         }
         //Finalmente actualizamos el usuario
         $user->update($request->all());
-        
+
         return response()->json([
             'message' => 200,
             'message_text' => 'Usuario creado correctamente',

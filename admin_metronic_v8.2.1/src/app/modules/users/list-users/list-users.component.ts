@@ -11,12 +11,12 @@ import { UsersService } from '../service/users.service';
   styleUrls: ['./list-users.component.scss']
 })
 export class ListUsersComponent implements OnInit {
-  
+
   search = '';
   USERS:any = [];
   isLoading$:any;
 
-  roles:any = [];
+  //roles:any = [];
 
   totalPages = 0;
   currentPage = 1;
@@ -24,7 +24,7 @@ export class ListUsersComponent implements OnInit {
     public modalService: NgbModal,
     public usersService: UsersService,
   ) {
-    
+
   }
 
   ngOnInit(): void {
@@ -32,7 +32,7 @@ export class ListUsersComponent implements OnInit {
     //Add 'implements OnInit' to the class.
     this.isLoading$ = this.usersService.isLoading$;
     this.listUsers();
-    this.configAll();
+    //this.configAll();
   }
 
   listUsers(page = 1){
@@ -43,30 +43,34 @@ export class ListUsersComponent implements OnInit {
       this.currentPage = page;
     })
   }
-  configAll(){
+ /*  configAll(){
     this.usersService.configAll().subscribe((resp:any) => {
       console.log(resp);
       this.roles = resp.roles;
     })
-  }
+  } */
   loadPage($event:any){
     this.listUsers($event);
   }
-
   createUser(){
     const modalRef = this.modalService.open(CreateUserComponent,{centered:true, size: 'md'});
-    modalRef.componentInstance.roles = this.roles;
-    modalRef.componentInstance.UserC.subscribe((role:any) => {
-      this.USERS.unshift(role);
+    //modalRef.componentInstance.roles = this.roles;
+    modalRef.componentInstance.UserC.subscribe((user:any) => {
+      //this.USERS.unshift(role);
+      this.USERS.unshift(user);
+
+
+      //this.toastr.success('Éxito', 'Usuario creado correctamente');
     })
   }
 
   editUser(USER:any){
     const modalRef = this.modalService.open(EditUserComponent,{centered:true, size: 'md'});
     modalRef.componentInstance.USER_SELECTED = USER;
-    modalRef.componentInstance.roles = this.roles;
+    //modalRef.componentInstance.roles = this.roles;
 
     modalRef.componentInstance.UserE.subscribe((user:any) => {
+      console.log('Usuario editado:', user);
       const INDEX = this.USERS.findIndex((user:any) => user.id == USER.id);
       if(INDEX != -1){
         this.USERS[INDEX] = user;
@@ -79,6 +83,7 @@ export class ListUsersComponent implements OnInit {
     modalRef.componentInstance.USER_SELECTED = USER;
 
     modalRef.componentInstance.UserD.subscribe((user:any) => {
+      console.log('Usuario eliminado:', USER);
       const INDEX = this.USERS.findIndex((user:any) => user.id == USER.id);
       if(INDEX != -1){
         this.USERS.splice(INDEX,1);

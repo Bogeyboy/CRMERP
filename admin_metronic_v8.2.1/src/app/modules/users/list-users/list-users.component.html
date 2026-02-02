@@ -104,7 +104,23 @@ class="dt-column-order"></span></th>
         </div>
       </td>
       <td>
-        {{ USER.rol.name }}
+        <!-- {{ USER.roles }} -->
+        @if (USER.roles && USER.roles.length > 0)
+        {
+          <div>
+            @for (role of USER.roles; track role) {
+              <span class="badge badge-light-primary me-1">
+                {{ role.name }}
+              </span>
+            }
+          </div>
+        }
+        @else
+        {
+          <div>
+            <span class="badge badge-light-danger">Sin roles</span>
+          </div>
+        }
       </td>
       <td>
         {{ USER.sucursal_id }}

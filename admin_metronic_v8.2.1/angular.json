@@ -33,7 +33,7 @@
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
-              "node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css",  
+              "node_modules/datatables.net-bs5/css/dataTables.bootstrap5.min.css",
               "node_modules/animate.css/animate.min.css",
               "src/styles.scss"
             ],
@@ -93,14 +93,17 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "buildTarget": "demo1:build",
-            "hmr": false
+            "hmr": false,
+            "proxyConfig": "proxy.conf.json"  
           },
           "configurations": {
             "production": {
-              "buildTarget": "demo1:build:production"
+              "buildTarget": "demo1:build:production",
+              "proxyConfig": "proxy.prod.conf.json"
             },
             "development": {
-              "buildTarget": "demo1:build:development"
+              "buildTarget": "demo1:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

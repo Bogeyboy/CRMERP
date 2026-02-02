@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { UsersService } from '../service/users.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-create-user',
@@ -11,10 +12,12 @@ import { UsersService } from '../service/users.service';
 export class CreateUserComponent implements OnInit {
 
   @Output() UserC = new EventEmitter<any>();
-  @Input() roles:any = [];
+  //@Input() roles:any = [];
+
+  roles: any[] = [];
 
   isLoading:any;
-  
+
   name = '';
   surname = '';
   email = '';
@@ -30,18 +33,144 @@ export class CreateUserComponent implements OnInit {
 
   password = '';
   password_repit = '';
+
+  loadingRoles: boolean;
+  errorLoadingRoles: boolean;
+  errorMessage:string;
+
   constructor(
     public modal: NgbActiveModal,
     public usersService: UsersService,
     public toast: ToastrService,
   ) {
-    
+
   }
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
+    this.loadRoles();
   }
+
+  //Cargamos los roles disponibles
+  /* loadRoles(): void {
+    this.loadingRoles = true;
+    this.usersService.configAll().pipe(
+      finalize(() => this.loadingRoles = false)
+    ).subscribe({
+      next: (resp: any) => {
+        // Asumiendo que configAll() devuelve los roles en alguna propiedad
+        // Ajusta según la estructura real de tu respuesta
+        if (resp && resp.roles)
+        {
+          this.roles = resp.roles;
+        }
+        else if (resp && Array.isArray(resp))
+        {
+          console.log('Respuesta de roles es un array directamente:', resp);
+          this.roles = resp; // Si la respuesta es directamente el array
+        }
+        console.log('Roles cargados en modal:', this.roles);
+      },
+      error: (err) => {
+        console.error('Error cargando roles:', err);
+        this.toast.error('Error', 'No se pudieron cargar los roles');
+      }
+    });
+  } */
+
+  /* loadRoles(): void {
+    this.loadingRoles = true;
+    this.errorLoadingRoles = false;
+    this.errorMessage = '';
+
+    this.usersService.getRoles().subscribe({
+      next: (roles: any) => {
+        this.roles = roles;
+      },
+      error: (err) => {
+        console.error('Error cargando roles:', err);
+        // Si falla, intenta con configAll como fallback
+        this.usersService.configAll().subscribe({
+          next: (resp: any) => {
+            if (resp && resp.roles) {
+              this.roles = resp.roles;
+            }
+          },
+          error: () => {
+            this.toast.error('Error', 'No se pudieron cargar los roles');
+          }
+        });
+      },
+      complete: () => {
+        this.loadingRoles = false;
+      }
+    });
+  } */
+
+  loadRoles(): void {
+    this.loadingRoles = true;
+    this.errorLoadingRoles = false;
+    this.errorMessage = '';
+
+    console.log('🔄 Cargando roles...');
+
+    this.usersService.getRoles().subscribe({
+      next: (roles: any) => {
+        console.log('✅ Roles recibidos:', roles);
+
+        if (Array.isArray(roles) && roles.length > 0) {
+          this.roles = roles;
+          console.log(`📊 ${roles.length} roles cargados`);
+        } else {
+          this.errorLoadingRoles = true;
+          this.errorMessage = 'No se encontraron roles disponibles';
+          console.warn('⚠️ No hay roles disponibles');
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error cargando roles:', err);
+        this.errorLoadingRoles = true;
+
+        if (err.status === 403) {
+          this.errorMessage = 'No tienes permisos para ver los roles';
+          this.toast.error('Permiso denegado', this.errorMessage);
+        } else if (err.status === 404) {
+          // Intentar con /users/config como fallback
+          this.fallbackToConfigAll();
+        } else {
+          this.errorMessage = 'Error al cargar los roles';
+          this.toast.error('Error', this.errorMessage);
+        }
+      },
+      complete: () => {
+        this.loadingRoles = false;
+        console.log('🏁 Carga de roles completada');
+      }
+    });
+  }
+
+fallbackToConfigAll(): void {
+    console.log('🔄 Intentando fallback con configAll...');
+    this.usersService.configAll().subscribe({
+      next: (resp: any) => {
+        console.log('📦 Respuesta de configAll:', resp);
+        if (resp && resp.roles) {
+          this.roles = resp.roles;
+          console.log(`📊 ${resp.roles.length} roles cargados desde configAll`);
+        } else {
+          this.errorMessage = 'No se encontraron roles disponibles';
+          this.toast.warning('Advertencia', this.errorMessage);
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error en fallback:', err);
+        this.errorMessage = 'No se pudieron cargar los roles';
+        this.toast.error('Error', this.errorMessage);
+      }
+    });
+  }
+
   //Prtocesamos el archivo que queremos subir al servidor
   processFile($event:any){
     if($event.target.files[0].type.indexOf("image") < 0){
@@ -103,7 +232,7 @@ export class CreateUserComponent implements OnInit {
    if(this.address){
      formData.append("address",this.address);
    }
-   
+
    formData.append("password",this.password);
    //Se llama iimagen porque en el backend se llama imagen
    formData.append("imagen",this.file_name);

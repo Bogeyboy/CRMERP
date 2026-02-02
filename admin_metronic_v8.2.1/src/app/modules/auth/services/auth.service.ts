@@ -40,7 +40,7 @@ export class AuthService implements OnDestroy {
     private authHttpService: AuthHTTPService,
     private router: Router,
     private http: HttpClient,
-)
+  )
   {
     this.isLoadingSubject = new BehaviorSubject<boolean>(false);
     this.currentUserSubject = new BehaviorSubject<UserType>(undefined);
@@ -48,12 +48,41 @@ export class AuthService implements OnDestroy {
     this.isLoading$ = this.isLoadingSubject.asObservable();
     const subscr = this.getUserByToken().subscribe();
     this.unsubscribe.push(subscr);
+
+    this.loadUserFromLocalStorage();
+  }
+  private loadUserFromLocalStorage(): void {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        this.currentUserSubject.next(user);
+        this.user = user; // También establece this.user
+      } catch (e) {
+        console.error('Error parsing user from localStorage', e);
+      }
+    }
+  }
+  hasPermission(permission: string): boolean {
+    const user = this.currentUserValue as any;
+
+    if (!user) {
+      return false;
+    }
+
+    // 🔥 SUPER ADMIN VE TODO
+    if (user.is_super === true) {
+      return true;
+    }
+
+    const permissions: string[] = user.permissions || [];
+    return permissions.includes(permission);
   }
 
   // public methods
-  login(email: string, password: string): Observable<any> {
+  /* login(email: string, password: string): Observable<any> {
     this.isLoadingSubject.next(true);
-    /* return this.authHttpService.login(email, password).pipe( */
+    //return this.authHttpService.login(email, password).pipe(
     return this.http.post(URL_SERVICIOS+"/auth/login",{email,password}).pipe(
       map((auth: any) => {
         const result = this.setAuthFromLocalStorage(auth);
@@ -66,7 +95,25 @@ export class AuthService implements OnDestroy {
       }),
       finalize(() => this.isLoadingSubject.next(false))
     );
-  }
+  } */
+ login(email: string, password: string): Observable<any> {
+  this.isLoadingSubject.next(true);
+  return this.http.post(URL_SERVICIOS+"/auth/login",{email,password}).pipe(
+    map((auth: any) => {
+      const result = this.setAuthFromLocalStorage(auth);
+      if (result && auth.user) {
+        this.currentUserSubject.next(auth.user);
+        this.user = auth.user; // ← Esto es importante
+      }
+      return result;
+    }),
+    catchError((err) => {
+      console.error('err', err);
+      return of(undefined);
+    }),
+    finalize(() => this.isLoadingSubject.next(false))
+  );
+}
 
   logout() {
     localStorage.removeItem("token");
@@ -157,7 +204,6 @@ export class AuthService implements OnDestroy {
       return undefined;
     }
   }
-
   ngOnDestroy() {
     this.unsubscribe.forEach((sb) => sb.unsubscribe());
   }

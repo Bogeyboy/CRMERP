@@ -19,80 +19,63 @@ use App\Http\Controllers\Configuration\SucursalDeliverieController;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Routes (JWT + Spatie)
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
 */
 
-/* Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum'); */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request){
-    return $request->user();
+// ---------- AUTH (SIN TOKEN) ----------
+Route::prefix('auth')->group(function () {
+    Route::post('/login',    [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
 });
 
-Route::group([
-    //'middleware' => 'auth:api',
-    'prefix' => 'auth',
-    //'middleware' => ['auth:api']//, 'permission:publish articles|edit articles'],
-], function ($router) {
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
-    Route::post('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::post('/refresh', [AuthController::class, 'refresh'])->name('refresh');
-    Route::post('/me', [AuthController::class, 'me'])->name('me');
+// ---------- AUTH (CON TOKEN JWT) ----------
+Route::middleware('auth:api')->prefix('auth')->group(function () {
+    Route::post('/logout',  [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::post('/me',      [AuthController::class, 'me']);
 });
 
-Route::group([
-    'middleware' => 'auth:api',
-    //'prefix' => 'auth',
-], function ($router) {
-    Route::resource("roles", RolePermissionController::class);
-    Route::post('/login/{id}', [UserAccessController::class, 'update']);
+Route::middleware('auth:api')->group(function () {
+    // Ruta para obtener roles (accesible para cualquier usuario autenticado)
+    Route::get('/roles/list', [UserAccessController::class, 'listRoles']);
+});
+
+// ---------- SOLO SUPER-ADMIN ----------
+Route::middleware(['auth:api', 'role:Super-Admin'])->group(function () {
+
+    Route::resource('roles', RolePermissionController::class);
+
+    Route::resource('users', UserAccessController::class)->except(['config']);
     Route::get('/users/config', [UserAccessController::class, 'config']);
-    Route::resource("users", UserAccessController::class);
-    //Route::post('/users/{user}', [UserAccessController::class, 'update']);
+    Route::post('/login/{id}', [UserAccessController::class, 'update']);
 
-    //Rutas para sucursales
-    Route::resource("sucursales", SucursaleController::class);
+    // Configuración
+    Route::resource('sucursales', SucursaleController::class);
+    Route::resource('warehouses', WarehouseController::class);
+    Route::resource('sucursal_deliveries', SucursalDeliverieController::class);
+    Route::resource('method_payments', MethodPaymentController::class);
+    Route::resource('client_segments', ClientSegmentController::class);
 
-    //Rutas para almacenes
-    Route::resource("warehouses", WarehouseController::class);
-
-    //Rutas para sucursales de entrega
-    Route::resource("sucursal_deliveries", SucursalDeliverieController::class);
-
-    //Rutas para métodos de pago
-    Route::resource("method_payments", MethodPaymentController::class);
-
-    //Rutas para segmentos de clientes
-    Route::resource("client_segments", ClientSegmentController::class);
-
-    //Rutas para categorias de productos
+    // Categorías
     Route::post('/product_categories/{id}', [ProductCategorieController::class, 'update']);
-    Route::resource("product_categories", ProductCategorieController::class);
+    Route::resource('product_categories', ProductCategorieController::class);
 
-    //Rutas para proveedores
+    // Proveedores
     Route::post('/providers/{id}', [ProviderController::class, 'update']);
-    Route::resource("providers", ProviderController::class);
+    Route::resource('providers', ProviderController::class);
 
-    //Rutas para unidades de transformación
+    // Unidades
     Route::post('/units/add-transform', [UnitController::class,'add_transform']);
     Route::delete('/units/delete-transform/{id}', [UnitController::class, 'delete_transform']);
-    Route::resource("units", UnitController::class);
+    Route::resource('units', UnitController::class);
 
-    //Rutas para productos
+    // Productos
     Route::post('/products/index', [ProductController::class, 'index']);
     Route::post('/products/{id}', [ProductController::class, 'update']);
     Route::get('/products/config', [ProductController::class, 'config']);
+    Route::resource('products', ProductController::class);
 
-    Route::resource("products", ProductController::class);
-
-    Route::resource("product_wallets", ProductWalletController::class);
-    Route::resource("product_warehouses", ProductWarehouseController::class);
+    Route::resource('product_wallets', ProductWalletController::class);
+    Route::resource('product_warehouses', ProductWarehouseController::class);
 });

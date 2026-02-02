@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Models\Role;
+//use Laravel\Sanctum\HasApiTokens;
+//use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -15,7 +15,8 @@ class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     /* use HasApiTokens, HasFactory, Notifiable; */
-    use HasApiTokens,HasFactory, Notifiable;
+    /* use HasApiTokens,HasFactory, Notifiable; */
+    use HasFactory, Notifiable;
     use HasRoles;
     use SoftDeletes;
     /**
@@ -34,10 +35,12 @@ class User extends Authenticatable implements JWTSubject
         'address',
         'avatar',
         'gender',
-        'rol_id',
+        //'rol_id',
         'sucursal_id',
         'deleted_at',
     ];
+
+    protected $guard_name = 'api';
 
     /**
      * The attributes that should be hidden for serialization.
@@ -63,9 +66,10 @@ class User extends Authenticatable implements JWTSubject
     }
 
     //Relación con la tabla roles
-    public function rol(){
+    //se comenta porque se usa el trait HasRoles de Spatie
+    /* public function rol(){
         return $this->belongsTo(Role::class);
-    }
+    } */
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

@@ -90,10 +90,28 @@
           <!-- Campo para los permisos -->
           <td>
             <!-- {{ ROL.permission_pluck }} -->
-                                    <span style="width: 600px !important;
-                                                display:block" >
+            <!-- <span style="width: 600px !important; display:block" >
               {{ ROL.permission_pluck}}
-            </span>
+            </span> -->
+
+            @if (ROL.permission_pluck && ROL.permission_pluck.length > 0)
+            {
+              <div>
+                @for (role of ROL.permission_pluck; track role)
+                {
+                    <span class="badge badge-light-primary me-1">
+                        {{ role }}
+                    </span>
+                }
+              </div>
+            }
+            @else
+            {
+              <div>
+                <span class="badge badge-light-danger">Sin permisos</span>
+              </div>
+            }
+
           </td>
           <!-- Cammpo de fecha -->
           <td >

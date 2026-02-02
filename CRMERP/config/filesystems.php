@@ -34,6 +34,8 @@ return [
             'driver' => 'local',
             //'root' => storage_path('app/private'),
             'root' => storage_path('app/public'),//Ruta donde se almacenarán los archivos
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
             'serve' => true,
             'throw' => false,
         ],
