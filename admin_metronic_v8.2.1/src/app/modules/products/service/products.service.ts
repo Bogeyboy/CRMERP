@@ -11,7 +11,7 @@ export class ProductsService {
 
   isLoading$: Observable<boolean>;
   isLoadingSubject: BehaviorSubject<boolean>;
-  
+
   constructor(
     private http: HttpClient,
     public authservice: AuthService,
@@ -20,11 +20,18 @@ export class ProductsService {
     this.isLoading$ = this.isLoadingSubject.asObservable();
   }
 
-  registerProduct(data:any) {
+  /* registerProduct(data:any) {
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     const URL = URL_SERVICIOS+"/products";
     return this.http.post(URL,data,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  } */
+  registerProduct(formData: FormData) {
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/products";
+    return this.http.post(URL, formData,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
@@ -57,10 +64,10 @@ export class ProductsService {
     );
   }
 
-  updateProduct(ID_PRODUCT:string,data:any) {
+  updateProduct(PRODUCT_ID:string,data:any) {
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    const URL = URL_SERVICIOS+"/products/"+ID_PRODUCT;
+    const URL = URL_SERVICIOS+"/products/"+PRODUCT_ID;
     return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );

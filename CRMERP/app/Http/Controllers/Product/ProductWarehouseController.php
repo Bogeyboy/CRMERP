@@ -21,14 +21,20 @@ class ProductWarehouseController extends Controller
      */
     public function store(Request $request)
     {
-        $product_warehouse = ProductWarehouse::create([
+        /* $product_warehouse = ProductWarehouse::create([
             'product_id' -> $request->product_id,
             'unit_id' -> $request->unit_id,
             'warehouse_id' -> $request->warehouse_id,
             'stock' -> $request->quantity,
+        ]); */
+        $product_warehouse = ProductWarehouse::create([
+            'product_id' => $request->product_id,      // CORREGIDO: => en lugar de ->
+            'unit_id' => $request->unit_id,            // CORREGIDO
+            'warehouse_id' => $request->warehouse_id,  // CORREGIDO
+            'stock' => $request->quantity,             // CORREGIDO
         ]);
 
-        return response()->json([
+        /* return response()->json([
             'message' => 200,
             "product_warehouse" => [
                     'id,' => $product_warehouse->id,
@@ -36,6 +42,15 @@ class ProductWarehouseController extends Controller
                     'warehouse' => $product_warehouse->warehouse,
                     'quantity' => $product_warehouse->stock,
                 ]
+        ]); */
+        return response()->json([
+            'message' => 200,
+            "product_warehouse" => [
+                'id' => $product_warehouse->id,        // También corregí 'id,' por 'id'
+                'unit' => $product_warehouse->unit,
+                'warehouse' => $product_warehouse->warehouse,
+                'quantity' => $product_warehouse->stock,
+            ]
         ]);
     }
 
@@ -54,14 +69,20 @@ class ProductWarehouseController extends Controller
     {
         $product_warehouse = ProductWarehouse::findOrFail($id);
 
-        $product_warehouse -> update([
+        /* $product_warehouse -> update([
             'product_id' -> $request->product_id,
             'unit_id' -> $request->unit_id,
             'warehouse_id' -> $request->warehouse_id,
             'stock' -> $request->quantity,
+        ]); */
+        $product_warehouse->update([
+            'product_id' => $request->product_id,      // CORREGIDO
+            'unit_id' => $request->unit_id,            // CORREGIDO
+            'warehouse_id' => $request->warehouse_id,  // CORREGIDO
+            'stock' => $request->quantity,             // CORREGIDO
         ]);
 
-        return response()->json([
+        /* return response()->json([
             'message' => 200,
             "product_warehouse" => [
                     'id,' => $product_warehouse->id,
@@ -69,6 +90,15 @@ class ProductWarehouseController extends Controller
                     'warehouse' => $product_warehouse->warehouse,
                     'quantity' => $product_warehouse->stock,
                 ]
+        ]); */
+        return response()->json([
+            'message' => 200,
+            "product_warehouse" => [
+                'id' => $product_warehouse->id,        // CORREGIDO
+                'unit' => $product_warehouse->unit,
+                'warehouse' => $product_warehouse->warehouse,
+                'quantity' => $product_warehouse->stock,
+            ]
         ]);
     }
 

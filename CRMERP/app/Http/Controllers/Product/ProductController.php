@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Product;
 use Illuminate\Http\Request;
 use App\Models\Product\Product;
 use App\Models\Configuration\Unit;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Models\Product\ProductWallet;
 use App\Models\Configuration\Provider;
@@ -21,13 +23,6 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        /* logger()->info('Request recibido: ', $request->all());
-        $provider_id = $request->input('provider_id');
-
-        logger()->info('provider_id recibido:', [
-            'valor' => $provider_id,
-            'tipo'  => gettype($provider_id)
-        ]); */
         $search = $request->search;
         $product_categorie_id = $request->product_categorie_id;
         $disponibilidad = $request->disponibilidad;
@@ -39,7 +34,7 @@ class ProductController extends Controller
         $provider = $request->input('provider_id');
         $state = $request->state;
 
-        $products = Product::filterAdvance($search,
+        /* $products = Product::filterAdvance($search,
             product_categorie_id: $product_categorie_id,
             disponibilidad: $disponibilidad,
             tax_selected: $tax_selected,
@@ -50,17 +45,27 @@ class ProductController extends Controller
             state: $state,
             unit_warehouse: $unit_warehouse)
             ->orderBy('id', 'desc')
+            ->paginate(25); */
+
+
+        $products = Product::with(['warehouses', 'wallets'])
+            ->filterAdvance($search,
+                product_categorie_id: $product_categorie_id,
+                disponibilidad: $disponibilidad,
+                tax_selected: $tax_selected,
+                provider_id: $provider,
+                sucursale_price_multiple: $sucursale_price_multiple,
+                almacen_warehouse: $almacen_warehouse,
+                client_segment_price_multiple: $client_segment_price_multiple,
+                state: $state,
+                unit_warehouse: $unit_warehouse)
+            ->orderBy('id', 'desc')
             ->paginate(25);
 
         return response()->json([
             'total' => $products->total(),
             'products' => ProductCollection::make($products),
         ]);
-
-        /* return response()->json([
-            'provider_id' => $provider_id,
-            'tipo'        => gettype($provider_id),
-        ]); */
     }
 
     public function config()
@@ -84,39 +89,88 @@ class ProductController extends Controller
     /**
      * Almacenamos los registros de la tabla
      */
+
     public function store(Request $request)
     {
-        $if_exists_product = Product::where('title', $request->title)->first();
-        if ($if_exists_product) {
+        DB::beginTransaction();
+
+        try {
+            $if_exists_product = Product::where('title', $request->title)->first();
+            if ($if_exists_product) {
+                return response()->json([
+                    'message' => 403,
+                    'message_text' => 'El nombre del producto ya existe.',
+                ]);
+            }
+
+            // Guardar imagen
+            if ($request->hasFile('product_imagen')) {
+                $path = $request->file('product_imagen')->store('products', 'public');
+                $request->merge(['imagen' => $path]);
+            }
+
+            // Crear el producto
+            $product = Product::create($request->all());
+
+            // ====== GUARDAR WAREHOUSES ======
+            if ($request->has('warehouses')) {
+                $warehouses = json_decode($request->warehouses, true);
+
+                if (is_array($warehouses) && count($warehouses) > 0) {
+                    foreach ($warehouses as $warehouse) {
+                        ProductWarehouse::create([
+                            'product_id' => $product->id,
+                            'unit_id' => $warehouse['unit_id'],
+                            'warehouse_id' => $warehouse['warehouse_id'],
+                            'stock' => $warehouse['quantity']
+                        ]);
+                    }
+                }
+            }
+
+            // ====== GUARDAR WALLETS ======
+            if ($request->has('wallets')) {
+                $wallets = json_decode($request->wallets, true);
+
+                if (is_array($wallets) && count($wallets) > 0) {
+                    foreach ($wallets as $wallet) {
+                        ProductWallet::create([
+                            'product_id' => $product->id,
+                            'unit_id' => $wallet['unit_id'],
+                            'sucursal_id' => $wallet['sucursale_id'],
+                            'client_segment_id' => $wallet['client_segment_id'],
+                            'price' => $wallet['price']
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+
             return response()->json([
-                'message' => 403,
-                'message_text' => 'El nombre del producto ya existe.',
+                'message' => 200,
+                'message_text' => 'El producto se ha creado correctamente.',
+                'product_id' => $product->id
             ]);
-        }
 
-        if ($request->hasFile('product_imagen')) {
-            $path = $request->file('product_imagen')
-                ->store('products', 'public'); // ✅ DISCO PUBLIC
+        } catch (\Exception $e) {
+            DB::rollback();
 
-            $request->merge(['imagen' => $path]);
+            return response()->json([
+                'message' => 500,
+                'message_text' => 'Error al crear el producto: ' . $e->getMessage()
+            ], 500);
         }
-        $product = Product::create($request->all());
-        // (resto de tu código igual)
-        return response()->json([
-            'message' => 200,
-            'message_text' => 'El producto se ha creado correctamente.'
-        ]);
     }
-
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        $product = Product::findOrFail($id);
+        /* $product = Product::findOrFail($id);
         return response()->json([
             "product" => ProductResource::make($product),
-        ]);
+        ]); */
         /* return response()->json([
             'product' => [
                 'id' => $product->id,
@@ -135,12 +189,28 @@ class ProductController extends Controller
                 'tiempo_de_abastecimiento' => $product->tiempo_de_abastecimiento,
             ]
         ]); */
+
+        $product = Product::with([
+            'warehouses.unit',
+            'warehouses.warehouse',
+            'wallets.unit',
+            'wallets.sucursale',
+            'wallets.client_Segment'
+        ])->findOrFail($id);
+
+        return response()->json([
+            "product" => ProductResource::make($product),
+            // O si no usas Resource, devuelve directamente:
+            /* 'product' => $product,
+            'warehouses' => $product->warehouses,
+            'wallets' => $product->wallets, */
+        ]);
     }
 
     /**
      * Actuialización de los registros de la tabla
      */
-    public function update(Request $request, string $id)
+    /* public function update(Request $request, string $id)
     {
         $if_exists_product = Product::where('title', $request->title)
             ->where('id', '<>', $id)
@@ -168,15 +238,115 @@ class ProductController extends Controller
 
         return response()->json([
             'message' => 200,
-            /* 'product' => [
-                'id' => $product->id,
-                'title' => $product->title,
-                'state' => $product->state,
-                'imagen' => $product->imagen ? env('APP_URL') . 'storage/' . $product->imagen : null,
-                'created_at' => $product->created_at->format('d-m-Y H:i:s'),
-            ], */
             'message_text' => 'La categoría se ha actualizado correctamente.',
         ]);
+    } */
+public function update(Request $request, string $id)
+{
+
+    DB::beginTransaction();
+        try {
+            $if_exists_product = Product::where('title', $request->title)
+                ->where('id', '<>', $id)
+                ->first();
+            if ($if_exists_product) {
+                return response()->json([
+                    'message' => 403,
+                    'message_text' => 'Ya existe un producto con ese nombre.',
+                ]);
+            };
+
+            $product = Product::findOrFail($id);
+
+            if ($request->hasFile('product_imagen')) {
+                if ($product->imagen) {
+                    Storage::disk('public')->delete($product->imagen);
+                }
+                $path = $request->file('product_imagen')->store('products', 'public');
+                $request->merge(['imagen' => $path]);
+            }
+
+            $product->update($request->except(['warehouses', 'wallets']));
+
+            // ELIMINAR Y RECREAR WAREHOUSES (o actualizar si prefieres)
+            if ($request->has('warehouses')) {
+                // Eliminar existentes
+                ProductWarehouse::where('product_id', $product->id)->delete();
+
+                // Crear nuevos
+                $warehouses = json_decode($request->warehouses, true);
+                if (is_array($warehouses) && count($warehouses) > 0) {
+                    foreach ($warehouses as $warehouse) {
+                        ProductWarehouse::create([
+                            'product_id' => $product->id,
+                            'unit_id' => $warehouse['unit_id'],
+                            'warehouse_id' => $warehouse['warehouse_id'],
+                            'stock' => $warehouse['quantity']
+                        ]);
+                    }
+                }
+            }
+
+            // ELIMINAR Y RECREAR WALLETS
+            /* if ($request->has('wallets')) {
+                // Eliminar existentes
+                ProductWallet::where('product_id', $product->id)->delete();
+
+                // Crear nuevos
+                $wallets = json_decode($request->wallets, true);
+                if (is_array($wallets) && count($wallets) > 0) {
+                    foreach ($wallets as $wallet) {
+                        ProductWallet::create([
+                            'product_id' => $product->id,
+                            'unit_id' => $wallet['unit_id'],
+                            'sucursal_id' => $wallet['sucursale_id'],
+                            'client_segment_id' => $wallet['client_segment_id'],
+                            'price' => $wallet['price']
+                        ]);
+                    }
+                }
+            } */
+            if ($request->has('wallets')) {
+                $walletsData = json_decode($request->wallets, true);
+
+                foreach ($walletsData as $wallet) {
+                    // Asegúrate de que la clave 'price' exista
+                    if (!isset($wallet['price'])) {
+                        // Si no existe 'price', intenta con 'price_general' o 'quantity'
+                        $wallet['price'] = $wallet['price_general'] ?? $wallet['quantity'] ?? 0;
+                    }
+
+                    // Tu lógica para actualizar/crear el wallet
+                    ProductWallet::updateOrCreate(
+                        [
+                            'product_id' => $product->id,
+                            'unit_id' => $wallet['unit_id'],
+                            //'sucursale_id' => $wallet['sucursale_id'] ?? null,
+                            'sucursal_id' => $wallet['sucursal_id'] ?? null,
+                            'client_segment_id' => $wallet['client_segment_id'] ?? null,
+                        ],
+                        [
+                            'price' => $wallet['price'],
+                        ]
+                    );
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 200,
+                'message_text' => 'El producto se ha actualizado correctamente.',
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return response()->json([
+                'message' => 500,
+                'message_text' => 'Error al actualizar el producto: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**

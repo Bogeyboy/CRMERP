@@ -11,11 +11,14 @@ import { UsersService } from '../service/users.service';
 export class EditUserComponent implements OnInit {
 
   @Output() UserE = new EventEmitter<any>();
-  @Input() roles:any = [];
+  //@Input() roles:any = [];
+
+  roles: any[] = [];
+
   @Input() USER_SELECTED:any;
 
   isLoading:any;
-  
+
   name = '';
   surname = '';
   email = '';
@@ -31,12 +34,17 @@ export class EditUserComponent implements OnInit {
 
   password = '';
   password_repit = '';
+
+  loadingRoles: boolean;
+  errorLoadingRoles: boolean;
+  errorMessage:string;
+
   constructor(
     public modal: NgbActiveModal,
     public usersService: UsersService,
     public toast: ToastrService,
   ) {
-    
+
   }
 
   ngOnInit(): void {
@@ -52,7 +60,73 @@ export class EditUserComponent implements OnInit {
     this.document = this.USER_SELECTED.document
     this.address = this.USER_SELECTED.address
     this.imagen_previzualiza = this.USER_SELECTED.avatar
+
+    this.loadRoles();
   }
+
+  loadRoles(): void {
+    this.loadingRoles = true;
+    this.errorLoadingRoles = false;
+    this.errorMessage = '';
+
+    console.log('🔄 Cargando roles...');
+
+    this.usersService.getRoles().subscribe({
+      next: (roles: any) => {
+        console.log('✅ Roles recibidos:', roles);
+
+        if (Array.isArray(roles) && roles.length > 0) {
+          this.roles = roles;
+          console.log(`📊 ${roles.length} roles cargados`);
+        } else {
+          this.errorLoadingRoles = true;
+          this.errorMessage = 'No se encontraron roles disponibles';
+          console.warn('⚠️ No hay roles disponibles');
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error cargando roles:', err);
+        this.errorLoadingRoles = true;
+
+        if (err.status === 403) {
+          this.errorMessage = 'No tienes permisos para ver los roles';
+          this.toast.error('Permiso denegado', this.errorMessage);
+        } else if (err.status === 404) {
+          // Intentar con /users/config como fallback
+          this.fallbackToConfigAll();
+        } else {
+          this.errorMessage = 'Error al cargar los roles';
+          this.toast.error('Error', this.errorMessage);
+        }
+      },
+      complete: () => {
+        this.loadingRoles = false;
+        console.log('🏁 Carga de roles completada');
+      }
+    });
+  }
+
+fallbackToConfigAll(): void {
+    console.log('🔄 Intentando fallback con configAll...');
+    this.usersService.configAll().subscribe({
+      next: (resp: any) => {
+        console.log('📦 Respuesta de configAll:', resp);
+        if (resp && resp.roles) {
+          this.roles = resp.roles;
+          console.log(`📊 ${resp.roles.length} roles cargados desde configAll`);
+        } else {
+          this.errorMessage = 'No se encontraron roles disponibles';
+          this.toast.warning('Advertencia', this.errorMessage);
+        }
+      },
+      error: (err) => {
+        console.error('❌ Error en fallback:', err);
+        this.errorMessage = 'No se pudieron cargar los roles';
+        this.toast.error('Error', this.errorMessage);
+      }
+    });
+  }
+
   //Se procesa la imagen que se va a enviar
   processFile($event:any){
     if($event.target.files[0].type.indexOf("image") < 0){
@@ -106,7 +180,7 @@ export class EditUserComponent implements OnInit {
     formData.append("type_document",this.type_document);
     formData.append("document",this.document);
     formData.append('_method','PUT');//Se envía el método PUT para poder actuar con las fotos
-    
+
     if(this.address){
       formData.append("address",this.address);
     }
@@ -117,7 +191,7 @@ export class EditUserComponent implements OnInit {
     if(this.file_name){
       formData.append("imagen",this.file_name);
     }
-    
+
     this.usersService.updateUser(this.USER_SELECTED.id,formData).subscribe((resp:any) => {
       //console.log(resp);
       if(resp.message == 403){

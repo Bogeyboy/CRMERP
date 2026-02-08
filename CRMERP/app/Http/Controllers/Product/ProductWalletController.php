@@ -21,15 +21,22 @@ class ProductWalletController extends Controller
      */
     public function store(Request $request)
     {
-        $product_wallet = ProductWallet::create([
+        /* $product_wallet = ProductWallet::create([
             'product_id' => $request->product_id,
             'unit_id' => $request->unit_id,
             'client_segment_id' => $request->client_segment_id,
             'sucursal_id' => $request->sucursal_id,
             'price' => $request->price_general,
+        ]); */
+        $product_wallet = ProductWallet::create([
+            'product_id' => $request->product_id,
+            'unit_id' => $request->unit_id,
+            'client_segment_id' => $request->client_segment_id,
+            'sucursal_id' => $request->sucursal_id,  // ¡CUIDADO! En el frontend envías 'sucursale_id'
+            'price' => $request->price_general,
         ]);
 
-        return response()->json([
+        /* return response()->json([
             'message' => 200,
             "product_wallet" => [
                     'id,' => $product_wallet->id,
@@ -40,6 +47,18 @@ class ProductWalletController extends Controller
                     'sucursale_price_multiple' => $product_wallet->sucursale ? $product_wallet->sucursale->id : null,
                     'client_segment_price_multiple' => $product_wallet->client_segment ? $product_wallet->client_segment->id : null,
                 ]
+        ]); */
+        return response()->json([
+            'message' => 200,
+            "product_wallet" => [
+                'id' => $product_wallet->id,  // Corregí 'id,' por 'id'
+                'unit' => $product_wallet->unit,
+                'sucursale' => $product_wallet->sucursale,
+                'client_segment' => $product_wallet->client_segment,
+                'price_general' => $product_wallet->price,
+                'sucursale_price_multiple' => $product_wallet->sucursale ? $product_wallet->sucursale->id : null,
+                'client_segment_price_multiple' => $product_wallet->client_segment ? $product_wallet->client_segment->id : null,
+            ]
         ]);
     }
 

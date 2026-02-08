@@ -15,7 +15,6 @@ export class ListProductComponent implements OnInit {
   PRODUCTS:any = [];
   isLoading$:any;
 
-
   CATEGORIES:any = [];
   product_categorie_id = '';
   disponibilidad = '';
@@ -65,7 +64,7 @@ export class ListProductComponent implements OnInit {
     public modalService: NgbModal,
     public productService: ProductsService, // Replace with actual service type
   ) {
-    
+
   }
   loadPage($event:any){
     this.listProducts();
@@ -79,7 +78,7 @@ export class ListProductComponent implements OnInit {
   }
   configAll(){
     this.productService.configAll().subscribe((resp:any) => {
-      //console.log(resp.providers);
+      //console.log(resp.almacenes);
       this.CATEGORIES = resp.categories;
       this.SUCURSALES = resp.sucursales;
       this.WAREHOUSES = resp.almacenes;
@@ -115,7 +114,7 @@ export class ListProductComponent implements OnInit {
   deleteProduct(PRODUCT:any){
       const modalRef = this.modalService.open(DeleteProductComponent,{centered:true, size: 'md'});
       modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
-  
+
       modalRef.componentInstance.ProductD.subscribe((prod:any) => {
         const INDEX = this.PRODUCTS.findIndex((prod:any) => prod.id == PRODUCT.id);
         if(INDEX != -1){
@@ -176,7 +175,7 @@ export class ListProductComponent implements OnInit {
         TEXTO = 'Vender los productos sin stock';
         break;
       case 2:
-        TEXTO = 'No Vender los productos con stock'; 
+        TEXTO = 'No Vender los productos con stock';
         break;
       case 3:
         TEXTO = 'Proyectar con los contratos que se tenga';
@@ -192,7 +191,7 @@ export class ListProductComponent implements OnInit {
         TEXTO = 'Libre de impuestos';
         break;
       case 2:
-        TEXTO = 'Bienes gravables'; 
+        TEXTO = 'Bienes gravables';
         break;
       case 3:
         TEXTO = 'Producto descargable';
