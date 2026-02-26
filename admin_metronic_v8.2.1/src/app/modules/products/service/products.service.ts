@@ -20,14 +20,6 @@ export class ProductsService {
     this.isLoading$ = this.isLoadingSubject.asObservable();
   }
 
-  /* registerProduct(data:any) {
-    this.isLoadingSubject.next(true);
-    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    const URL = URL_SERVICIOS+"/products";
-    return this.http.post(URL,data,{headers: headers}).pipe(
-      finalize(() => this.isLoadingSubject.next(false))
-    );
-  } */
   registerProduct(formData: FormData) {
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     const URL = URL_SERVICIOS+"/products";
@@ -64,14 +56,33 @@ export class ProductsService {
     );
   }
 
-  updateProduct(PRODUCT_ID:string,data:any) {
+  /* updateProduct(PRODUCT_ID:string,data:any) {
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     const URL = URL_SERVICIOS+"/products/"+PRODUCT_ID;
-    return this.http.post(URL,data,{headers: headers}).pipe(
+    return this.http.put(URL,data,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  } */
+  updateProduct(PRODUCT_ID: string, data: any) {
+    this.isLoadingSubject.next(true);
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/products/"+PRODUCT_ID;
+    // Cambiar de put a post
+    return this.http.post(URL, data, {headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
+
+  /* updateProduct(PRODUCT_ID: string, data: any) {
+    this.isLoadingSubject.next(true);
+    // No establecer Content-Type, dejar que el navegador lo haga automáticamente
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/products/"+PRODUCT_ID;
+    return this.http.put(URL, data, {headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  } */
 
   // deleteUser(ID_USER:string) {
   //   this.isLoadingSubject.next(true);

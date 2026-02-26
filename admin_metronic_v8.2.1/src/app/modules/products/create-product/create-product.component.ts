@@ -125,6 +125,7 @@ export class CreateProductComponent implements OnInit {
     this.quantity_warehouse = 0
 
     console.log(this.WAREHOUSES_PRODUCT);
+    this.isLoadingProcess();
   }
 
   addEspecif() {
@@ -163,10 +164,6 @@ export class CreateProductComponent implements OnInit {
       this.toast.error("VALIDACIÓN","Necesitas seleccionar una unidad, aparte de colocar un precio");
       return;
     }
-    // unit_price_multiple
-    // sucursale_price_multiple
-    // client_segment_price_multiple
-    // quantity_price_multiple
     const UNIT_SELECTED = this.UNITS.find((unit:any) => unit.id == this.unit_price_multiple);
     const SUCURSALE_SELECTED = this.SUCURSALES.find((sucurs:any) => sucurs.id == this.sucursale_price_multiple);
     const CLIENT_SEGMENT_SELECTED = this.CLIENT_SEGMENTS.find((clisg:any) => clisg.id == this.client_segment_price_multiple);
@@ -185,8 +182,7 @@ export class CreateProductComponent implements OnInit {
       unit: UNIT_SELECTED,
       sucursale: SUCURSALE_SELECTED,
       client_segment: CLIENT_SEGMENT_SELECTED,
-      //price_general: this.quantity_price_multiple,
-      price: this.quantity_price_multiple,
+      price_general: this.quantity_price_multiple,
       quantity: this.quantity_price_multiple,
       sucursale_price_multiple: this.sucursale_price_multiple,
       client_segment_price_multiple: this.client_segment_price_multiple,
@@ -246,132 +242,6 @@ export class CreateProductComponent implements OnInit {
   selectedTab(val:number){
     this.tab_selected = val;
   }
-
-  /* store() {
-    //console.log(this.disponibilidad,this.provider_id,this.tax_selected,this.is_discount,this.is_gift,this.title,this.description,this.price_general,this.imagen_product,
-//      this.product_categorie_id,this.sku,this.weight,this.width,this.height,this.length, this.ESPECIFICACIONES);
-    if(!this.title ||
-      !this.description ||
-      !this.price_general ||
-      !this.imagen_product ||
-      !this.product_categorie_id ||
-      !this.sku ||
-      !this.tax_selected ||
-      !this.importe_iva ||
-      !this.weight  ||
-      !this.width  ||
-      !this.height  ||
-      !this.length ||
-      !this.provider_id
-    ){
-      this.toast.error("VALIDACIÓN","Necesitas llenar todos los campos obligatorios");
-      return;
-    }
-    if(this.WAREHOUSES_PRODUCT.length == 0){
-      this.toast.error("VALIDACIÓN","Necesitas ingresar al menos un registro de existencia de producto");
-      return;
-    }
-    if(this.WALLETS_PRODUCT.length == 0){
-      this.toast.error("VALIDACIÓN","Necesitas ingresar al menos un listado de precio al producto");
-      return;
-    }
-
-    //ELIMINAR LUEGO
-    console.log('WAREHOUSES_PRODUCT estructura completa:', this.WAREHOUSES_PRODUCT);
-    console.log('WALLETS_PRODUCT estructura completa:', this.WALLETS_PRODUCT);
-
-    //ELIMINAR LUEGO
-    if (this.WAREHOUSES_PRODUCT.length > 0) {
-      console.log('Primer warehouse:', this.WAREHOUSES_PRODUCT[0]);
-      console.log('Tiene propiedad warehouse?:', 'warehouse' in this.WAREHOUSES_PRODUCT[0]);
-      console.log('Tiene propiedad warehouse_id?:', 'warehouse_id' in this.WAREHOUSES_PRODUCT[0]);
-    }
-    //ELIMINAR LUEGO
-    if (this.WALLETS_PRODUCT.length > 0) {
-      console.log('Primer wallet:', this.WALLETS_PRODUCT[0]);
-      console.log('Tiene propiedad unit?:', 'unit' in this.WALLETS_PRODUCT[0]);
-      console.log('Tiene propiedad unit_id?:', 'unit_id' in this.WALLETS_PRODUCT[0]);
-    }
-
-    const warehousesData = this.WAREHOUSES_PRODUCT.map((warehouse: any) => ({
-      warehouse_id: warehouse.warehouse.id,
-      unit_id: warehouse.unit.id,
-      quantity: warehouse.quantity
-    }));
-
-    const walletsData = this.WALLETS_PRODUCT.map((wallet: any) => {
-      // Usa 'price' en lugar de 'price_general' o 'quantity'
-      return {
-        unit_id: wallet.unit.id,
-        sucursale_id: wallet.sucursale.id,
-        client_segment_id: wallet.client_segment.id,
-        price: wallet.price_general || wallet.price || 0  // Asegúrate de usar 'price'
-      };
-    });
-    //BORRAR LUEGO
-    console.log('Wallets para enviar:', walletsData);
-
-    const formData = new FormData();
-    formData.append("title",this.title);
-    formData.append("description",this.description);
-    formData.append("specifications",JSON.stringify(this.ESPECIFICACIONES));
-    formData.append("state",this.state);
-    formData.append("product_categorie_id",this.product_categorie_id);
-    formData.append("product_imagen",this.imagen_product);
-    formData.append("provider_id",this.provider_id+"");
-    formData.append("price_general",this.price_general+"");
-    formData.append("disponibilidad",this.disponibilidad+"");
-
-    //console.log('El proveedor es: ', this.provider_id);
-    formData.append("tiempo_de_abastecimiento",this.tiempo_de_abastecimiento+"");
-    formData.append("is_discount",this.is_discount+"");//NUEVO
-    formData.append("min_discount",this.min_discount+"");
-    formData.append("max_discount",this.max_discount+"");
-    formData.append("tax_selected",this.tax_selected+"");//NUEVO
-    formData.append("importe_iva",this.importe_iva+"");//NUEVO
-
-    formData.append("sku",this.sku+"");
-    formData.append("is_gift",this.is_gift+"");
-
-    formData.append("weight",this.weight+"");//NUEVO
-    formData.append("width",this.width+"");//NUEVO
-    formData.append("height",this.height+"");//NUEVO
-    formData.append("length",this.length+"");//NUEVO
-
-    formData.append("umbral",this.umbral+"");
-    formData.append("umbral_unit_id",this.umbral_unit_id);
-
-    formData.append("warehouses", JSON.stringify(warehousesData));
-    formData.append("wallets", JSON.stringify(walletsData));
-
-    console.log('Enviando datos...');
-    console.log('Warehouses:', warehousesData);
-    console.log('Wallets:', walletsData);
-    //formData.append("WAREHOUSES_PRODUCT",JSON.stringify(this.WAREHOUSES_PRODUCT));
-    //formData.append("WALLETS_PRODUCT",JSON.stringify(this.WALLETS_PRODUCT));
-
-    this.productService.registerProduct(formData).subscribe((resp:any) => {
-      //console.log(formData);
-
-      console.log('Respuesta completa:', resp);
-      console.log('WALLETS_PRODUCT:', this.WALLETS_PRODUCT);
-
-      if(resp.message == 200)
-      {
-        this.toast.success("EXITO","El producto se registro correctamente");
-        this.cleanForm();
-      }
-      else
-      {
-        //this.toast.warning("VALIDACIÓN",resp.message_text);
-        this.toast.warning("VALIDACIÓN", resp.message_text || resp.message || "Error al registrar el producto");
-      }
-      error: (error) => {
-      console.error('Error en la petición:', error);
-      this.toast.error("ERROR", "Ocurrió un error al registrar el producto");
-    }
-    });
-  } */
 
   store() {
     console.log(this.disponibilidad,this.provider_id,this.tax_selected,this.is_discount,this.is_gift,this.title,this.description,this.price_general,this.imagen_product,

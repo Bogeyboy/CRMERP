@@ -87,6 +87,7 @@ export class ListProductComponent implements OnInit {
       this.PROVIDERS = resp.providers;
     })
   }
+  
   listProducts(page = 1){
     const data = {
       product_categorie_id: this.product_categorie_id,
@@ -102,15 +103,53 @@ export class ListProductComponent implements OnInit {
       provider_id: this.provider_id,
     }
     //console.log(data);
-    this.productService.listProducts(page, data).subscribe((resp: any) => {
-      console.log(resp.products.data);
+    /* this.productService.listProducts(page, data).subscribe((resp: any) => {
+      console.log(resp);
       console.log('Proveedor: ' + this.provider_id + typeof (this.provider_id));
       console.log('ID de categoria: ' + this.product_categorie_id + typeof (this.product_categorie_id));
       this.PRODUCTS = resp.products.data;
       this.totalPages = resp.total;
       this.currentPage = page;
+    }) */
+
+    this.productService.listProducts(page, data).subscribe((resp: any) => {
+      console.log('Respuesta del servidor:', resp);
+      
+      // Extraer productos - maneja diferentes estructuras
+      if (resp.products) {
+        // Formato: { products: { data: [...] } }
+        this.PRODUCTS = resp.products.data || resp.products;
+        this.totalPages = resp.total || resp.products.total || 0;
+      } else if (resp.data) {
+        // Formato: { data: [...], total: X }
+        this.PRODUCTS = resp.data;
+        this.totalPages = resp.total || 0;
+      } else if (Array.isArray(resp)) {
+        // Formato: [...]
+        this.PRODUCTS = resp;
+        this.totalPages = resp.length;
+      } else {
+        // Intentar con otras propiedades
+        const possibleDataProps = ['items', 'results', 'products', 'data'];
+        for (const prop of possibleDataProps) {
+          if (resp[prop]) {
+            this.PRODUCTS = Array.isArray(resp[prop]) ? resp[prop] : (resp[prop].data || resp[prop]);
+            this.totalPages = resp.total || resp[prop]?.total || 0;
+            break;
+          }
+        }
+      }
+      
+      // Si aún no hay productos, asignar un array vacío
+      if (!this.PRODUCTS) {
+        this.PRODUCTS = [];
+        this.totalPages = 0;
+      }
+      
+      this.currentPage = page;
     })
   }
+
   deleteProduct(PRODUCT:any){
       const modalRef = this.modalService.open(DeleteProductComponent,{centered:true, size: 'md'});
       modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
@@ -122,6 +161,7 @@ export class ListProductComponent implements OnInit {
         }
       })
   }
+  
   resetFilters(event: Event){
     //const etiqueta = (event.target as HTMLElement).tagName;
     const etiqueta = event.target as HTMLInputElement | HTMLSelectElement;
@@ -154,6 +194,7 @@ export class ListProductComponent implements OnInit {
     }
     //console.log('Etiqueta del evento:', etiqueta.getAttribute('name'));
   }
+  
   resetListProducts (){
     this.product_categorie_id = '';
     this.disponibilidad = '';
@@ -167,6 +208,7 @@ export class ListProductComponent implements OnInit {
     this.provider_id = '';
     this.listProducts();
   }
+  
   getDisponibilidad(val: number)
   {
     let TEXTO = '';
@@ -183,6 +225,7 @@ export class ListProductComponent implements OnInit {
     }
     return TEXTO;
   }
+  
   getTaxSelected(val: number)
   {
     let TEXTO = '';

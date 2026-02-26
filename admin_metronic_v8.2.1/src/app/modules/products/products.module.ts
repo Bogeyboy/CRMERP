@@ -38,7 +38,8 @@ import { DeleteWarehouseProductComponent } from './warehouse/delete-warehouse-pr
         DeleteWalletPriceProductComponent,
         EditWarehouseProductComponent,
         DeleteWarehouseProductComponent
-    ], imports: [CommonModule,
+    ],
+    imports: [CommonModule,
         ProductsRoutingModule,
         RouterModule,
         FormsModule,

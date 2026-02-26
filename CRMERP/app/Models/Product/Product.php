@@ -7,6 +7,7 @@ use App\Models\Configuration\Unit;
 use Illuminate\Support\Facades\DB;
 use App\Models\Product\ProductWallet;
 use App\Models\Configuration\Provider;
+use App\Models\Configuration\Warehouse;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Product\ProductWarehouse;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -73,9 +74,23 @@ class Product extends Model
     {
         return $this->hasMany(ProductWallet::class);
     }
-    public function warehouses()
+    public function productWarehouses()
+    {
+        return $this->hasMany(ProductWarehouse::class, 'product_id');
+    }
+    /* public function warehouses()
     {
         return $this->hasMany(ProductWarehouse::class);
+    } */
+    public function warehouses()
+    {
+        // Asegúrate de incluir 'stock' en el pivot
+        return $this->belongsToMany(ProductWarehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
+            ->withPivot('id', 'stock', 'unit_id') // IMPORTANTE: incluir 'stock'
+            ->withTimestamps();
+        
+        // Si además tienes unit_id en la tabla pivot, inclúyelo también:
+        // ->withPivot('id', 'unit_id', 'stock')
     }
     public function scopeFilterAdvance (
         $query,
@@ -110,26 +125,6 @@ class Product extends Model
             if (!is_null($provider_id) && $provider_id !== '') {
                 $query->where('products.provider_id', (int)$provider_id);
             }
-        /* if (!is_null($provider_id) && $provider_id !== '') {
-            // Si viene como string "5,7,9" lo convertimos en array
-            if (is_string($provider_id) && str_contains($provider_id, ',')) {
-                $provider_id = explode(',', $provider_id);
-            }
-            // Si viene como único valor → lo casteamos a int
-            if (is_numeric($provider_id)) {
-                $query->where('products.provider_id', (int) $provider_id);
-            }
-            // Si viene como array → aplicamos whereIn
-            if (is_array($provider_id)) {
-                $ids = array_filter(array_map('intval', $provider_id), fn($v) => $v === 0 || $v > 0);
-                if (count($ids) === 1) {
-                    $query->where('products.provider_id', $ids[0]);
-                } elseif (count($ids) > 1) {
-                    $query->whereIn('products.provider_id', $ids);
-                }
-            }
-        } */
-
         //Variable para el filtrado por sucursal de precio
         if($sucursale_price_multiple){
             $query->whereHas('wallets',function($sub) use ($sucursale_price_multiple) {
@@ -143,14 +138,24 @@ class Product extends Model
             });
         }
         //Variable para el filtrado por almacén
-        if ($almacen_warehouse) {
+        /* if ($almacen_warehouse) {
             $query->whereHas('warehouses', function ($sub) use ($almacen_warehouse) {
+                $sub->where('warehouse_id', $almacen_warehouse);
+            });
+        } */
+        if ($almacen_warehouse) {
+            $query->whereHas('productWarehouses', function ($sub) use ($almacen_warehouse) {
                 $sub->where('warehouse_id', $almacen_warehouse);
             });
         }
         //Variable para el filtrado por unidades de almacén
-        if ($unit_warehouse) {
+        /* if ($unit_warehouse) {
             $query->whereHas('warehouses', function ($sub) use ($unit_warehouse) {
+                $sub->where('unit_id', $unit_warehouse);
+            });
+        } */
+        if ($unit_warehouse) {
+            $query->whereHas('productWarehouses', function ($sub) use ($unit_warehouse) {
                 $sub->where('unit_id', $unit_warehouse);
             });
         }

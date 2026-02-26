@@ -77,5 +77,6 @@ Route::middleware(['auth:api', 'role:Super-Admin'])->group(function () {
     Route::resource('products', ProductController::class);
 
     Route::resource('product_wallets', ProductWalletController::class);
+    //Route::put('/product_warehouses/{id}', [ProductWarehouseController::class, 'update']);
     Route::resource('product_warehouses', ProductWarehouseController::class);
 });

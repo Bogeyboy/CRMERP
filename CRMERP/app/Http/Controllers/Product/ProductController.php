@@ -48,7 +48,7 @@ class ProductController extends Controller
             ->paginate(25); */
 
 
-        $products = Product::with(['warehouses', 'wallets'])
+        /* $products = Product::with(['warehouses', 'wallets'])
             ->filterAdvance($search,
                 product_categorie_id: $product_categorie_id,
                 disponibilidad: $disponibilidad,
@@ -65,7 +65,19 @@ class ProductController extends Controller
         return response()->json([
             'total' => $products->total(),
             'products' => ProductCollection::make($products),
-        ]);
+        ]); */
+        $products = Product::with([
+            'product_categorie',
+            'umbral_unit',
+            'provider',
+            'wallets.unit', 
+            'wallets.sucursale', 
+            'wallets.client_segment',
+            'productWarehouses.unit',
+            'productWarehouses.warehouse.sucursale',
+        ])->paginate(25);
+        
+        return ProductResource::collection($products);
     }
 
     public function config()
@@ -165,46 +177,46 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    /* public function show(string $id)
     {
-        /* $product = Product::findOrFail($id);
-        return response()->json([
-            "product" => ProductResource::make($product),
-        ]); */
-        /* return response()->json([
-            'product' => [
-                'id' => $product->id,
-                'title' => $product->title,
-                'sku' => $product->sku,
-                'imagen' => $product->imagen ? env('APP_URL') . 'storage/' . $product->imagen : null,
-                'price_general' => $product->price_general,
-                'description' => $product->description,
-                'specifications' => $product->specifications,
-                'min_discount' => $product->min_discount,
-                'max_discount' => $product->max_discount,
-                'is_gift' => $product->is_gift,
-                'umbral' => $product->umbral,
-                'umbral_unit_id' => $product->umbral_unit_id,
-                'disponibilidad' => $product->disponibilidad,
-                'tiempo_de_abastecimiento' => $product->tiempo_de_abastecimiento,
-            ]
-        ]); */
-
         $product = Product::with([
+            //'specifications',
+            'product_categorie',
+            'provider',
             'warehouses.unit',
-            'warehouses.warehouse',
+            //'warehouses.warehouse',
             'wallets.unit',
             'wallets.sucursale',
-            'wallets.client_Segment'
+            'wallets.client_segment'
         ])->findOrFail($id);
 
+        $product->warehouses = $product->warehouses->map(function($warehouse) {
+            return [
+                'id' => $warehouse->pivot->id ?? $warehouse->id, // 👈 ¡EL ID ESTÁ EN EL PIVOT!
+                'unit' => $warehouse->unit,
+                'warehouse' => $warehouse->warehouse,
+                'quantity' => $warehouse->pivot->stock ?? $warehouse->quantity,
+            ];
+        });
         return response()->json([
             "product" => ProductResource::make($product),
-            // O si no usas Resource, devuelve directamente:
-            /* 'product' => $product,
-            'warehouses' => $product->warehouses,
-            'wallets' => $product->wallets, */
         ]);
+    } */
+
+    public function show($id)
+    {
+        $product = Product::with([
+            'product_categorie',
+            'umbral_unit',
+            'provider',
+            'wallets.unit', 
+            'wallets.sucursale', 
+            'wallets.client_segment',
+            'productWarehouses.unit',      // Carga los ProductWarehouse con unit
+            'productWarehouses.warehouse.sucursale', // Carga warehouse y sucursale
+        ])->findOrFail($id);
+        
+        return new ProductResource($product);
     }
 
     /**
@@ -241,113 +253,113 @@ class ProductController extends Controller
             'message_text' => 'La categoría se ha actualizado correctamente.',
         ]);
     } */
-public function update(Request $request, string $id)
-{
+    public function update(Request $request, string $id)
+    {
 
-    DB::beginTransaction();
-        try {
-            $if_exists_product = Product::where('title', $request->title)
-                ->where('id', '<>', $id)
-                ->first();
-            if ($if_exists_product) {
+        DB::beginTransaction();
+            try {
+                $if_exists_product = Product::where('title', $request->title)
+                    ->where('id', '<>', $id)
+                    ->first();
+                if ($if_exists_product) {
+                    return response()->json([
+                        'message' => 403,
+                        'message_text' => 'Ya existe un producto con ese nombre.',
+                    ]);
+                };
+
+                $product = Product::findOrFail($id);
+
+                if ($request->hasFile('product_imagen')) {
+                    if ($product->imagen) {
+                        Storage::disk('public')->delete($product->imagen);
+                    }
+                    $path = $request->file('product_imagen')->store('products', 'public');
+                    $request->merge(['imagen' => $path]);
+                }
+
+                $product->update($request->except(['warehouses', 'wallets']));
+
+                // ELIMINAR Y RECREAR WAREHOUSES (o actualizar si prefieres)
+                if ($request->has('warehouses')) {
+                    // Eliminar existentes
+                    ProductWarehouse::where('product_id', $product->id)->delete();
+
+                    // Crear nuevos
+                    $warehouses = json_decode($request->warehouses, true);
+                    if (is_array($warehouses) && count($warehouses) > 0) {
+                        foreach ($warehouses as $warehouse) {
+                            ProductWarehouse::create([
+                                'product_id' => $product->id,
+                                'unit_id' => $warehouse['unit_id'],
+                                'warehouse_id' => $warehouse['warehouse_id'],
+                                'stock' => $warehouse['quantity']
+                            ]);
+                        }
+                    }
+                }
+
+                // ELIMINAR Y RECREAR WALLETS
+                /* if ($request->has('wallets')) {
+                    // Eliminar existentes
+                    ProductWallet::where('product_id', $product->id)->delete();
+
+                    // Crear nuevos
+                    $wallets = json_decode($request->wallets, true);
+                    if (is_array($wallets) && count($wallets) > 0) {
+                        foreach ($wallets as $wallet) {
+                            ProductWallet::create([
+                                'product_id' => $product->id,
+                                'unit_id' => $wallet['unit_id'],
+                                'sucursal_id' => $wallet['sucursale_id'],
+                                'client_segment_id' => $wallet['client_segment_id'],
+                                'price' => $wallet['price']
+                            ]);
+                        }
+                    }
+                } */
+                if ($request->has('wallets')) {
+                    $walletsData = json_decode($request->wallets, true);
+
+                    foreach ($walletsData as $wallet) {
+                        // Asegúrate de que la clave 'price' exista
+                        if (!isset($wallet['price'])) {
+                            // Si no existe 'price', intenta con 'price_general' o 'quantity'
+                            $wallet['price'] = $wallet['price_general'] ?? $wallet['quantity'] ?? 0;
+                        }
+
+                        // Tu lógica para actualizar/crear el wallet
+                        ProductWallet::updateOrCreate(
+                            [
+                                'product_id' => $product->id,
+                                'unit_id' => $wallet['unit_id'],
+                                //'sucursale_id' => $wallet['sucursale_id'] ?? null,
+                                'sucursal_id' => $wallet['sucursal_id'] ?? null,
+                                'client_segment_id' => $wallet['client_segment_id'] ?? null,
+                            ],
+                            [
+                                'price' => $wallet['price'],
+                            ]
+                        );
+                    }
+                }
+
+                DB::commit();
+
                 return response()->json([
-                    'message' => 403,
-                    'message_text' => 'Ya existe un producto con ese nombre.',
+                    'message' => 200,
+                    'message_text' => 'El producto se ha actualizado correctamente.',
                 ]);
-            };
 
-            $product = Product::findOrFail($id);
+            } catch (\Exception $e) {
+                DB::rollback();
 
-            if ($request->hasFile('product_imagen')) {
-                if ($product->imagen) {
-                    Storage::disk('public')->delete($product->imagen);
-                }
-                $path = $request->file('product_imagen')->store('products', 'public');
-                $request->merge(['imagen' => $path]);
+                return response()->json([
+                    'message' => 500,
+                    'message_text' => 'Error al actualizar el producto: ' . $e->getMessage()
+                ], 500);
             }
-
-            $product->update($request->except(['warehouses', 'wallets']));
-
-            // ELIMINAR Y RECREAR WAREHOUSES (o actualizar si prefieres)
-            if ($request->has('warehouses')) {
-                // Eliminar existentes
-                ProductWarehouse::where('product_id', $product->id)->delete();
-
-                // Crear nuevos
-                $warehouses = json_decode($request->warehouses, true);
-                if (is_array($warehouses) && count($warehouses) > 0) {
-                    foreach ($warehouses as $warehouse) {
-                        ProductWarehouse::create([
-                            'product_id' => $product->id,
-                            'unit_id' => $warehouse['unit_id'],
-                            'warehouse_id' => $warehouse['warehouse_id'],
-                            'stock' => $warehouse['quantity']
-                        ]);
-                    }
-                }
-            }
-
-            // ELIMINAR Y RECREAR WALLETS
-            /* if ($request->has('wallets')) {
-                // Eliminar existentes
-                ProductWallet::where('product_id', $product->id)->delete();
-
-                // Crear nuevos
-                $wallets = json_decode($request->wallets, true);
-                if (is_array($wallets) && count($wallets) > 0) {
-                    foreach ($wallets as $wallet) {
-                        ProductWallet::create([
-                            'product_id' => $product->id,
-                            'unit_id' => $wallet['unit_id'],
-                            'sucursal_id' => $wallet['sucursale_id'],
-                            'client_segment_id' => $wallet['client_segment_id'],
-                            'price' => $wallet['price']
-                        ]);
-                    }
-                }
-            } */
-            if ($request->has('wallets')) {
-                $walletsData = json_decode($request->wallets, true);
-
-                foreach ($walletsData as $wallet) {
-                    // Asegúrate de que la clave 'price' exista
-                    if (!isset($wallet['price'])) {
-                        // Si no existe 'price', intenta con 'price_general' o 'quantity'
-                        $wallet['price'] = $wallet['price_general'] ?? $wallet['quantity'] ?? 0;
-                    }
-
-                    // Tu lógica para actualizar/crear el wallet
-                    ProductWallet::updateOrCreate(
-                        [
-                            'product_id' => $product->id,
-                            'unit_id' => $wallet['unit_id'],
-                            //'sucursale_id' => $wallet['sucursale_id'] ?? null,
-                            'sucursal_id' => $wallet['sucursal_id'] ?? null,
-                            'client_segment_id' => $wallet['client_segment_id'] ?? null,
-                        ],
-                        [
-                            'price' => $wallet['price'],
-                        ]
-                    );
-                }
-            }
-
-            DB::commit();
-
-            return response()->json([
-                'message' => 200,
-                'message_text' => 'El producto se ha actualizado correctamente.',
-            ]);
-
-        } catch (\Exception $e) {
-            DB::rollback();
-
-            return response()->json([
-                'message' => 500,
-                'message_text' => 'Error al actualizar el producto: ' . $e->getMessage()
-            ], 500);
         }
-    }
 
     /**
      * Eliminación de los registros de la tabla

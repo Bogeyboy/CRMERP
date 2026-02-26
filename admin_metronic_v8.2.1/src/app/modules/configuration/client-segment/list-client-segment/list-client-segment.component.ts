@@ -12,29 +12,29 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./list-client-segment.component.scss']
 })
 export class ListClientSegmentComponent implements OnInit {
-    
+
     search = '';
     CLIENT_SEGMENTS:any[];
     isLoading$:any;
-  
+
     totalPages = 0;
     currentPage = 1;
-  
+
     constructor(
       public modalService: NgbModal,
       public clientSegmentService: ClientSegmentService,)
     {
-  
+
     }
-    
-    ngOnInit(): void 
+
+    ngOnInit(): void
     {
       //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
       //Add 'implements OnInit' to the class.
       this.isLoading$ = this.clientSegmentService.isLoading$;
       this.listClientSegments();
     }
-  
+
     //PARA CREAR UNA SUCURSAL
     createClientSegment()
     {
@@ -46,7 +46,7 @@ export class ListClientSegmentComponent implements OnInit {
         this.CLIENT_SEGMENTS.unshift(client_segment);//Se agrega al principio del listado
       });
     }
-  
+
     //PARA LISTAR LAS CLIENT_SEGMENTS
     listClientSegments(page = 1)
     {
@@ -61,9 +61,8 @@ export class ListClientSegmentComponent implements OnInit {
     editClientSegment(CLIENT_SEGMENT:any)
     {
       const modalRef = this.modalService.open(EditClientSegmentComponent,{centered:true,size:'md'});
-  
       modalRef.componentInstance.CLIENT_SEGMENT_SELECTED = CLIENT_SEGMENT;
-  
+
       //Recibimos los datos del componente hijo
       modalRef.componentInstance.ClientSegmentE.subscribe((client_segment:any) => {
         const INDEX = this.CLIENT_SEGMENTS.findIndex((client_seg:any) => client_seg.id == CLIENT_SEGMENT.id);
@@ -91,7 +90,7 @@ export class ListClientSegmentComponent implements OnInit {
         }
       });
     }
-  
+
     //Función para las acciones tras el cambio de pagina en la paginación
     loadPage($event:any)
     {

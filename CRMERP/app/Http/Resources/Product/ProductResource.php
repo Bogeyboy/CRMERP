@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Product;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProductResource extends JsonResource
@@ -52,26 +53,63 @@ class ProductResource extends JsonResource
             'width' => $this->resource->width,
             'height' => $this->resource->height,
             'length' => $this->resource->length,
-            'wallets' => $this->resource->wallets->map(function ($wallet){
-                return [
-                    'id,' => $wallet->id,
-                    'unit' => $wallet->unit,
-                    'sucursale' => $wallet->sucursale,
-                    'client_segment' => $wallet->client_segment,
-                    'price_general' => $wallet->price,
-                    'sucursale_price_multiple' => $wallet->sucursale ? $wallet->sucursale->id : null,
-                    'client_segment_price_multiple' => $wallet->client_segment ? $wallet->client_segment->id : null,
-                ];
-            }),
-            'warehouses' => $this->resource->warehouses->map(function ($warehouse) {
-                return [
-                    'id,' => $warehouse->id,
-                    'unit' => $warehouse->unit,
-                    'warehouse' => $warehouse->warehouse,
-                    'quantity' => $warehouse->stock,
-                ];
-            }),
-        ];
+            
+            //PRECIOS MULTIPLES
+            
+            'wallets' => $this->resource->wallets && $this->resource->wallets->count() > 0 
+                ? $this->resource->wallets->map(function ($wallet) {
+                    return [
+                        'id' => $wallet->id,
+                        'unit' => $wallet->unit ? [
+                            'id' => $wallet->unit->id,
+                            'name' => $wallet->unit->name,
+                        ] : null,
+                        'sucursale' => $wallet->sucursale ? [
+                            'id' => $wallet->sucursale->id,
+                            'name' => $wallet->sucursale->name,
+                        ] : null,
+                        'client_segment' => $wallet->client_segment ? [
+                            'id' => $wallet->client_segment->id,
+                            'name' => $wallet->client_segment->name,
+                        ] : null,
+                        'price_general' => $wallet->price,
+                        'sucursale_price_multiple' => $wallet->sucursale ? $wallet->sucursale->id : null,
+                        'client_segment_price_multiple' => $wallet->client_segment ? $wallet->client_segment->id : null,
+                    ];
+                }) : [],
 
+            //ALMACENES
+
+            'warehouses' => $this->resource->productWarehouses && $this->resource->productWarehouses->count() > 0
+                ? $this->resource->productWarehouses->map(function ($productWarehouse) {
+                    // $productWarehouse es una instancia de ProductWarehouse
+                    return [
+                        'id' => $productWarehouse->id,
+                        'unit' => $productWarehouse->unit ? [
+                            'id' => $productWarehouse->unit->id,
+                            'name' => $productWarehouse->unit->name,
+                            'description' => $productWarehouse->unit->description,
+                            'state' => $productWarehouse->unit->state,
+                        ] : null,
+                        'warehouse' => $productWarehouse->warehouse ? [
+                            'id' => $productWarehouse->warehouse->id,
+                            'name' => $productWarehouse->warehouse->name,
+                            'state' => $productWarehouse->warehouse->state,
+                            'address' => $productWarehouse->warehouse->address,
+                            'sucursale_id' => $productWarehouse->warehouse->sucursale_id,
+                            'sucursale' => $productWarehouse->warehouse->sucursale ? [
+                                'id' => $productWarehouse->warehouse->sucursale->id,
+                                'name' => $productWarehouse->warehouse->sucursale->name,
+                            ] : null,
+                        ] : null,
+                        'quantity' => $productWarehouse->stock ?? 0,
+                        'unit_id' => $productWarehouse->unit_id,
+                        'warehouse_id' => $productWarehouse->warehouse_id,
+                        'product_id' => $productWarehouse->product_id,
+                        'created_at' => $productWarehouse->created_at,
+                        'updated_at' => $productWarehouse->updated_at,
+                    ];
+                }) : [],
+        ];
     }
 }

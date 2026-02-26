@@ -78,7 +78,7 @@ class ProductWalletController extends Controller
         $product_wallet = ProductWallet::findOrFail($id);
 
         $product_wallet -> update([
-            'product_id' => $request->product_id,
+            //'product_id' => $request->product_id,
             'unit_id' => $request->unit_id,
             'client_segment_id' => $request->client_segment_id,
             'sucursal_id' => $request->sucursal_id,
