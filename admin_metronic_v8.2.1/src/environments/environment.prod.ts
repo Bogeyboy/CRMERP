@@ -5,6 +5,9 @@
 export const environment = {
   production: true,
   appVersion: 'v8.1.8',
+  URL_BACKEND: 'http://api.dominio.com/',
+  URL_SERVICIOS: 'http://api.dominio.com/api',
+  URL_FRONTEND: 'http://admin.dominio.com',
   USERDATA_KEY: 'authf649fc9a5f55',
   isMockEnabled: false,
   apiUrl: 'http://api.dominio.com/api',
@@ -156,9 +159,6 @@ export const environment = {
       'thumbnail': './assets/media/demos/demo20.png'
     },
   },
-  URL_BACKEND: 'http://api.dominio.com/',
-  URL_SERVICIOS: 'http://api.dominio.com/api',
-  URL_FRONTEND: 'http://admin.dominio.com',
 };
 
 /*

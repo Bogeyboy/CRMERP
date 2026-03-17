@@ -12,6 +12,9 @@ import { AppComponent } from './app.component';
 import { AuthService } from './modules/auth/services/auth.service';
 import { environment } from 'src/environments/environment';
 
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+
 //import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgApexchartsModule } from "ng-apexcharts";
@@ -72,6 +75,11 @@ const mockImports = environment.isMockEnabled
             useFactory: appInitializer,
             multi: true,
             deps: [AuthService],
+        },
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: AuthInterceptor,
+            multi: true
         },
         provideHttpClient(withInterceptorsFromDi()),
     ]

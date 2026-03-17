@@ -24,8 +24,8 @@ class ProductResource extends JsonResource
                 'id' => $this->resource->product_categorie->id,
                 'name' => $this->resource->product_categorie->name,
             ],
-            /* 'imagen' => env('APP_URL')."storage/".$this->resource->imagen, */
-            'imagen' => $this->resource->imagen ? asset('storage/' ) .'/'. $this->resource->imagen : null,
+            'imagen' => env('APP_URL')."storage/".$this->resource->imagen,
+            //'imagen' => $this->resource->imagen ? asset('storage/' ) .'/'. $this->resource->imagen : null,
             'price_general' => $this->resource->price_general,
             'description' => $this->resource->description,
             'specifications' => $this->resource->specifications ? json_decode($this->resource->specifications, true) : [],

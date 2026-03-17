@@ -80,3 +80,5 @@ Route::middleware(['auth:api', 'role:Super-Admin'])->group(function () {
     //Route::put('/product_warehouses/{id}', [ProductWarehouseController::class, 'update']);
     Route::resource('product_warehouses', ProductWarehouseController::class);
 });
+
+Route::get("excel/export-products", [ProductController::class,"export_products"]);

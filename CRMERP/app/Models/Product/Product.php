@@ -2,17 +2,18 @@
 
 namespace App\Models\Product;
 
-use Carbon\Carbon;
-use App\Models\Configuration\Unit;
-use Illuminate\Support\Facades\DB;
-use App\Models\Product\ProductWallet;
-use App\Models\Configuration\Provider;
-use App\Models\Configuration\Warehouse;
-use Illuminate\Database\Eloquent\Model;
-use App\Models\Product\ProductWarehouse;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Configuration\ProductCategorie;
+use App\Models\Configuration\Provider;
+use App\Models\Configuration\Unit;
+use App\Models\Configuration\Warehouse;
+use App\Models\Product\ProductWallet;
+use App\Models\Product\ProductWarehouse;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class Product extends Model
 {
@@ -88,7 +89,7 @@ class Product extends Model
         return $this->belongsToMany(ProductWarehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
             ->withPivot('id', 'stock', 'unit_id') // IMPORTANTE: incluir 'stock'
             ->withTimestamps();
-        
+
         // Si además tienes unit_id en la tabla pivot, inclúyelo también:
         // ->withPivot('id', 'unit_id', 'stock')
     }
@@ -103,66 +104,77 @@ class Product extends Model
         $almacen_warehouse,
         $client_segment_price_multiple,
         $state,
-        $unit_warehouse) {
-        if(!empty($search))
+        $unit_warehouse)
         {
-            /* $query->where('title', 'LIKE', "%{$search}%"); */
-            $query->where(DB::raw("CONCAT(products.title,' ',products.sku)"), 'LIKE', "%{$search}%");
-        }
-        //Variable para el filtrado por categoria de producto
-        if (!empty($product_categorie_id)) {
-            $query->where('product_categorie_id',$product_categorie_id);
-        }
-        //Variable para el filtrado por disponibilidad
-        if (!is_null($disponibilidad)) {
-            $query->where('disponibilidad', $disponibilidad);
-        }
-        //Variable para el filtrado por impuesto seleccionado
-        if (!is_null($tax_selected)) {
-            $query->where('tax_selected', $tax_selected);
-        }
-        //Variable para el filtrado por proveedor
-            if (!is_null($provider_id) && $provider_id !== '') {
-                $query->where('products.provider_id', (int)$provider_id);
+            if(!empty($search))
+            {
+                /* $query->where('title', 'LIKE', "%{$search}%"); */
+                $query->where(DB::raw("CONCAT(products.title,' ',products.sku)"), 'LIKE', "%{$search}%");
             }
-        //Variable para el filtrado por sucursal de precio
-        if($sucursale_price_multiple){
-            $query->whereHas('wallets',function($sub) use ($sucursale_price_multiple) {
-                $sub->where('sucursal_id', $sucursale_price_multiple);
-            });
+            //Variable para el filtrado por categoria de producto
+            if (!empty($product_categorie_id)) {
+                $query->where('product_categorie_id',$product_categorie_id);
+            }
+            //Variable para el filtrado por disponibilidad
+            if (!is_null($disponibilidad)) {
+                $query->where('disponibilidad', $disponibilidad);
+            }
+            //Variable para el filtrado por impuesto seleccionado
+            if (!is_null($tax_selected)) {
+                $query->where('tax_selected', $tax_selected);
+            }
+            //Variable para el filtrado por proveedor
+                if (!is_null($provider_id) && $provider_id !== '') {
+                    $query->where('products.provider_id', (int)$provider_id);
+                }
+            //Variable para el filtrado por sucursal de precio
+            if($sucursale_price_multiple){
+                $query->whereHas('wallets',function($sub) use ($sucursale_price_multiple) {
+                    $sub->where('sucursal_id', $sucursale_price_multiple);
+                });
+            }
+            //Variable para el filtrado por segmento de cliente
+            if ($client_segment_price_multiple) {
+                $query->whereHas('wallets', function ($sub) use ($client_segment_price_multiple) {
+                    $sub->where('client_segment_id', $client_segment_price_multiple);
+                });
+            }
+            //Variable para el filtrado por almacén
+            if ($almacen_warehouse) {
+                $query->whereHas('productWarehouses', function ($sub) use ($almacen_warehouse) {
+                    $sub->where('warehouse_id', $almacen_warehouse);
+                });
+            }
+            //Variable para el filtrado por unidades de almacén
+            if ($unit_warehouse) {
+                $query->whereHas('productWarehouses', function ($sub) use ($unit_warehouse) {
+                    $sub->where('unit_id', $unit_warehouse);
+                });
+            }
+            //Variable para el filtrado por estado
+            if ($state) {
+                $query->where('state', $state);
+            }
+            return $query;
         }
-        //Variable para el filtrado por segmento de cliente
-        if ($client_segment_price_multiple) {
-            $query->whereHas('wallets', function ($sub) use ($client_segment_price_multiple) {
-                $sub->where('client_segment_id', $client_segment_price_multiple);
-            });
+    public function getImagenUrlAttribute()
+    {
+        if ($this->imagen) {
+            if (str_starts_with($this->imagen, 'http')) {
+                return $this->imagen;
+            }
+            return asset('storage/' . $this->imagen);
         }
-        //Variable para el filtrado por almacén
-        /* if ($almacen_warehouse) {
-            $query->whereHas('warehouses', function ($sub) use ($almacen_warehouse) {
-                $sub->where('warehouse_id', $almacen_warehouse);
-            });
-        } */
-        if ($almacen_warehouse) {
-            $query->whereHas('productWarehouses', function ($sub) use ($almacen_warehouse) {
-                $sub->where('warehouse_id', $almacen_warehouse);
-            });
+
+        return asset('assets/media/products/default-product.png');
+    }
+
+    // También puedes modificar el accessor existente
+    public function getImagenAttribute($value)
+    {
+        if ($value) {
+            return Storage::url($value);
         }
-        //Variable para el filtrado por unidades de almacén
-        /* if ($unit_warehouse) {
-            $query->whereHas('warehouses', function ($sub) use ($unit_warehouse) {
-                $sub->where('unit_id', $unit_warehouse);
-            });
-        } */
-        if ($unit_warehouse) {
-            $query->whereHas('productWarehouses', function ($sub) use ($unit_warehouse) {
-                $sub->where('unit_id', $unit_warehouse);
-            });
-        }
-        //Variable para el filtrado por estado
-        if ($state) {
-            $query->where('state', $state);
-        }
-        return $query;
+        return null;
     }
 }

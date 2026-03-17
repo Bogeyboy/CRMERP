@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ProductsService } from '../service/products.service';
 import { DeleteProductComponent } from '../delete-product/delete-product.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { URL_SERVICIOS } from 'src/app/config/config';
+import { data } from 'jquery';
 
 @Component({
   selector: 'app-list-product',
@@ -85,69 +87,158 @@ export class ListProductComponent implements OnInit {
       this.CLIENT_SEGMENTS = resp.segments_clients;
       this.UNITS = resp.units;
       this.PROVIDERS = resp.providers;
+      //this.diagnosticarFiltros();
     })
   }
-  
-  listProducts(page = 1){
-    const data = {
-      product_categorie_id: this.product_categorie_id,
-      disponibilidad: this.disponibilidad,
-      tax_selected: this.tax_selected,
-      search: this.search,
-      //FILTRADO ESPECIAL
-      sucursale_price_multiple: this.sucursale_price_multiple,
-      almacen_warehouse: this.almacen_warehouse,
-      client_segment_price_multiple: this.client_segment_price_multiple,
-      state: this.state,
-      unit_warehouse: this.unit_warehouse,
-      provider_id: this.provider_id,
-    }
-    //console.log(data);
-    /* this.productService.listProducts(page, data).subscribe((resp: any) => {
-      console.log(resp);
-      console.log('Proveedor: ' + this.provider_id + typeof (this.provider_id));
-      console.log('ID de categoria: ' + this.product_categorie_id + typeof (this.product_categorie_id));
-      this.PRODUCTS = resp.products.data;
-      this.totalPages = resp.total;
-      this.currentPage = page;
-    }) */
 
-    this.productService.listProducts(page, data).subscribe((resp: any) => {
-      console.log('Respuesta del servidor:', resp);
-      
-      // Extraer productos - maneja diferentes estructuras
-      if (resp.products) {
-        // Formato: { products: { data: [...] } }
-        this.PRODUCTS = resp.products.data || resp.products;
-        this.totalPages = resp.total || resp.products.total || 0;
-      } else if (resp.data) {
-        // Formato: { data: [...], total: X }
-        this.PRODUCTS = resp.data;
-        this.totalPages = resp.total || 0;
-      } else if (Array.isArray(resp)) {
-        // Formato: [...]
-        this.PRODUCTS = resp;
-        this.totalPages = resp.length;
-      } else {
-        // Intentar con otras propiedades
-        const possibleDataProps = ['items', 'results', 'products', 'data'];
-        for (const prop of possibleDataProps) {
-          if (resp[prop]) {
-            this.PRODUCTS = Array.isArray(resp[prop]) ? resp[prop] : (resp[prop].data || resp[prop]);
-            this.totalPages = resp.total || resp[prop]?.total || 0;
-            break;
+  diagnosticarFiltros() {
+    console.log('=== DIAGNÓSTICO DE FILTROS ===');
+    console.log('1. Valores actuales:');
+    console.log('   - sucursale_price_multiple:', this.sucursale_price_multiple);
+    console.log('   - almacen_warehouse:', this.almacen_warehouse);
+    console.log('   - client_segment_price_multiple:', this.client_segment_price_multiple);
+    console.log('   - unit_warehouse:', this.unit_warehouse);
+
+    console.log('2. Datos de configuración:');
+    console.log('   - SUCURSALES cargadas:', this.SUCURSALES.length);
+    console.log('   - ALMACENES cargados:', this.WAREHOUSES.length);
+    console.log('   - SEGMENTOS cargados:', this.CLIENT_SEGMENTS.length);
+    console.log('   - UNIDADES cargadas:', this.UNITS.length);
+    console.log('   - PROVEEDORES cargados:', this.PROVIDERS.length);
+    console.log('   - CATEGORÍAS cargadas:', this.CATEGORIES.length);
+  }
+
+  listProducts(page = 1) {
+    // Construir objeto de filtros
+    //this.debugFilters();
+
+    const filters: any = {};
+
+    if (this.product_categorie_id && this.product_categorie_id.toString().trim() !== '') {
+      filters.product_categorie_id = this.product_categorie_id;
+    }
+
+    if (this.disponibilidad && this.disponibilidad.toString().trim() !== '') {
+      filters.disponibilidad = this.disponibilidad;
+    }
+
+    if (this.tax_selected && this.tax_selected.toString().trim() !== '') {
+      filters.tax_selected = this.tax_selected;
+    }
+
+    if (this.search && this.search.trim() !== '') {
+      filters.search = this.search;
+    }
+
+    if (this.provider_id && this.provider_id.toString().trim() !== '') {
+      filters.provider_id = this.provider_id;
+    }
+
+    if (this.sucursale_price_multiple && this.sucursale_price_multiple.toString().trim() !== '') {
+      filters.sucursale_price_multiple = this.sucursale_price_multiple;
+    }
+
+    if (this.almacen_warehouse && this.almacen_warehouse.toString().trim() !== '') {
+      filters.almacen_warehouse = this.almacen_warehouse;
+    }
+
+    if (this.client_segment_price_multiple && this.client_segment_price_multiple.toString().trim() !== '') {
+      filters.client_segment_price_multiple = this.client_segment_price_multiple;
+    }
+
+    if (this.unit_warehouse && this.unit_warehouse.toString().trim() !== '') {
+      filters.unit_warehouse = this.unit_warehouse;
+    }
+
+    // Estado - solo si es diferente de 0
+    if (this.state !== 0 && this.state !== null && this.state !== undefined) {
+      filters.state = this.state;
+    }
+
+    this.productService.listProducts(page, filters).subscribe({
+      next: (resp: any) => {
+        console.log('📦 RESPUESTA COMPLETA DEL SERVIDOR:', resp.data);
+        this.procesarRespuesta(resp);
+        this.currentPage = page;
+      },
+      error: (error) => {
+        console.error('❌ ERROR EN LA PETICIÓN:', error);
+        console.error('Detalles del error:', error.error);
+      }
+    });
+  }
+  
+  procesarRespuesta(resp: any) {
+    console.log('📦 Procesando respuesta:', resp);
+
+    // Limpiar productos anteriores
+    this.PRODUCTS = [];
+
+    // Caso 1: Respuesta con propiedad 'data' (formato paginado)
+    if (resp.data && Array.isArray(resp.data)) {
+      this.PRODUCTS = resp.data;
+      this.totalPages = resp.total || resp.data.total || 0;
+      console.log('✅ Formato 1: data como array');
+    }
+    // Caso 2: Respuesta con propiedad 'products'
+    else if (resp.products) {
+      if (Array.isArray(resp.products)) {
+        this.PRODUCTS = resp.products;
+      } else if (resp.products.data && Array.isArray(resp.products.data)) {
+        this.PRODUCTS = resp.products.data;
+      }
+      this.totalPages = resp.total || resp.products.total || this.PRODUCTS.length;
+      console.log('✅ Formato 2: products');
+    }
+    // Caso 3: Respuesta es directamente un array
+    else if (Array.isArray(resp)) {
+      this.PRODUCTS = resp;
+      this.totalPages = resp.length;
+      console.log('✅ Formato 3: array directo');
+    }
+    // Caso 4: Buscar en otras propiedades
+    else {
+      const possibleProps = ['items', 'results', 'lista', 'productos'];
+      for (const prop of possibleProps) {
+        if (resp[prop]) {
+          if (Array.isArray(resp[prop])) {
+            this.PRODUCTS = resp[prop];
+          } else if (resp[prop].data && Array.isArray(resp[prop].data)) {
+            this.PRODUCTS = resp[prop].data;
+          } else {
+            continue;
           }
+          this.totalPages = resp.total || resp[prop]?.total || this.PRODUCTS.length;
+          console.log(`✅ Formato 4: encontrado en "${prop}"`);
+          break;
         }
       }
-      
-      // Si aún no hay productos, asignar un array vacío
-      if (!this.PRODUCTS) {
-        this.PRODUCTS = [];
-        this.totalPages = 0;
-      }
-      
-      this.currentPage = page;
-    })
+    }
+
+    // Si no se encontró nada, array vacío
+    if (this.PRODUCTS.length === 0) {
+      console.log('⚠️ No se encontraron productos');
+      this.PRODUCTS = [];
+      this.totalPages = 0;
+    }
+
+    console.log('✅ Productos cargados:', this.PRODUCTS.length);
+  }
+
+  resetListProducts (){
+    console.log('🔄 RESETEANDO FILTROS');
+    this.product_categorie_id = '';
+    this.disponibilidad = '';
+    this.tax_selected = '';
+    this.search = '';
+    this.sucursale_price_multiple = '';
+    this.almacen_warehouse = '';
+    this.client_segment_price_multiple = '';
+    this.state = 1;
+    this.unit_warehouse = '';
+    this.provider_id = '';
+    console.log('✅ Filtros reseteados');
+    this.listProducts(1);
   }
 
   deleteProduct(PRODUCT:any){
@@ -161,7 +252,7 @@ export class ListProductComponent implements OnInit {
         }
       })
   }
-  
+
   resetFilters(event: Event){
     //const etiqueta = (event.target as HTMLElement).tagName;
     const etiqueta = event.target as HTMLInputElement | HTMLSelectElement;
@@ -194,21 +285,7 @@ export class ListProductComponent implements OnInit {
     }
     //console.log('Etiqueta del evento:', etiqueta.getAttribute('name'));
   }
-  
-  resetListProducts (){
-    this.product_categorie_id = '';
-    this.disponibilidad = '';
-    this.tax_selected = '';
-    this.search = '';
-    this.sucursale_price_multiple = '';
-    this.almacen_warehouse = '';
-    this.client_segment_price_multiple = '';
-    this.state = 0;
-    this.unit_warehouse = '';
-    this.provider_id = '';
-    this.listProducts();
-  }
-  
+
   getDisponibilidad(val: number)
   {
     let TEXTO = '';
@@ -217,7 +294,7 @@ export class ListProductComponent implements OnInit {
         TEXTO = 'Vender los productos sin stock';
         break;
       case 2:
-        TEXTO = 'No Vender los productos con stock';
+        TEXTO = 'No Vender los productos sin stock';
         break;
       case 3:
         TEXTO = 'Proyectar con los contratos que se tenga';
@@ -225,7 +302,7 @@ export class ListProductComponent implements OnInit {
     }
     return TEXTO;
   }
-  
+
   getTaxSelected(val: number)
   {
     let TEXTO = '';
@@ -241,5 +318,56 @@ export class ListProductComponent implements OnInit {
         break;
     }
     return TEXTO;
+  }
+  isLoadingProcess(){
+    this.productService.isLoadingSubject.next(true);
+    setTimeout(() => {
+      this.productService.isLoadingSubject.next(false);
+    }, 50);
+  }
+
+  downloadProducts(){
+    /* const data = {
+      product_categorie_id: this.product_categorie_id,
+      disponibilidad: this.disponibilidad,
+      tax_selected: this.tax_selected,
+      search: this.search,
+      //FILTRADO ESPECIAL
+      provider_id: this.provider_id,
+      sucursale_price_multiple: this.sucursale_price_multiple,
+      almacen_warehouse: this.almacen_warehouse,
+      client_segment_price_multiple: this.client_segment_price_multiple,
+      state: this.state
+    } */
+    let LINK ="";
+
+    if (this.product_categorie_id){
+      LINK += "&product_categorie_id="+this.product_categorie_id;
+    }
+    if (this.disponibilidad){
+      LINK += "&disponibilidad="+this.disponibilidad;
+    }
+    if (this.tax_selected){
+      LINK += "&tax_selected="+this.tax_selected;
+    }
+    if (this.search){
+      LINK += "&search="+this.search;
+    }
+    if (this.provider_id){
+      LINK += "&provider_id="+this.provider_id;
+    }
+    if (this.sucursale_price_multiple){
+      LINK += "&sucursale_price_multiple="+this.sucursale_price_multiple;
+    }
+    if (this.almacen_warehouse){
+      LINK += "&almacen_warehouse="+this.almacen_warehouse;
+    }
+    if (this.client_segment_price_multiple){
+      LINK += "&client_segment_price_multiple="+this.client_segment_price_multiple;
+    }
+    if (this.state){
+      LINK += "&state="+this.state;
+    }
+    window.open(URL_SERVICIOS+"/excel/export-products?k=1"+LINK,"_blank");
   }
 }

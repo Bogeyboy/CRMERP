@@ -4,8 +4,10 @@ use Fruitcake\Cors\HandleCors;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+//use Maatwebsite\Excel\Facades\Excel;
 
 return Application::configure(basePath: dirname(__DIR__))
+    /*   */
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__. '/../routes/api.php',
@@ -17,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'cors' => \App\Http\Middleware\Cors::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

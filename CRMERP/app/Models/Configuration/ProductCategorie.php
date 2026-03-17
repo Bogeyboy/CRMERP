@@ -16,6 +16,11 @@ class ProductCategorie extends Model
         'imagen',
         'state',
     ];
+    protected $casts = [
+        'state' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime'
+    ];
 
     public function setCreatedAtAttribute($value)
     {

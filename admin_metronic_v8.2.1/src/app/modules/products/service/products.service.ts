@@ -1,8 +1,9 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, finalize } from 'rxjs';
 import { AuthService } from '../../auth';
 import { URL_SERVICIOS } from 'src/app/config/config';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ export class ProductsService {
 
   isLoading$: Observable<boolean>;
   isLoadingSubject: BehaviorSubject<boolean>;
+  private URL_SERVICIOS = environment.URL_SERVICIOS;
 
   constructor(
     private http: HttpClient,
@@ -28,16 +30,53 @@ export class ProductsService {
     );
   }
 
-  listProducts(page = 1,data:any = null){
+  /* listProducts(page = 1,data:any = null){
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     const URL = URL_SERVICIOS+"/products/index?page="+page;
     return this.http.post(URL,data,{headers: headers}).pipe(
-    /* return this.http.get(URL,{headers: headers}).pipe( */
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  } */
+
+  /* listProducts(page: number, filters: any) {
+    // Verifica que los filtros se están enviando como parámetros GET
+    console.log('📤 Enviando al backend (desde servicio):', filters);
+
+    // Construir query params
+    let params = new HttpParams()
+      .set('page', page.toString());
+
+    // Agregar filtros no vacíos
+    Object.keys(filters).forEach(key => {
+      if (filters[key] !== null && filters[key] !== undefined && filters[key] !== '') {
+        params = params.set(key, filters[key].toString());
+        console.log(`➕ Parámetro agregado: ${key} = ${filters[key]}`);
+      }
+    });
+
+    return this.http.get(`${this.URL_SERVICIOS}/products`, { params });
+  } */
+
+  listProducts(page: number, filters: any) {
+    this.isLoadingSubject.next(true);
+
+    console.log('📤 Enviando al backend (desde servicio):', filters);
+    console.log('📄 Página:', page);
+
+    const headers = new HttpHeaders({
+      'Authorization': 'Bearer ' + this.authservice.token,
+      'Content-Type': 'application/json'
+    });
+
+    // Construir URL con página
+    const URL = `${URL_SERVICIOS}/products/index?page=${page}`;
+
+    // Enviar filtros en el body (POST)
+    return this.http.post(URL, filters, { headers: headers }).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
-
   showProduct(PRODUCT_ID:string){
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});

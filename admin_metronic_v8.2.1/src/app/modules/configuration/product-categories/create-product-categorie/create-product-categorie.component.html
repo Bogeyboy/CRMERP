@@ -69,7 +69,7 @@
         <button type="button" (click)="store()" class="btn btn-primary" data-kt-users-modal-action="submit">
           <span class="indicator-label">Registrar</span>
 
-          @if (isLoading | async) {
+          @if (isLoading) {
             <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
           }
           <!-- <span class="indicator-progress">Please wait...
