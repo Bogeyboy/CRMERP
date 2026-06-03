@@ -4,6 +4,7 @@ import { DeleteProductComponent } from '../delete-product/delete-product.compone
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { URL_SERVICIOS } from 'src/app/config/config';
 import { data } from 'jquery';
+import { ImportProductsComponent } from '../import-products/import-products.component';
 
 @Component({
   selector: 'app-list-product',
@@ -167,7 +168,7 @@ export class ListProductComponent implements OnInit {
       }
     });
   }
-  
+
   procesarRespuesta(resp: any) {
     console.log('📦 Procesando respuesta:', resp);
 
@@ -241,18 +242,6 @@ export class ListProductComponent implements OnInit {
     this.listProducts(1);
   }
 
-  deleteProduct(PRODUCT:any){
-      const modalRef = this.modalService.open(DeleteProductComponent,{centered:true, size: 'md'});
-      modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
-
-      modalRef.componentInstance.ProductD.subscribe((prod:any) => {
-        const INDEX = this.PRODUCTS.findIndex((prod:any) => prod.id == PRODUCT.id);
-        if(INDEX != -1){
-          this.PRODUCTS.splice(INDEX,1);
-        }
-      })
-  }
-
   resetFilters(event: Event){
     //const etiqueta = (event.target as HTMLElement).tagName;
     const etiqueta = event.target as HTMLInputElement | HTMLSelectElement;
@@ -319,11 +308,20 @@ export class ListProductComponent implements OnInit {
     }
     return TEXTO;
   }
+  
   isLoadingProcess(){
     this.productService.isLoadingSubject.next(true);
     setTimeout(() => {
       this.productService.isLoadingSubject.next(false);
     }, 50);
+  }
+
+  importProducts(){
+    const modalRef = this.modalService.open(ImportProductsComponent,{centered:true, size: 'md'});
+    //modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
+    modalRef.componentInstance.ImportProductD.subscribe((prod:any) => {
+      this.listProducts();
+    })
   }
 
   downloadProducts(){
@@ -369,5 +367,17 @@ export class ListProductComponent implements OnInit {
       LINK += "&state="+this.state;
     }
     window.open(URL_SERVICIOS+"/excel/export-products?k=1"+LINK,"_blank");
+  }
+
+  deleteProduct(PRODUCT:any){
+      const modalRef = this.modalService.open(DeleteProductComponent,{centered:true, size: 'md'});
+      modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
+
+      modalRef.componentInstance.ProductD.subscribe((prod:any) => {
+        const INDEX = this.PRODUCTS.findIndex((prod:any) => prod.id == PRODUCT.id);
+        if(INDEX != -1){
+          this.PRODUCTS.splice(INDEX,1);
+        }
+      })
   }
 }

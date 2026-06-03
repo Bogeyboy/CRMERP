@@ -12,7 +12,7 @@ export class RolesService {
 
   isLoading$: Observable<boolean>;
   isLoadingSubject: BehaviorSubject<boolean>;
-  
+
   constructor(
     private http: HttpClient,
     public authservice: AuthService,
@@ -76,5 +76,18 @@ export class RolesService {
     return this.http.delete(URL,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
+  }
+  getAllPermissions()
+  {
+    this.isLoadingSubject.next(true);
+
+    const URL =URL_SERVICIOS + '/permissions';
+    //let headers = new HttpHeaders('Authorization': 'Bearer '+ this.authservice.token);
+    const headers = new HttpHeaders().set('Authorization', 'Bearer ' + this.authservice.token);
+
+    return this.http.get(URL,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+    //return this.http.get(`${this.URL_SERVICIOS}/permissions`);
   }
 }

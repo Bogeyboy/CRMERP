@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>
+  i/* ntercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>
   {
     // Obtener el token del localStorage
     const token = localStorage.getItem('token');
@@ -16,10 +16,18 @@ export class AuthInterceptor implements HttpInterceptor {
     console.log('🔍 Interceptor - Es FormData:', isFormData);
     console.log('🔍 Interceptor - URL:', req.url);
     console.log('🔍 Interceptor - Método:', req.method);
+
+    let authReq = req;
     
     // Si hay token, clonar la request y agregar el header
-    if (token) {
-      if (isFormData) {
+    if (token)
+    {
+      if (isFormData)
+      {
+        if (req.url.startsWith('http://') || req.url.startsWith('https://'))
+        {
+          return next.handle(req);
+        }
         // Para FormData, NO establecer Content-Type (el navegador lo hace automáticamente con el boundary)
         const cloned = req.clone({
           headers: req.headers
@@ -30,7 +38,9 @@ export class AuthInterceptor implements HttpInterceptor {
         
         console.log('🔑 Token agregado al interceptor (FormData - sin Content-Type)');
         return next.handle(cloned);
-      } else {
+      }
+      else
+      {
         // Para JSON, establecer Content-Type
         const cloned = req.clone({
           headers: req.headers
@@ -46,6 +56,32 @@ export class AuthInterceptor implements HttpInterceptor {
     
     // Si no hay token, enviar la request original
     console.log('⚠️ Sin token en interceptor');
+    return next.handle(req);
+  } */
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>
+  {
+    const token = localStorage.getItem('token');
+    const isFormData = req.body instanceof FormData;
+    
+    console.log('🔍 Interceptor - URL:', req.url);
+    console.log('🔍 Interceptor - Método:', req.method);
+
+    if (token) {
+      let cloned = req.clone({
+        headers: req.headers.set('Authorization', `Bearer ${token}`)
+      });
+      
+      // Solo añadir Content-Type si NO es FormData
+      if (!isFormData && !req.headers.has('Content-Type')) {
+        cloned = cloned.clone({
+          headers: cloned.headers.set('Content-Type', 'application/json')
+        });
+      }
+      
+      console.log('🔑 Token agregado');
+      return next.handle(cloned);
+    }
+    
     return next.handle(req);
   }
 }

@@ -6,6 +6,7 @@ use App\Exports\Product\DownloadProduct;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Product\ProductResource;
+use App\Imports\ProductsImport;
 use App\Models\Configuration\client_segment;
 use App\Models\Configuration\ProductCategorie;
 use App\Models\Configuration\Provider;
@@ -17,8 +18,9 @@ use App\Models\Product\ProductWallet;
 use App\Models\Product\ProductWarehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
@@ -113,15 +115,23 @@ class ProductController extends Controller
 
         // Transformar los productos para incluir la URL completa de la imagen
         $products->getCollection()->transform(function ($product) {
-            if ($product->imagen) {
-                // Si la imagen no tiene URL completa, agregar la URL base
-                if (!str_starts_with($product->imagen, 'http')) {
-                    $product->imagen = asset('storage/' . $product->imagen);
-                }
-            } else {
-                // Imagen por defecto si no tiene
-                $product->imagen = asset('assets/media/products/default-product.png');
+        if ($product->imagen) {
+            // Si la imagen ya es una URL completa (http:// o https://), no la modifiques
+            if (str_starts_with($product->imagen, 'http://') || str_starts_with($product->imagen, 'https://')) {
+                // Ya es una URL completa, no hacer nada
+                $product->imagen = $product->imagen;
             }
+            // Si empieza con 'products/' (ruta local)
+            elseif (str_starts_with($product->imagen, 'products/')) {
+                $product->imagen = asset('storage/' . $product->imagen);
+            }
+            // Cualquier otra ruta local
+            else {
+                $product->imagen = asset('storage/' . $product->imagen);
+            }
+        } else {
+            $product->imagen = asset('assets/media/products/default-product.png');
+        }
             return $product;
         });
 
@@ -140,7 +150,6 @@ class ProductController extends Controller
             ]
         ]);
     }
-
     public function config()
     {
         $almacenes = Warehouse::where('state', 1)->get();
@@ -159,10 +168,6 @@ class ProductController extends Controller
             'providers' => $providers,
         ]);
     }
-
-    /**
-     * Almacenamos los registros de la tabla
-     */
     public function store(Request $request)
     {
         DB::beginTransaction();
@@ -235,129 +240,228 @@ class ProductController extends Controller
             ], 500);
         }
     }
-
-    /**
-     * Display the specified resource.
-     */
     public function show($id)
     {
-        $product = Product::with([
-            'product_categorie',
-            'umbral_unit',
-            'provider',
-            'wallets.unit',
-            'wallets.sucursale',
-            'wallets.client_segment',
-            'productWarehouses.unit',
-            'productWarehouses.warehouse.sucursale',
-        ])->findOrFail($id);
-
-        // Transformar la imagen para que tenga URL completa
-        if ($product->imagen) {
-            $product->imagen = asset('storage/' . $product->imagen);
-        }
-
-        return new ProductResource($product);
-    }
-
-    /**
-     * Actualización de los registros de la tabla
-     */
-    public function update(Request $request, string $id)
-    {
-        DB::beginTransaction();
-        try
-        {
-            $if_exists_product = Product::where('title', $request->title)
-                ->where('id', '<>', $id)
-                ->first();
-            if ($if_exists_product) {
-                return response()->json([
-                    'message' => 403,
-                    'message_text' => 'Ya existe un producto con ese nombre.',
-                ]);
-            };
-
-            $product = Product::findOrFail($id);
-
-            if ($request->hasFile('product_imagen')) {
-                if ($product->imagen) {
-                    Storage::disk('public')->delete($product->imagen);
-                }
-                $path = $request->file('product_imagen')->store('products', 'public');
-                $request->merge(['imagen' => $path]);
+        try {
+            $product = Product::with([
+                'product_categorie',
+                'provider',
+                'umbral_unit',
+                'productWarehouses.unit',  // ← Cambiado: usar productWarehouses en lugar de warehouses
+                'productWarehouses.warehouse.sucursale',  // ← Cambiado
+                'wallets.unit',
+                'wallets.sucursale',
+                'wallets.client_segment'
+            ])->findOrFail($id);
+            
+            // Transformar productWarehouses para el frontend - CORREGIDO
+            $product->warehouses = $product->productWarehouses->map(function($productWarehouse) {
+                return [
+                    'id' => $productWarehouse->warehouse->id,  // ID del almacén
+                    'pivot' => [  // ← IMPORTANTE: Incluir el pivot con el ID del product_warehouse
+                        'id' => $productWarehouse->id,  // ← ¡ESTE ES EL ID QUE NECESITA EL FRONTEND!
+                        'product_id' => $productWarehouse->product_id,
+                        'warehouse_id' => $productWarehouse->warehouse_id,
+                        'unit_id' => $productWarehouse->unit_id,
+                        'stock' => $productWarehouse->stock,
+                        'created_at' => $productWarehouse->created_at,
+                        'updated_at' => $productWarehouse->updated_at,
+                    ],
+                    'unit' => $productWarehouse->unit ? [
+                        'id' => $productWarehouse->unit->id,
+                        'name' => $productWarehouse->unit->name,
+                        'description' => $productWarehouse->unit->description,
+                        'state' => $productWarehouse->unit->state,
+                        'pivot' => [
+                            'warehouse_id' => $productWarehouse->warehouse_id,
+                            'unit_id' => $productWarehouse->unit_id,
+                            'product_id' => $productWarehouse->product_id,
+                            'stock' => $productWarehouse->stock,
+                            'created_at' => $productWarehouse->created_at,
+                            'updated_at' => $productWarehouse->updated_at,
+                        ]
+                    ] : null,
+                    'warehouse' => $productWarehouse->warehouse ? [
+                        'id' => $productWarehouse->warehouse->id,
+                        'name' => $productWarehouse->warehouse->name,
+                        'state' => $productWarehouse->warehouse->state,
+                        'address' => $productWarehouse->warehouse->address,
+                        'sucursale_id' => $productWarehouse->warehouse->sucursale_id,
+                        'sucursale' => $productWarehouse->warehouse->sucursale ? [
+                            'id' => $productWarehouse->warehouse->sucursale->id,
+                            'name' => $productWarehouse->warehouse->sucursale->name,
+                        ] : null,
+                    ] : null,
+                    'quantity' => $productWarehouse->stock ?? 0,
+                    'unit_id' => $productWarehouse->unit_id,
+                    'warehouse_id' => $productWarehouse->warehouse_id,
+                    'product_id' => $productWarehouse->product_id,
+                    'created_at' => $productWarehouse->created_at,
+                    'updated_at' => $productWarehouse->updated_at,
+                ];
+            });
+            
+            // Las specifications ya están como array gracias al cast
+            if (is_string($product->specifications)) {
+                $product->specifications = json_decode($product->specifications, true);
             }
-
-            $product->update($request->except(['warehouses', 'wallets']));
-
-            // ELIMINAR Y RECREAR WAREHOUSES (o actualizar si prefieres)
-            if ($request->has('warehouses'))
-            {
-                // Eliminar existentes
-                ProductWarehouse::where('product_id', $product->id)->delete();
-
-                // Crear nuevos
-                $warehouses = json_decode($request->warehouses, true);
-                if (is_array($warehouses) && count($warehouses) > 0) {
-                    foreach ($warehouses as $warehouse) {
-                        ProductWarehouse::create([
+            
+            return response()->json(['data' => $product]);
+            
+        } catch (\Exception $e) {
+            Log::error('Error en show: ' . $e->getMessage());
+            Log::error('Trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'message' => 'Error al cargar el producto: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+    public function update(Request $request, $id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+            
+            // Decodificar JSON
+            $warehouses = $request->warehouses;
+            if (is_string($warehouses)) {
+                $warehouses = json_decode($warehouses, true);
+            }
+            
+            $wallets = $request->wallets;
+            if (is_string($wallets)) {
+                $wallets = json_decode($wallets, true);
+            }
+            
+            // ========== MANEJO DE IMAGEN ==========
+            // Verificar si se debe eliminar la imagen
+            $imageRemoved = $request->input('image_removed', false);
+            
+            if ($imageRemoved === true || $imageRemoved === 'true') {
+                // Eliminar la imagen actual si existe
+                if ($product->imagen && !filter_var($product->imagen, FILTER_VALIDATE_URL)) {
+                    $oldPath = str_replace('storage/', '', $product->imagen);
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
+                }
+                $product->imagen = null;
+            }
+            
+            // Verificar si se subió una nueva imagen
+            if ($request->hasFile('product_imagen')) {
+                // Eliminar la imagen anterior si existe y no es URL externa
+                if ($product->imagen && !filter_var($product->imagen, FILTER_VALIDATE_URL)) {
+                    $oldPath = str_replace('storage/', '', $product->imagen);
+                    if (Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->delete($oldPath);
+                    }
+                }
+                
+                // Guardar la nueva imagen
+                $path = $request->file('product_imagen')->store('products', 'public');
+                $product->imagen = Storage::url($path);
+            }
+            
+            // Verificar si se envió una URL externa
+            if ($request->has('imagen_url') && !$request->hasFile('product_imagen')) {
+                $product->imagen = $request->imagen_url;
+            }
+            
+            // Si no hay imagen y no se ha eliminado ni subido nueva, mantener la existente
+            // (no hacer nada)
+            // ========== FIN MANEJO DE IMAGEN ==========
+            
+            // Actualizar campos básicos
+            $product->title = $request->title;
+            $product->sku = $request->sku;
+            $product->description = $request->description;
+            $product->product_categorie_id = $request->product_categorie_id;
+            $product->price_general = $request->price_general;
+            $product->provider_id = $request->provider_id;
+            $product->disponibilidad = $request->disponibilidad;
+            $product->tiempo_de_abastecimiento = $request->tiempo_de_abastecimiento;
+            $product->is_discount = $request->is_discount;
+            $product->min_discount = $request->min_discount ?? 0;
+            $product->max_discount = $request->max_discount ?? 0;
+            $product->tax_selected = $request->tax_selected;
+            $product->importe_iva = $request->importe_iva;
+            $product->is_gift = $request->is_gift;
+            $product->weight = $request->weight;
+            $product->width = $request->width;
+            $product->height = $request->height;
+            $product->length = $request->length;
+            $product->umbral = $request->umbral;
+            $product->umbral_unit_id = $request->umbral_unit_id;
+            $product->state = $request->state ?? 1;
+            
+            // Guardar specifications como JSON
+            $specifications = $request->specifications;
+            if (is_string($specifications)) {
+                $specifications = json_decode($specifications, true);
+            }
+            $product->specifications = $specifications;
+            
+            $product->save();
+            
+            // Procesar warehouses
+            if ($warehouses && is_array($warehouses)) {
+                $warehouseIds = [];
+                foreach ($warehouses as $warehouse) {
+                    $existingWarehouse = ProductWarehouse::where('product_id', $product->id)
+                        ->where('warehouse_id', $warehouse['warehouse_id'])
+                        ->where('unit_id', $warehouse['unit_id'])
+                        ->first();
+                    
+                    if ($existingWarehouse) {
+                        $existingWarehouse->update([
+                            'stock' => $warehouse['quantity']
+                        ]);
+                        $warehouseIds[] = $existingWarehouse->id;
+                    } else {
+                        $newWarehouse = ProductWarehouse::create([
                             'product_id' => $product->id,
                             'unit_id' => $warehouse['unit_id'],
                             'warehouse_id' => $warehouse['warehouse_id'],
                             'stock' => $warehouse['quantity']
                         ]);
+                        $warehouseIds[] = $newWarehouse->id;
                     }
                 }
+                
+                ProductWarehouse::where('product_id', $product->id)
+                    ->whereNotIn('id', $warehouseIds)
+                    ->delete();
             }
-
-            if ($request->has('wallets'))
-            {
-                $walletsData = json_decode($request->wallets, true);
-
-                foreach ($walletsData as $wallet) {
-                    // Asegúrate de que la clave 'price' exista
-                    if (!isset($wallet['price'])) {
-                        // Si no existe 'price', intenta con 'price_general' o 'quantity'
-                        $wallet['price'] = $wallet['price_general'] ?? $wallet['quantity'] ?? 0;
-                    }
-
-                    // Tu lógica para actualizar/crear el wallet
-                    ProductWallet::updateOrCreate(
-                        [
-                            'product_id' => $product->id,
-                            'unit_id' => $wallet['unit_id'],
-                            'sucursal_id' => $wallet['sucursal_id'] ?? null,
-                            'client_segment_id' => $wallet['client_segment_id'] ?? null,
-                        ],
-                        [
-                            'price' => $wallet['price'],
-                        ]
-                    );
+            
+            // Procesar wallets
+            if ($wallets && is_array($wallets)) {
+                $product->wallets()->delete();
+                foreach ($wallets as $wallet) {
+                    $product->wallets()->create([
+                        'unit_id' => $wallet['unit_id'],
+                        'client_segment_id' => $wallet['client_segment_id'] ?? null,
+                        'price' => $wallet['price'],
+                        'sucursal_id' => $wallet['sucursale_id'] ?? null,
+                    ]);
                 }
             }
-
-            DB::commit();
-
+            
             return response()->json([
-                'message' => 200,
-                'message_text' => 'El producto se ha actualizado correctamente.',
+                'success' => true,
+                'message' => 'Producto actualizado correctamente',
+                'data' => $product
             ]);
-
-        }
-        catch (\Exception $e)
-        {
-            DB::rollback();
-
+            
+        } catch (\Exception $e) {
+            Log::error('Error al actualizar producto: ' . $e->getMessage());
+            
             return response()->json([
-                'message' => 500,
-                'message_text' => 'Error al actualizar el producto: ' . $e->getMessage()
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
             ], 500);
         }
     }
-
-    /**
-     * Eliminación de los registros de la tabla
-     */
     public function destroy(string $id)
     {
         $product = Product::findOrFail($id);
@@ -368,7 +472,188 @@ class ProductController extends Controller
             'message_text' => 'Producto eliminado correctamente.',
         ]);
     }
+    /* public function import_product(Request $request)
+    {
+        try {
+            // Validación del archivo
+            if (!$request->hasFile('import_file')) {
+                return response()->json([
+                    'message' => 400,
+                    'message_text' => 'No se ha seleccionado ningún archivo'
+                ], 400);
+            }
 
+            $file = $request->file('import_file');
+            
+            // Validar el archivo manualmente
+            $validator = Validator::make($request->all(), [
+                'import_file' => 'required|file|mimes:xlsx,xls,csv,ods|max:5120'
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 422,
+                    'message_text' => 'Error en la validación del archivo',
+                    'errors' => $validator->errors()
+                ], 422);
+            }
+
+            // Log para depuración
+            Log::info('Iniciando importación de productos', [
+                'file_name' => $file->getClientOriginalName(),
+                'file_size' => $file->getSize(),
+                'file_mime' => $file->getMimeType()
+            ]);
+
+            // Verificar que el archivo no esté vacío
+            if ($file->getSize() === 0) {
+                return response()->json([
+                    'message' => 400,
+                    'message_text' => 'El archivo está vacío'
+                ], 400);
+            }
+
+            $import = new ProductsImport();
+            Excel::import($import, $file);
+
+            $importedCount = $import->getImportedCount();
+            $errors = $import->getImportErrors();
+
+            Log::info('Importación finalizada', [
+                'imported_count' => $importedCount,
+                'errors_count' => count($errors)
+            ]);
+
+            if ($importedCount > 0) {
+                $message = "Se importaron {$importedCount} productos correctamente.";
+                if (count($errors) > 0) {
+                    $errorList = array_slice($errors, 0, 5);
+                    $message .= " Advertencias: " . implode(', ', $errorList);
+                    if (count($errors) > 5) {
+                        $message .= " ... y " . (count($errors) - 5) . " más";
+                    }
+                }
+
+                return response()->json([
+                    'message' => 200,
+                    'message_text' => $message,
+                    'imported' => $importedCount,
+                    'errors' => $errors
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 400,
+                    'message_text' => 'No se pudo importar ningún producto. ' . (count($errors) > 0 ? implode(', ', array_slice($errors, 0, 3)) : 'Verifica el formato del archivo'),
+                    'errors' => $errors
+                ], 400);
+            }
+
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            $errors = [];
+            foreach ($failures as $failure) {
+                $errors[] = "Fila {$failure->row()}: " . implode(', ', $failure->errors());
+            }
+
+            Log::error('Errores de validación en importación', ['errors' => $errors]);
+
+            return response()->json([
+                'message' => 422,
+                'message_text' => 'Error de validación en el archivo.',
+                'errors' => $errors
+            ], 422);
+            
+        } catch (\Exception $e) {
+            Log::error('Error crítico en import_product: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return response()->json([
+                'message' => 500,
+                'message_text' => 'Error interno del servidor: ' . $e->getMessage()
+            ], 500);
+        }
+    } */
+    public function import_product(Request $request)
+    {
+        // Log de inicio
+        Log::info('User authenticated: ' . ($request->user() ? $request->user()->id : 'No user'));
+        Log::info('=== INICIO IMPORTACIÓN ===');
+        Log::info('=== import_product METHOD CALLED ===');
+        Log::info('Request method: ' . $request->method());
+        Log::info('Request path: ' . $request->path());
+        Log::info('All request data:', $request->all());
+        Log::info('Request all:', $request->all());
+        Log::info('Has file: ' . $request->hasFile('import_file'));
+        
+        try {
+            if (!$request->hasFile('import_file')) {
+                Log::error('No file in request');
+                return response()->json([
+                    'message' => 400,
+                    'message_text' => 'No se ha seleccionado ningún archivo'
+                ], 400);
+            }
+
+            $file = $request->file('import_file');
+            Log::info('File info:', [
+                'name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+                'mime' => $file->getMimeType(),
+                'extension' => $file->getClientOriginalExtension()
+            ]);
+
+            // Validar extensión manualmente
+            $extension = strtolower($file->getClientOriginalExtension());
+            $allowedExtensions = ['xlsx', 'xls', 'csv', 'ods'];
+            
+            if (!in_array($extension, $allowedExtensions)) {
+                Log::error('Invalid extension: ' . $extension);
+                return response()->json([
+                    'message' => 400,
+                    'message_text' => 'Extensión no válida. Permitidas: ' . implode(', ', $allowedExtensions)
+                ], 400);
+            }
+
+            // Crear el import y procesar
+            $import = new ProductsImport();
+            
+            Log::info('Starting Excel import');
+            Excel::import($import, $file);
+            Log::info('Excel import completed');
+
+            $importedCount = $import->getImportedCount();
+            $errors = $import->getImportErrors();
+
+            Log::info('Import results:', [
+                'imported' => $importedCount,
+                'errors' => $errors
+            ]);
+
+            if ($importedCount > 0) {
+                return response()->json([
+                    'message' => 200,
+                    'message_text' => "Se importaron {$importedCount} productos correctamente.",
+                    'imported' => $importedCount,
+                    'errors' => $errors
+                ]);
+            } else {
+                return response()->json([
+                    'message' => 400,
+                    'message_text' => 'No se importaron productos. Errores: ' . implode(', ', $errors),
+                    'errors' => $errors
+                ], 400);
+            }
+
+        } catch (\Exception $e) {
+            Log::error('EXCEPTION in import_product: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            
+            return response()->json([
+                'message' => 500,
+                'message_text' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
     public function export_products(Request $request)
     {
         $product_categorie_id= $request->get("product_categorie_id");

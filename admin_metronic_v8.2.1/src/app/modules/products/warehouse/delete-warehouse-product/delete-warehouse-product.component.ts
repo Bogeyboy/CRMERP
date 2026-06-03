@@ -15,6 +15,7 @@ export class DeleteWarehouseProductComponent {
   @Output() WarehouseD = new EventEmitter<any>();
   //recibiendo datos del componente padre
   @Input() WAREHOUSES_PROD:any;
+  @Input() WAREHOUSES: any = []; // ← AGREGAR ESTO
 
   //Variables
   isLoading:any;
@@ -33,21 +34,42 @@ export class DeleteWarehouseProductComponent {
   ngOnInit(): void {
   }
   //Función para guardar los permisos
-  delete()
-  {
+  delete() {
+    // Obtener el ID de diferentes posibles ubicaciones
+    const id = this.WAREHOUSES_PROD?.id || 
+              this.WAREHOUSES_PROD?.pivot?.id || 
+              this.WAREHOUSES_PROD?.warehouse_id;
+    
+    console.log("ID a eliminar:", id);
+    console.log("Objeto completo:", this.WAREHOUSES_PROD);
+    
+    if (!id) {
+      this.toast.error("ERROR", "No se pudo identificar el registro a eliminar");
+      return;
+    }
 
-    this.productWarehouseService.deleteProductWarehouse(this.WAREHOUSES_PROD.id).subscribe((resp:any) => {
-      console.log(resp);
-      if(resp.message == 403)
-      {
-        this.toast.error("Validación",resp.message_text);
-      }
-      else
-      {
-        this.toast.success("Éxito","La existencia del producto se eliminó correctamente.");
-        this.WarehouseD.emit(resp.message);
-        this.modal.close();
+    this.productWarehouseService.deleteProductWarehouse(id).subscribe({
+      next: (resp: any) => {
+        console.log("Eliminado correctamente:", resp);
+        this.WarehouseD.emit(this.WAREHOUSES_PROD);
+        this.toast.success("ÉXITO", "Registro eliminado correctamente");
+        this.modal.dismiss();
+      },
+      error: (error) => {
+        console.error("Error al eliminar:", error);
+        this.toast.error("ERROR", "No se pudo eliminar el registro: " + (error.error?.message || error.message));
       }
     });
+  }
+
+  getWarehouseName(): string {
+    if (this.WAREHOUSES_PROD?.warehouse?.name) {
+      return this.WAREHOUSES_PROD.warehouse.name;
+    }
+    if (this.WAREHOUSES_PROD?.pivot?.warehouse_id) {
+      const warehouse = this.WAREHOUSES.find(w => w.id == this.WAREHOUSES_PROD.pivot.warehouse_id);
+      return warehouse?.name || 'Sin nombre';
+    }
+    return 'Sin nombre';
   }
 }

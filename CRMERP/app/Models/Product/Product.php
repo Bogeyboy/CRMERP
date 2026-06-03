@@ -13,7 +13,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -36,6 +38,7 @@ class Product extends Model
         'disponibilidad',
         'tiempo_de_abastecimiento',
         'state',
+        'state_stock',
         'provider_id',
         'is_discount',
         'tax_selected',
@@ -79,19 +82,77 @@ class Product extends Model
     {
         return $this->hasMany(ProductWarehouse::class, 'product_id');
     }
-    /* public function warehouses()
-    {
-        return $this->hasMany(ProductWarehouse::class);
-    } */
     public function warehouses()
     {
         // Asegúrate de incluir 'stock' en el pivot
-        return $this->belongsToMany(ProductWarehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
+        /* return $this->belongsToMany(ProductWarehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
             ->withPivot('id', 'stock', 'unit_id') // IMPORTANTE: incluir 'stock'
-            ->withTimestamps();
+            ->withTimestamps(); */
+        /* return $this->belongsToMany(Warehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
+                    ->withPivot('unit_id', 'stock')
+                    ->withTimestamps(); */
 
-        // Si además tienes unit_id en la tabla pivot, inclúyelo también:
-        // ->withPivot('id', 'unit_id', 'stock')
+        return $this->hasMany(ProductWarehouse::class,'product_id','id');//(Warehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
+                    //->withPivot('unit_id', 'stock')
+                    //->withTimestamps();
+    }
+
+    public function getImagenAttribute($value)
+    {
+        Log::info('🔍 Accessor getImagenAttribute llamado');
+        Log::info('Valor original en BD:', ['imagen' => $value]);
+
+        if (!$value) {
+            Log::info('No hay imagen, retornando null');
+            return null;
+        }
+
+        // Si ya es una URL completa
+        if (str_starts_with($value, 'http://') || str_starts_with($value, 'https://')) {
+            Log::info('Es URL externa, retornando:', ['url' => $value]);
+            return $value;
+        }
+
+        // Si es ruta local
+        $fullUrl = asset('storage/' . $value);
+        Log::info('Es ruta local, retornando:', ['url' => $fullUrl]);
+        return $fullUrl;
+    }
+    public function setImagenAttribute($value)
+    {
+        if (!$value) {
+            $this->attributes['imagen'] = null;
+            return;
+        }
+
+        // Si es un archivo subido (UploadedFile)
+        if ($value instanceof \Illuminate\Http\UploadedFile) {
+            $path = $value->store('products', 'public');
+            $this->attributes['imagen'] = $path;
+            return;
+        }
+
+        // Si es una URL externa, guardarla tal cual
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $this->attributes['imagen'] = $value;
+            return;
+        }
+
+        // Si es una ruta existente en storage, guardar la ruta relativa
+        if (Str::startsWith($value, 'products/')) {
+            $this->attributes['imagen'] = $value;
+            return;
+        }
+
+        // Si ya tiene el dominio del storage, extraer solo la ruta
+        if (Str::contains($value, '/storage/')) {
+            $path = Str::after($value, '/storage/');
+            $this->attributes['imagen'] = $path;
+            return;
+        }
+
+        // Por defecto, guardar como está
+        $this->attributes['imagen'] = $value;
     }
     public function scopeFilterAdvance (
         $query,
@@ -157,24 +218,4 @@ class Product extends Model
             }
             return $query;
         }
-    public function getImagenUrlAttribute()
-    {
-        if ($this->imagen) {
-            if (str_starts_with($this->imagen, 'http')) {
-                return $this->imagen;
-            }
-            return asset('storage/' . $this->imagen);
-        }
-
-        return asset('assets/media/products/default-product.png');
-    }
-
-    // También puedes modificar el accessor existente
-    public function getImagenAttribute($value)
-    {
-        if ($value) {
-            return Storage::url($value);
-        }
-        return null;
-    }
 }

@@ -24,8 +24,7 @@ class ProductResource extends JsonResource
                 'id' => $this->resource->product_categorie->id,
                 'name' => $this->resource->product_categorie->name,
             ],
-            'imagen' => env('APP_URL')."storage/".$this->resource->imagen,
-            //'imagen' => $this->resource->imagen ? asset('storage/' ) .'/'. $this->resource->imagen : null,
+            'imagen' => $this->resource->imagen,
             'price_general' => $this->resource->price_general,
             'description' => $this->resource->description,
             'specifications' => $this->resource->specifications ? json_decode($this->resource->specifications, true) : [],
@@ -53,10 +52,9 @@ class ProductResource extends JsonResource
             'width' => $this->resource->width,
             'height' => $this->resource->height,
             'length' => $this->resource->length,
-            
+
             //PRECIOS MULTIPLES
-            
-            'wallets' => $this->resource->wallets && $this->resource->wallets->count() > 0 
+            'wallets' => $this->resource->wallets && $this->resource->wallets->count() > 0
                 ? $this->resource->wallets->map(function ($wallet) {
                     return [
                         'id' => $wallet->id,
@@ -78,18 +76,34 @@ class ProductResource extends JsonResource
                     ];
                 }) : [],
 
-            //ALMACENES
-
+            //ALMACENES - CORREGIDO: Se incluye el pivot.id
             'warehouses' => $this->resource->productWarehouses && $this->resource->productWarehouses->count() > 0
                 ? $this->resource->productWarehouses->map(function ($productWarehouse) {
                     // $productWarehouse es una instancia de ProductWarehouse
                     return [
-                        'id' => $productWarehouse->id,
+                        'id' => $productWarehouse->id,  // ← ID del warehouse (almacén)
+                        'pivot' => [  // ← IMPORTANTE: Incluir el pivot con el ID del product_warehouse
+                            'id' => $productWarehouse->id,  // ← ¡ESTE ES EL ID QUE NECESITAS!
+                            'product_id' => $productWarehouse->product_id,
+                            'warehouse_id' => $productWarehouse->warehouse_id,
+                            'unit_id' => $productWarehouse->unit_id,
+                            'stock' => $productWarehouse->stock,
+                            'created_at' => $productWarehouse->created_at,
+                            'updated_at' => $productWarehouse->updated_at,
+                        ],
                         'unit' => $productWarehouse->unit ? [
                             'id' => $productWarehouse->unit->id,
                             'name' => $productWarehouse->unit->name,
                             'description' => $productWarehouse->unit->description,
                             'state' => $productWarehouse->unit->state,
+                            'pivot' => [  // También incluir pivot para la unidad si es necesario
+                                'warehouse_id' => $productWarehouse->warehouse_id,
+                                'unit_id' => $productWarehouse->unit_id,
+                                'product_id' => $productWarehouse->product_id,
+                                'stock' => $productWarehouse->stock,
+                                'created_at' => $productWarehouse->created_at,
+                                'updated_at' => $productWarehouse->updated_at,
+                            ]
                         ] : null,
                         'warehouse' => $productWarehouse->warehouse ? [
                             'id' => $productWarehouse->warehouse->id,

@@ -28,6 +28,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/login',    [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register']);
 });
+Route::post('/products/import', [ProductController::class, 'import_product']);
 
 // ---------- AUTH (CON TOKEN JWT) ----------
 Route::middleware('auth:api')->prefix('auth')->group(function () {
@@ -35,10 +36,37 @@ Route::middleware('auth:api')->prefix('auth')->group(function () {
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::post('/me',      [AuthController::class, 'me']);
 });
-
+Route::get('/test-products', function() {
+    return response()->json(['message' => 'Test route works']);
+});
+// Rutas accesibles para cualquier usuario autenticado (con permisos específicos)
 Route::middleware('auth:api')->group(function () {
     // Ruta para obtener roles (accesible para cualquier usuario autenticado)
     Route::get('/roles/list', [UserAccessController::class, 'listRoles']);
+
+    // Productos - rutas con permisos
+    Route::post('/products/index', [ProductController::class, 'index'])
+        ->middleware('permission:list_product');
+
+    Route::get('/products/config', [ProductController::class, 'config'])
+        ->middleware('permission:list_product');
+
+    Route::get('/products/{id}', [ProductController::class, 'show'])
+        ->middleware('permission:list_product');
+
+    Route::post('/products', [ProductController::class, 'store'])
+        ->middleware('permission:register_product');
+
+    // Para actualizar - acepta PUT explícitamente
+    Route::put('/products/{id}', [ProductController::class, 'update'])
+        ->middleware('permission:edit_product');
+
+    // También acepta POST con _method=PUT para formularios
+    Route::post('/products/{id}', [ProductController::class, 'update'])
+        ->middleware('permission:edit_product');
+
+    Route::delete('/products/{id}', [ProductController::class, 'destroy'])
+        ->middleware('permission:delete_product');
 });
 
 // ---------- SOLO SUPER-ADMIN ----------
@@ -46,7 +74,15 @@ Route::middleware(['auth:api', 'role:Super-Admin'])->group(function () {
 
     Route::resource('roles', RolePermissionController::class);
 
+    Route::get('/permissions', function() {
+        return response()->json([
+            'permissions' => \Spatie\Permission\Models\Permission::all()
+        ]);
+    });
+
     Route::resource('users', UserAccessController::class)->except(['config']);
+    Route::post('/users/{id}', [UserAccessController::class, 'update']);
+    Route::put('/users/{id}', [UserAccessController::class, 'update']);
     Route::get('/users/config', [UserAccessController::class, 'config']);
     Route::post('/login/{id}', [UserAccessController::class, 'update']);
 
@@ -70,15 +106,24 @@ Route::middleware(['auth:api', 'role:Super-Admin'])->group(function () {
     Route::delete('/units/delete-transform/{id}', [UnitController::class, 'delete_transform']);
     Route::resource('units', UnitController::class);
 
-    // Productos
-    Route::post('/products/index', [ProductController::class, 'index']);
-    Route::post('/products/{id}', [ProductController::class, 'update']);
-    Route::get('/products/config', [ProductController::class, 'config']);
-    Route::resource('products', ProductController::class);
+    // Productos - Solo lo que realmente requiere Super-Admin
+    // NOTA: products/index, products/config y products/{id} ya están definidos fuera
+    
+    //Route::post('/products/import', [ProductController::class, 'import_product']);
+    //Route::post('/products/import', [ProductController::class, 'import_product']);
+        //->middleware('permission:register_product');
+    
+    // Si necesitas store, update, delete solo para Super-Admin, descomenta:
+    // Route::post('/products', [ProductController::class, 'store']);
+    // Route::put('/products/{id}', [ProductController::class, 'update']);
+    // Route::delete('/products/{id}', [ProductController::class, 'destroy']);
 
     Route::resource('product_wallets', ProductWalletController::class);
-    //Route::put('/product_warehouses/{id}', [ProductWarehouseController::class, 'update']);
     Route::resource('product_warehouses', ProductWarehouseController::class);
 });
 
-Route::get("excel/export-products", [ProductController::class,"export_products"]);
+// Exportación de excel (accesible para todos los autenticados con permiso)
+Route::middleware('auth:api')->group(function() {
+    Route::get("excel/export-products", [ProductController::class,"export_products"])
+        ->middleware('permission:list_product');
+});

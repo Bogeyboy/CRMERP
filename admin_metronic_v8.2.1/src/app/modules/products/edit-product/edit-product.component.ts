@@ -17,7 +17,8 @@ import { DeleteWalletPriceProductComponent } from '../wallet/delete-wallet-price
   templateUrl: './edit-product.component.html',
   styleUrls: ['./edit-product.component.scss']
 })
-export class EditProductComponent implements OnInit {
+export class EditProductComponent implements OnInit
+{
   isLoading$:any;
   is_discount = 1;
   tab_selected = 1;
@@ -28,6 +29,7 @@ export class EditProductComponent implements OnInit {
   //SECCIÓN IMAGEN DE PRODUCTO
   imagen_product:any;
   imagen_previzualiza:any = 'assets/media/svg/files/blank-image.svg';
+  image_removed: boolean = false;
   //SECCIÓN ADICIONALES
 
   price_general = 0;
@@ -60,6 +62,7 @@ export class EditProductComponent implements OnInit {
 
 
   // SECTION WAREHOUSES
+  almacenes:any []= [];
   almacen_warehouse = '';
   unit_warehouse = '';
   quantity_warehouse = 0;
@@ -97,18 +100,23 @@ export class EditProductComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void
+  {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
 
-    this.ActivedRoute.params.subscribe((resp:any)=>{
+    this.ActivedRoute.params.subscribe((resp:any)=>
+    {
       console.log(resp);
       this.PRODUCT_ID = resp.id;
     });
     this.isLoading$ = this.productService.isLoading$;
 
-    this.productService.configAll().subscribe((resp:any) => {
+    this.productService.configAll().subscribe((resp:any) =>
+    {
       console.log(resp);
+      this.almacenes = resp.almacenes || [];
+      this.ESPECIFICACIONES = [];
       this.WAREHOUSES = resp.almacenes;
       this.SUCURSALES = resp.sucursales;
       this.UNITS = resp.units;
@@ -117,21 +125,27 @@ export class EditProductComponent implements OnInit {
       this.PROVIDERS = resp.providers;
 
       //this.loadProductData();
-      if (this.PRODUCT_ID) {
+      if (this.PRODUCT_ID)
+      {
         this.loadProductData();
-      } else {
+      }
+      else
+      {
         console.error('No hay ID de producto disponible');
         this.toast.error('ERROR', 'No se pudo obtener el ID del producto');
       }
     })
   }
 
-  loadProductData() {
+  loadProductData()
+  {
     //console.log(this.PRODUCT_ID)
     this.productService.showProduct(this.PRODUCT_ID).subscribe((resp: any) =>
     {
-      console.log('Producto cargado:', resp.data.specifications);
-      //this.PRODUCT_SELECTED = resp.product;
+      console.log('🔍 RESPUESTA COMPLETA DEL BACKEND:', JSON.stringify(resp, null, 2));
+      console.log('📸 IMAGEN CRUDA (resp.data.imagen):', resp.data?.imagen);
+      console.log('📸 PRODUCT_SELECTED.imagen:', resp.data?.imagen);
+
       this.PRODUCT_SELECTED = resp.data;
 
       if (!this.PRODUCT_SELECTED) {
@@ -140,11 +154,23 @@ export class EditProductComponent implements OnInit {
         return;
       }
 
+      // ⭐⭐⭐ LA PARTE MÁS IMPORTANTE - ASIGNACIÓN DE LA IMAGEN ⭐⭐⭐
+      // Tomar la imagen exactamente como viene del backend
+      const imagenDelBackend = this.PRODUCT_SELECTED.imagen;
+      console.log('📸 Imagen del backend:', imagenDelBackend);
+
+      if (imagenDelBackend && imagenDelBackend.trim() !== '') {
+        this.imagen_previzualiza = imagenDelBackend;
+      } else {
+        this.imagen_previzualiza = 'assets/media/svg/files/blank-image.svg';
+      }
+      console.log('🖼️ imagen_previzualiza final:', this.imagen_previzualiza);
+
       // Datos básicos
       this.is_discount = this.PRODUCT_SELECTED.is_discount;
       this.title = this.PRODUCT_SELECTED.title;
       this.description = this.PRODUCT_SELECTED.description;
-      this.imagen_previzualiza = this.PRODUCT_SELECTED.imagen;
+      //this.imagen_previzualiza = this.PRODUCT_SELECTED.imagen;
       this.provider_id = this.PRODUCT_SELECTED.provider_id;
       this.price_general = this.PRODUCT_SELECTED.price_general;
       this.disponibilidad = this.PRODUCT_SELECTED.disponibilidad;
@@ -158,12 +184,21 @@ export class EditProductComponent implements OnInit {
       this.sku = this.PRODUCT_SELECTED.sku;
       this.is_gift = this.PRODUCT_SELECTED.is_gift;
       this.umbral = this.PRODUCT_SELECTED.umbral;
-      this.umbral_unit_id = this.PRODUCT_SELECTED.umbral_unit_id;
+      //this.umbral_unit_id = this.PRODUCT_SELECTED.umbral_unit_id;
+      this.umbral_unit_id = this.PRODUCT_SELECTED.umbral_unit_id || ''; // Si es null, usar string vacío
       this.weight = this.PRODUCT_SELECTED.weight;
       this.width = this.PRODUCT_SELECTED.width;
       this.height = this.PRODUCT_SELECTED.height;
       this.length = this.PRODUCT_SELECTED.length;
-      this.ESPECIFICACIONES = this.PRODUCT_SELECTED.specifications;
+      //this.ESPECIFICACIONES = this.PRODUCT_SELECTED.specifications;
+      if (this.PRODUCT_SELECTED.specifications === null)
+      {
+        this.ESPECIFICACIONES = [];
+      }
+      else
+      {
+        this.ESPECIFICACIONES = this.PRODUCT_SELECTED.specifications;
+      }
 
       this.WAREHOUSES_PRODUCT = this.PRODUCT_SELECTED.warehouses;
       this.WALLETS_PRODUCT = this.PRODUCT_SELECTED.wallets;
@@ -173,22 +208,31 @@ export class EditProductComponent implements OnInit {
       {
         console.log('WAREHOUSES CRUDOS:', resp.data.warehouses);
 
-        this.WAREHOUSES_PRODUCT = resp.data.warehouses.map((warehouse: any) =>
-        {
-          // EL ID ESTÁ EN warehouse.pivot.id
-          //const warehouseId = warehouse.pivot?.id || warehouse.id;
-
-          console.log('Procesando warehouse, ID encontrado:', warehouse, 'en pivot:', warehouse.pivot);
-
+        this.WAREHOUSES_PRODUCT = resp.data.warehouses.map((warehouse: any) => {
+          // IMPORTANTE: El ID del registro en product_warehouses está en warehouse.pivot.id
+          const warehouseProductId = warehouse.pivot?.id;
+          
+          console.log('ID del warehouse product (pivot.id):', warehouseProductId);
+          console.log('pivot completo:', warehouse.pivot);
+          
           return {
-              //id: warehouseId, // 👈 ¡AQUÍ ESTÁ LA SOLUCIÓN!
+            id: warehouseProductId,  // ← ¡ESTE ES EL ID QUE NECESITAS!
+            warehouse_id: warehouse.id,
+            warehouse: {
               id: warehouse.id,
-              unit: warehouse.unit,
-              warehouse: warehouse.warehouse,
-              //quantity: warehouse.pivot?.stock || warehouse.stock || warehouse.quantity
-              quantity: warehouse.quantity
+              name: warehouse.name,
+              state: warehouse.state,
+              address: warehouse.address,
+              sucursale_id: warehouse.sucursale_id
+            },
+            unit_id: warehouse.pivot?.unit_id,
+            unit: warehouse.unit,
+            quantity: warehouse.pivot?.stock || 0,
+            stock: warehouse.pivot?.stock || 0,
+            pivot: warehouse.pivot
           };
         });
+
         console.log('WAREHOUSES PROCESADOS CON ID:', this.WAREHOUSES_PRODUCT);
         console.log('Warehouses cargados:', this.WAREHOUSES_PRODUCT);
         console.log('Por ahora hemos llegado a los almacenes');
@@ -199,21 +243,21 @@ export class EditProductComponent implements OnInit {
       {
         this.WALLETS_PRODUCT = resp.data.wallets.map((wallet: any) => ({
           id: wallet.id,
+          unit_id: wallet.unit_id || wallet.unit?.id,  // ← Asegurar unit_id
           unit: wallet.unit,
+          sucursale_id: wallet.sucursale_id || wallet.sucursale?.id,
           sucursale: wallet.sucursale || null,
+          client_segment_id: wallet.client_segment_id || wallet.client_segment?.id,
           client_segment: wallet.client_segment || null,
-          price_general: wallet.price_general,
-          //quantity: wallet.price,
-          /* sucursale_price_multiple: wallet.sucursale ? wallet.sucursale.id : null, */
-          sucursale_price_multiple: wallet.sucursale ? wallet.sucursale.id : null,
-          client_segment_price_multiple: wallet.client_segment ? wallet.client_segment.id : null
-      }));
+          price_general: wallet.price_general || wallet.price || 0
+        }));
         console.log('Wallets cargados:', this.WALLETS_PRODUCT);
       }
     });
   }
 
-  addWarehouse(){
+  addWarehouse()
+  {
     if(!this.almacen_warehouse || !this.unit_warehouse  || !this.quantity_warehouse)
     {
       this.toast.error("VALIDACIÓN","Necesitas seleccionar un almacen y una unidad, aparte de colocar la cantidad");
@@ -258,61 +302,74 @@ export class EditProductComponent implements OnInit {
     console.log(this.WAREHOUSES_PRODUCT);
   }
 
-  editWarehouse(WAREHOUSES_PROD: any){
-  // Buscar el ID en la respuesta del update anterior si existe
-  // O usar el ID de la URL/búsqueda
-
-  console.log("WAREHOUSES_PROD en padre:", JSON.stringify(WAREHOUSES_PROD, null, 2));
-
-  const modalRef = this.modalService.open(EditWarehouseProductComponent,{centered:true,size:'lg'});
-
-  modalRef.componentInstance.WAREHOUSES_PROD = WAREHOUSES_PROD;
-  modalRef.componentInstance.UNITS = this.UNITS;
-  modalRef.componentInstance.WAREHOUSES = this.WAREHOUSES;
-  modalRef.componentInstance.PRODUCT_ID = this.PRODUCT_ID; // ¡Esta línea es crítica!
-
-  // Recibimos los datos del componente hijo
-  modalRef.componentInstance.WarehouseE.subscribe((wh_product: any) => {
-      // Ahora wh_product viene con ID porque el update lo incluye
-      console.log("Producto recibido:", wh_product);
-      const INDEX = this.WAREHOUSES_PRODUCT.findIndex((wh_prod: any) =>
-        (wh_prod.id && wh_prod.id == wh_product.id) ||
-        (wh_prod.unit?.id == WAREHOUSES_PROD.unit?.id &&
-        wh_prod.warehouse?.id == WAREHOUSES_PROD.warehouse?.id)
-      );
-      if(INDEX != -1)
-      {
-        // También actualizar WAREHOUSES_PROD para futuras ediciones
-        this.WAREHOUSES_PRODUCT[INDEX] = wh_product;
-        //this.toast.success("ÉXITO", "Almacén actualizado correctamente");
-        this.isLoadingProcess();
+  editWarehouse(warehouseProd: any, event?: Event)
+  {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
+    console.log("Editando warehouse product:", warehouseProd);
+    console.log("ID del warehouse product:", warehouseProd.id);  // ← Debería tener un valor ahora
+    
+    const modalRef = this.modalService.open(EditWarehouseProductComponent, {
+      size: 'lg',
+      backdrop: 'static',
+      keyboard: false
+    });
+    
+    modalRef.componentInstance.WAREHOUSES_PROD = warehouseProd;
+    modalRef.componentInstance.UNITS = this.UNITS;
+    modalRef.componentInstance.WAREHOUSES = this.almacenes;
+    modalRef.componentInstance.PRODUCT_ID = this.PRODUCT_SELECTED.id;
+    modalRef.componentInstance.PRODUCT_WAREHOUSE_ID = warehouseProd.id;  // ← Ahora tiene el ID correcto
+    
+    modalRef.componentInstance.WarehouseE.subscribe((updatedWarehouse: any) => {
+      const index = this.WAREHOUSES_PRODUCT.findIndex(w => w.id === updatedWarehouse.id);
+      if (index !== -1) {
+        this.WAREHOUSES_PRODUCT[index] = updatedWarehouse;
       }
     });
   }
 
-  removeWarehouse(WAREHOUSES_PROD:any){
-    // EL OBJETO QUE QUIERO ELIMINAR
-    // LA LISTA DONDE SE ENCUENTRA EL OBJECTO QUE QUIERO ELIMINAR
-    //  OBTENER LA POSICIÓN DEL ELEMENTO A ELIMINAR
+  removeWarehouse(WAREHOUSES_PROD: any)
+  {
+    // Obtener el ID correcto
+    const warehouseProductId = WAREHOUSES_PROD?.id || 
+                              WAREHOUSES_PROD?.pivot?.id;
+    
+    console.log("ID a eliminar:", warehouseProductId);
+    
+    if (!warehouseProductId) {
+      this.toast.error("ERROR", "No se pudo identificar el registro a eliminar");
+      return;
+    }
 
-    const modalRef = this.modalService.open(DeleteWarehouseProductComponent,{centered:true,size:'md'});
+    const modalRef = this.modalService.open(DeleteWarehouseProductComponent, {
+      centered: true,
+      size: 'md'
+    });
 
-    modalRef.componentInstance.WAREHOUSES_PROD = WAREHOUSES_PROD;
+    modalRef.componentInstance.WAREHOUSES_PROD = {
+      ...WAREHOUSES_PROD,
+      id: warehouseProductId
+    };
+    modalRef.componentInstance.WAREHOUSES = this.almacenes;
 
-    //Recibimos los datos del componente hijo
-    modalRef.componentInstance.WarehouseD.subscribe((wh_product:any) => {
-      const INDEX = this.WAREHOUSES_PRODUCT.findIndex((wh_prod:any) => wh_prod.id == WAREHOUSES_PROD.id);
-      if(INDEX!=-1)
-      {
-        //this.ROLES[INDEX] = rol;
-        this.WAREHOUSES_PRODUCT.splice(INDEX,1); //para eliminar un rol
+    modalRef.componentInstance.WarehouseD.subscribe((wh_product: any) => {
+      const INDEX = this.WAREHOUSES_PRODUCT.findIndex((wh_prod: any) => 
+        wh_prod.id === warehouseProductId
+      );
+      if (INDEX !== -1) {
+        this.WAREHOUSES_PRODUCT.splice(INDEX, 1);
+        this.toast.success("ÉXITO", "Registro eliminado correctamente");
       }
       this.isLoadingProcess();
     });
-
   }
 
-  addPriceMultiple(){
+  addPriceMultiple()
+  {
     if(!this.unit_price_multiple || ! this.quantity_price_multiple)
     {
       this.toast.error("VALIDACIÓN","Necesitas seleccionar una unidad, aparte de colocar un precio");
@@ -367,7 +424,8 @@ export class EditProductComponent implements OnInit {
     console.log(timeZone); */
   }
 
-  removePriceMultiple(WALLETS_PROD:any){
+  removePriceMultiple(WALLETS_PROD:any)
+  {
     // EL OBJETO QUE QUIERO ELIMINAR
     // LA LISTA DONDE SE ENCUENTRA EL OBJECTO QUE QUIERO ELIMINAR
     //  OBTENER LA POSICIÓN DEL ELEMENTO A ELIMINAR
@@ -387,7 +445,8 @@ export class EditProductComponent implements OnInit {
     });
   }
 
-  editProductWallet(WALLETS_PROD:any){
+  editProductWallet(WALLETS_PROD:any)
+  {
     // Buscar el ID en la respuesta del update anterior si existe
     // O usar el ID de la URL/búsqueda
 
@@ -451,11 +510,19 @@ export class EditProductComponent implements OnInit {
       });
   }
 
-  addEspecif(){
-    if (!this.key_v || !this.value_v) {
+  addEspecif()
+  {
+    if (!this.key_v || !this.value_v)
+    {
       this.toast.error("VALIDACIÓN", "Necesitas introducir una propiedad y su correspondiente valor");
       return;
     }
+
+    if (!this.ESPECIFICACIONES || !Array.isArray(this.ESPECIFICACIONES))
+    {
+      this.ESPECIFICACIONES = [];
+    }
+
     this.ESPECIFICACIONES.unshift({
       key_v: this.key_v,
       value_v: this.value_v
@@ -465,18 +532,25 @@ export class EditProductComponent implements OnInit {
     this.value_v = '';
   }
 
-  removeEspecif(i:number){
-    this.ESPECIFICACIONES.splice(i,1);
+  removeEspecif(i:number)
+  {
+    //this.ESPECIFICACIONES.splice(i,1);
+    if (this.ESPECIFICACIONES && Array.isArray(this.ESPECIFICACIONES))
+    {
+      this.ESPECIFICACIONES.splice(i,1);
+    }
   }
 
-  isLoadingProcess(){
+  isLoadingProcess()
+  {
     this.productService.isLoadingSubject.next(true);
     setTimeout(() => {
       this.productService.isLoadingSubject.next(false);
     }, 50);
   }
 
-  processFile($event:any){
+  processFile($event:any)
+  {
     if($event.target.files[0].type.indexOf("image") < 0){
       this.toast.warning("WARN","El archivo no es una imagen");
       return;
@@ -488,26 +562,29 @@ export class EditProductComponent implements OnInit {
     this.isLoadingProcess();
   }
 
-  isGift(){
+  isGift()
+  {
     this.is_gift = this.is_gift == 1 ? 2 : 1;
     console.log(this.is_gift);
   }
 
-  selectedDiscount(val:number){
+  selectedDiscount(val:number)
+  {
     this.is_discount = val;
   }
 
-  selectedTab(val:number){
+  selectedTab(val:number)
+  {
     this.tab_selected = val;
   }
 
-  store() {
+  store()
+  {
     console.log('Editando producto ID:', this.PRODUCT_ID);
 
     if(!this.title ||
       !this.description ||
       !this.price_general ||
-      //!this.imagen_product || // No es obligatorio en edición
       !this.product_categorie_id ||
       !this.sku ||
       !this.tax_selected ||
@@ -517,68 +594,77 @@ export class EditProductComponent implements OnInit {
       !this.height  ||
       !this.length ||
       !this.provider_id
-    ){
+    )
+    {
       this.toast.error("VALIDACIÓN","Necesitas llenar todos los campos obligatorios");
       return;
     }
 
-    if(this.WAREHOUSES_PRODUCT.length == 0){
+    if(this.WAREHOUSES_PRODUCT.length == 0)
+    {
       this.toast.error("VALIDACIÓN","Necesitas ingresar al menos un registro de existencia de producto");
       return;
     }
 
-    if(this.WALLETS_PRODUCT.length == 0){
+    if(this.WALLETS_PRODUCT.length == 0)
+    {
       this.toast.error("VALIDACIÓN","Necesitas ingresar al menos un listado de precio al producto");
       return;
     }
 
     // Preparar datos de warehouses
-    const warehousesData = this.WAREHOUSES_PRODUCT.map((warehouse: any) => ({
-      warehouse_id: warehouse.warehouse.id,
-      unit_id: warehouse.unit.id,
-      quantity: warehouse.quantity
-    }));
+    const warehousesData = this.WAREHOUSES_PRODUCT.map((warehouse: any) =>
+    {
+      const data: any = {
+        warehouse_id: Number(warehouse.warehouse_id) || Number(warehouse.warehouse?.id),
+        unit_id: Number(warehouse.unit_id) || Number(warehouse.pivot?.unit_id) || Number(warehouse.unit?.id),
+        quantity: Number(warehouse.quantity) || Number(warehouse.pivot?.stock) || 0
+      };
+      
+      if (warehouse.id)
+      {
+        data.id = Number(warehouse.id);
+      }
+      
+      return data;
+    });
 
     // Preparar datos de wallets
-    /* const walletsData = this.WALLETS_PRODUCT.map((wallet: any) => ({
-      unit_id: wallet.unit.id,
-      sucursale_id: wallet.sucursale.id,
-      client_segment_id: wallet.client_segment.id,
-      //price: wallet.price_general
-      price: wallet.price || wallet.price_general || wallet.quantity || 0
-    })); */
-    const walletsData = this.WALLETS_PRODUCT.map((wallet: any) => {
-      const data: any = {
-        unit_id: wallet.unit.id,
-        client_segment_id: wallet.client_segment ? wallet.client_segment.id : null,
-        //price: wallet.price || wallet.price_general || wallet.quantity || 0
-        price: wallet.price_general // ✅ Enviar como 'price' al backend
-    };
-
-    // Verificar si sucursale existe y tiene id
-    if (wallet.sucursale && wallet.sucursale.id) {
-      data.sucursale_id = wallet.sucursale.id;
-    } else if (wallet.sucursale_price_multiple) {
-      // Si no hay objeto sucursale pero sí hay ID
-      data.sucursale_id = wallet.sucursale_price_multiple;
-    }
-
-    return data;
-  });
+    const walletsData = this.WALLETS_PRODUCT.map((wallet: any) =>
+    {
+      const walletData: any = {};
+      
+      walletData.unit_id = Number(wallet.unit_id) || Number(wallet.unit?.id);
+      walletData.price = Number(wallet.price_general) || Number(wallet.price) || 0;
+      walletData.product_id = Number(this.PRODUCT_ID);
+      
+      if (wallet.client_segment_id || wallet.client_segment?.id)
+      {
+        walletData.client_segment_id = Number(wallet.client_segment_id) || Number(wallet.client_segment?.id);
+      }
+      
+      if (wallet.sucursale_id || wallet.sucursale?.id)
+      {
+        walletData.sucursale_id = Number(wallet.sucursale_id) || Number(wallet.sucursale?.id);
+      }
+      
+      if (wallet.id)
+      {
+        walletData.id = Number(wallet.id);
+      }
+      
+      console.log('Wallet a enviar:', walletData);
+      return walletData;
+    })  ;
 
     console.log('=== DATOS PARA ACTUALIZAR ===');
     console.log('WarehousesData:', warehousesData);
     console.log('WalletsData:', walletsData);
 
-    const specificationsData = this.ESPECIFICACIONES.map((esp: any) => ({
-      key_v: esp.key_v,
-      value_v: esp.value_v
-    }));
-
-    /* const specificationsData = this.ESPECIFICACIONES.map((esp: any) => ({
-      specification_key: esp.key_v,
-      specification_value: esp.value_v
-    })); */
+    const specificationsData = (this.ESPECIFICACIONES && Array.isArray(this.ESPECIFICACIONES)) ? this.ESPECIFICACIONES.map((esp: any) => ({
+          key_v: esp.key_v,
+          value_v: esp.value_v
+        })) : [];
 
     console.log('ESPECIFICACIONES original:', this.ESPECIFICACIONES);
     console.log('ESPECIFICACIONES formateadas:', specificationsData);
@@ -587,14 +673,23 @@ export class EditProductComponent implements OnInit {
     const formData = new FormData();
     formData.append("title", this.title);
     formData.append("description", this.description);
-    //formData.append("specifications", JSON.stringify(this.ESPECIFICACIONES));
     formData.append("specifications", JSON.stringify(specificationsData));
     formData.append("state", this.state);
     formData.append("product_categorie_id", this.product_categorie_id);
 
-    // Solo agregar imagen si se seleccionó una nueva
-    if (this.imagen_product && typeof this.imagen_product !== 'string') {
+    // Solo agregar imagen si se seleccionó una nueva (archivo)
+    if (this.imagen_product && typeof this.imagen_product !== 'string')
+    {
       formData.append("product_imagen", this.imagen_product);
+    }
+    else if (this.imagen_previzualiza && this.imagen_previzualiza.startsWith('http'))
+    {
+      formData.append("imagen_url", this.imagen_previzualiza);
+      console.log('Enviando URL externa:', this.imagen_previzualiza);
+    }
+    if (this.image_removed)
+    {
+      formData.append("image_removed", "true");
     }
 
     formData.append("provider_id", this.provider_id.toString());
@@ -613,34 +708,55 @@ export class EditProductComponent implements OnInit {
     formData.append("height", this.height.toString());
     formData.append("length", this.length.toString());
     formData.append("umbral", this.umbral.toString());
-    formData.append("umbral_unit_id", this.umbral_unit_id);
+    
+    // ⭐⭐⭐ SOLUCIÓN PRINCIPAL: Manejar umbral_unit_id correctamente ⭐⭐⭐
+    // Enviar como string vacío o 0 en lugar de null
+    const umbralUnitIdValue = this.umbral_unit_id && this.umbral_unit_id !== 'null' && this.umbral_unit_id !== '' ? this.umbral_unit_id.toString() : '';
+
+    formData.append("umbral_unit_id", umbralUnitIdValue);
+    
+    formData.append('_method', 'PUT');
 
     // Agregar warehouses y wallets
+    console.log('WarehousesData a enviar:', JSON.stringify(warehousesData, null, 2));
+    console.log('WalletsData a enviar:', JSON.stringify(walletsData, null, 2));
+
     formData.append("warehouses", JSON.stringify(warehousesData));
-    formData.append("wallets", JSON.stringify(walletsData));
+    // formData.append("wallets", JSON.stringify(walletsData)); // Descomentar si es necesario
 
-    // IMPORTANTE: Usar updateProduct en lugar de registerProduct
     this.productService.updateProduct(this.PRODUCT_ID, formData).subscribe({
-      next: (resp: any) => {
-        console.log('Respuesta de actualización:', resp);
-
-        if(resp.message == 200) {
-          this.toast.success("EXITO", "El producto se actualizó correctamente");
-          // Recargar los datos del producto
-          this.loadProductData();
-        } else {
-          this.toast.warning("VALIDACIÓN", resp.message_text || "Error al actualizar el producto");
+        next: (response) =>
+        {
+          console.log('✅ Producto actualizado:', response);
+          this.toast.success('Producto actualizado correctamente');
+        },
+        error: (error) =>
+        {
+          console.error('❌ Error al actualizar:', error);
+          console.error('Detalles del error:', error.error);
+          
+          if (error.error && error.error.errors)
+          {
+            const errors = error.error.errors;
+            Object.keys(errors).forEach(key =>
+            {
+              this.toast.error(`${key}: ${errors[key].join(', ')}`);
+            });
+          }
+          else if (error.error && error.error.message)
+          {
+            this.toast.error(error.error.message);
+          }
+          else
+          {
+            this.toast.error('Error al actualizar el producto');
+          }
         }
-      },
-      error: (error) => {
-        console.error('Error en actualización:', error);
-        console.error('Error details:', error.error);
-        this.toast.error("ERROR", error.error?.message_text || "Ocurrió un error al actualizar el producto");
-      }
     });
   }
 
-  cleanForm(){
+  cleanForm()
+  {
       this.title = '';
       this.description = ''
       this.state = '1';
@@ -667,4 +783,99 @@ export class EditProductComponent implements OnInit {
       this.imagen_previzualiza = 'assets/media/svg/files/blank-image.svg';
   }
 
+  // Agrega este método para manejar errores de carga de imágenes
+  onImageError()
+  {
+    console.log('Error al cargar la imagen, usando placeholder', this.imagen_previzualiza);
+    //this.imagen_previzualiza = 'assets/media/svg/files/blank-image.svg';
+    //this.imagen_product = null;
+  }
+
+  // Agrega este método para eliminar la imagen
+  removeImage()
+  {
+    this.imagen_previzualiza = 'assets/media/svg/files/blank-image.svg';
+    this.imagen_product = null;
+    
+    // Agregar un campo para indicar que se eliminó la imagen
+    this.image_removed = true; // Agrega esta variable al componente
+    
+    this.toast.info("IMAGEN", "Imagen eliminada. Se usará el placeholder.");
+  }
+
+  getImageUrl(): string
+  {
+    if (this.imagen_previzualiza && this.imagen_previzualiza !== 'assets/media/svg/files/blank-image.svg') {
+      return this.imagen_previzualiza;
+    }
+    return 'assets/media/svg/files/blank-image.svg';
+  }
+
+  getImageName(): string
+  {
+    if (this.imagen_previzualiza && this.imagen_previzualiza !== 'assets/media/svg/files/blank-image.svg') {
+      // Si es una URL, mostrar solo el nombre del archivo o un mensaje
+      if (this.imagen_previzualiza.startsWith('http')) {
+        return 'Imagen externa';
+      }
+      return this.imagen_previzualiza.split('/').pop() || 'Imagen actual';
+    }
+    return 'No hay imagen seleccionada';
+  }
+
+  getUnitDisplayName(warehouseProd: any): string
+  {
+    // Si unit es un array y tiene elementos
+    if (warehouseProd.unit && Array.isArray(warehouseProd.unit) && warehouseProd.unit.length > 0) {
+      return warehouseProd.unit[0]?.name || 'N/A';
+    }
+    
+    // Si hay pivot con unit_id
+    if (warehouseProd.pivot?.unit_id && this.UNITS) {
+      const unit = this.UNITS.find(u => u.id == warehouseProd.pivot.unit_id);
+      return unit?.name || 'N/A';
+    }
+    
+    return 'N/A';
+  }
+
+  // Método para obtener el nombre de la unidad
+  getUnitName(warehouseProd: any): string
+  {
+    if (warehouseProd.unit && Array.isArray(warehouseProd.unit) && warehouseProd.unit.length > 0)
+    {
+      return warehouseProd.unit[0]?.name || 'N/A';
+    }
+    if (warehouseProd.unit && warehouseProd.unit.name)
+    {
+      return warehouseProd.unit.name;
+    }
+    if (warehouseProd.pivot?.unit_id && this.UNITS)
+    {
+      const unit = this.UNITS.find(u => u.id == warehouseProd.pivot.unit_id);
+      return unit?.name || 'N/A';
+    }
+    return 'N/A';
+  }
+
+  // Método para obtener el nombre del almacén
+  getWarehouseName(warehouseProd: any): string
+  {
+    if (warehouseProd.warehouse?.name)
+    {
+      return warehouseProd.warehouse.name;
+    }
+    if (warehouseProd.pivot?.warehouse_id && this.almacenes)
+    {
+      const warehouse = this.almacenes.find(w => w.id == warehouseProd.pivot.warehouse_id);
+      return warehouse?.name || 'N/A';
+    }
+    return 'N/A';
+  }
+
+  // Método para obtener la cantidad
+  getWarehouseQuantity(warehouseProd: any): number
+  {
+    return warehouseProd.quantity || warehouseProd.pivot?.stock || 0;
+  }
 }

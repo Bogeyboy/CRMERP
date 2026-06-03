@@ -1,27 +1,30 @@
 <?php
 
-use Fruitcake\Cors\HandleCors;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-//use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Http\Middleware\HandleCors;
 
 return Application::configure(basePath: dirname(__DIR__))
-    /*   */
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
-        api: __DIR__. '/../routes/api.php',
+        api: __DIR__.'/../routes/api.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
+    ->withMiddleware(function (Middleware $middleware)
+    {
+        // Agregar CORS globalmente (se ejecuta en TODAS las peticiones)
+        $middleware->append(\App\Http\Middleware\Cors::class);
+        
+        // Alias para los middlewares de Spatie
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'cors' => \App\Http\Middleware\Cors::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions)
+    {
         //
     })->create();

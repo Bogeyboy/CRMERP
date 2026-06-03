@@ -35,4 +35,11 @@ class Warehouse extends Model
     {
         return $this->belongsTo(Sucursale::class, 'sucursale_id');
     }
+
+    public function unit()
+    {
+        return $this->belongsToMany(Unit::class, 'product_warehouses', 'warehouse_id', 'unit_id')
+                    ->withPivot('product_id', 'stock')
+                    ->withTimestamps();
+    }
 }

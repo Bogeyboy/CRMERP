@@ -208,15 +208,28 @@
           }
         </select>
         <div class="text-muted fs-7">Unidad/Almacén</div>
-        
-      </div>
-      <div class="col-2">
-        <button class="btn btn-success btn-md" (click)="downloadProducts()">
-          <i class="ki-duotone ki-folder-down"><span class="path1"></span><span class="path2"></span></i>
-        </button>
       </div>
       <!-- FIN DE FILTRADO POR UNIDADES DE ALMACEN -->
-
+      <!-- COMIENZO DE LOS BOTONES DE DESCARGA E IMPORTACIÓN -->
+      <div class="col-2">
+        <!-- COMIENZO DE BOTÓN DE DESCARGA -->
+        <button class="btn btn-success btn-md" (click)="downloadProducts()">
+          <i class="ki-duotone ki-folder-down">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+        </button>
+        <!-- FIN DEL BOTÓN DE DESCARGA -->
+        <!-- COMIENZO DEL BOTÓN DE IMPORTACIÓN -->
+        <button class="btn btn-primary btn-md mx-1" (click)="importProducts()">
+          <i class="ki-duotone ki-folder-up">
+            <span class="path1"></span>
+            <span class="path2"></span>
+          </i>
+        </button>
+        <!-- FIN DEL BOTÓN DE IMPORTACIÓN -->
+      </div>
+      <!-- FIN DE LOS BOTONES DE DESCARGA E IMPORTACIÓN -->
       <!-- COMIENZO DEL FILTRADO POR ESTADO DEL PRODUCTO -->
       <!-- <div class="col-2">
         <select class="form-control form-select-solid fw-bolder"
@@ -313,99 +326,99 @@
               <span class="dt-column-order"></span>
             </th>
           </tr>
-      <!-- FIN DE CABECERA DE ACCIONES DEL PRODUCTO -->
-    </thead>
-    <!-- FIN DE CABECERA DE LA TABLA -->
+          <!-- FIN DE CABECERA DE ACCIONES DEL PRODUCTO -->
+        </thead>
+        <!-- FIN DE CABECERA DE LA TABLA -->
 
-    <!-- COMIENZO DEL CUERPO DE LA TABLA -->
-    <tbody class="fw-semibold text-gray-600">
-      <!-- COMINEZO DE CONTENEDOR DEL LISTADO DE PRODUCTOS -->
-      @for (PRODUCT of PRODUCTS; track PRODUCT) {
-        <tr>
-          <!-- COMIENZO DE IMAGEN Y NOMBRE DEL PRODUCTO Y PESO DE PRODUCTO -->
-          <td>
-            <div class="d-flex align-items-center">
-              <!-- COMIENZO DE IMAGEN DEL PRODUCTO -->
-              <div class="symbol symbol-50px me-5">
-                <img [src]="PRODUCT.imagen" class="" alt="">
-              </div>
-              <!-- FIN DE IMAGEN DEL PRODUCTO -->
-              <!-- COMIENZO DE NOMBRE Y PESO DEL PRODUCTO -->
-              <div class="d-flex justify-content-start flex-column">
-                <!-- COMIENZO DE NOMBRE DEL PRODUCTO -->
-                <a href="#" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">
-                  {{ PRODUCT.title }}
+        <!-- COMIENZO DEL CUERPO DE LA TABLA -->
+        <tbody class="fw-semibold text-gray-600">
+          <!-- COMINEZO DE CONTENEDOR DEL LISTADO DE PRODUCTOS -->
+          @for (PRODUCT of PRODUCTS; track PRODUCT) {
+            <tr>
+              <!-- COMIENZO DE IMAGEN Y NOMBRE DEL PRODUCTO Y PESO DE PRODUCTO -->
+              <td>
+                <div class="d-flex align-items-center">
+                  <!-- COMIENZO DE IMAGEN DEL PRODUCTO -->
+                  <div class="symbol symbol-50px me-5">
+                    <img [src]="PRODUCT.imagen" class="" alt="">
+                  </div>
+                  <!-- FIN DE IMAGEN DEL PRODUCTO -->
+                  <!-- COMIENZO DE NOMBRE Y PESO DEL PRODUCTO -->
+                  <div class="d-flex justify-content-start flex-column">
+                    <!-- COMIENZO DE NOMBRE DEL PRODUCTO -->
+                    <a href="#" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">
+                      {{ PRODUCT.title }}
+                    </a>
+                    <!-- FIN DE NOMBRE DEL PRODUCTO -->
+                    <!-- COMIENZO DE PESO DEL PRODUCTO -->
+                    <span class="text-muted fw-semibold text-muted d-block fs-7">
+                      Peso: {{ PRODUCT.weight }}
+                    </span>
+                    <!-- FIN DE PESO DEL PRODUCTO -->
+                  </div>
+                  <!-- FIN DE NOMBRE Y PESO DEL PRODUCTO -->
+                </div>
+              </td>
+              <!-- COMIENZO DE IMAGEN Y NOMBRE DEL PRODUCTO Y PESO DE PRODUCTO -->
+              <!-- COMIENZO DE CATEGORÍA DEL PRODUCTO -->
+              <td>
+                {{ PRODUCT.product_categorie.name }}
+              </td>
+              <!-- PRECIO GENERAL DEL PRODUCTO -->
+              <td>
+                {{ PRODUCT.price_general }}
+              </td>
+              <!-- DISPONIBILIDAD DEL PRODUCTO -->
+              <td >
+                {{ getDisponibilidad(PRODUCT.disponibilidad) }}
+              </td>
+              <!-- CÓDIGO SKU DEL PRODUCTO -->
+              <td>
+                {{ PRODUCT.sku }}
+              </td>
+              <!-- TIPO DE IMPUESTO DEL PRODUCTO -->
+              <td>
+                {{ getTaxSelected(PRODUCT.tax_selected) }}
+              </td>
+              <!-- ESTADO DEL PRODUCTO -->
+              <td>
+                @if (PRODUCT.state === 1) {
+                  <span class="badge badge-light-success">Activo</span>
+                }
+                @if (PRODUCT.state === 2) {
+                  <span class="badge badge-light-danger">Inactivo</span>
+                }
+              </td>
+              <!-- BOTONES DE ACCIÓN DE PRODUCTO -->
+              <td>
+                <!-- BOTÓN DE EDICIÓN -->
+                <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                  [routerLink]="'/productos/list/edit/' + PRODUCT.id ">
+                  <i class="ki-duotone ki-pencil fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                  </i>
                 </a>
-                <!-- FIN DE NOMBRE DEL PRODUCTO -->
-                <!-- COMIENZO DE PESO DEL PRODUCTO -->
-                <span class="text-muted fw-semibold text-muted d-block fs-7">
-                  Peso: {{ PRODUCT.weight }}
-                </span>
-                <!-- FIN DE PESO DEL PRODUCTO -->
-              </div>
-              <!-- FIN DE NOMBRE Y PESO DEL PRODUCTO -->
-            </div>
-          </td>
-          <!-- COMIENZO DE IMAGEN Y NOMBRE DEL PRODUCTO Y PESO DE PRODUCTO -->
-          <!-- COMIENZO DE CATEGORÍA DEL PRODUCTO -->
-          <td>
-            {{ PRODUCT.product_categorie.name }}
-          </td>
-          <!-- PRECIO GENERAL DEL PRODUCTO -->
-          <td>
-            {{ PRODUCT.price_general }}
-          </td>
-          <!-- DISPONIBILIDAD DEL PRODUCTO -->
-          <td >
-            {{ getDisponibilidad(PRODUCT.disponibilidad) }}
-          </td>
-          <!-- CÓDIGO SKU DEL PRODUCTO -->
-          <td>
-            {{ PRODUCT.sku }}
-          </td>
-          <!-- TIPO DE IMPUESTO DEL PRODUCTO -->
-          <td>
-            {{ getTaxSelected(PRODUCT.tax_selected) }}
-          </td>
-          <!-- ESTADO DEL PRODUCTO -->
-          <td>
-            @if (PRODUCT.state === 1) {
-              <span class="badge badge-light-success">Activo</span>
-            }
-            @if (PRODUCT.state === 2) {
-              <span class="badge badge-light-danger">Inactivo</span>
-            }
-          </td>
-          <!-- BOTONES DE ACCIÓN DE PRODUCTO -->
-          <td>
-            <!-- BOTÓN DE EDICIÓN -->
-            <a class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-              [routerLink]="'/productos/list/edit/' + PRODUCT.id ">
-              <i class="ki-duotone ki-pencil fs-2">
-                <span class="path1"></span>
-                <span class="path2"></span>
-              </i>
-            </a>
-            <!-- BOTÓN DE ELIMINACIÓN -->
-            <a href="#" onclick="return false;" (click)="deleteProduct(PRODUCT)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-              <i class="ki-duotone ki-trash fs-2">
-                <span class="path1"></span>
-                <span class="path2"></span>
-                <span class="path3"></span>
-                <span class="path4"></span>
-                <span class="path5"></span>
-              </i>
-            </a>
-          </td>
-        </tr>
-      }
-      <!-- FIN DE CONTENEDOR DEL LISTADO DE PRODUCTOS -->
-    </tbody>
-    <!-- FIN DEL CUERPO DE LA TABLA -->
-    <!-- COMIENZO DEL PIE DE LA TABLA -->
-    <tfoot>
-    </tfoot>
-    <!-- FIN DEL PIE DE LA TABLA -->
+                <!-- BOTÓN DE ELIMINACIÓN -->
+                <a href="#" onclick="return false;" (click)="deleteProduct(PRODUCT)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                  <i class="ki-duotone ki-trash fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                    <span class="path3"></span>
+                    <span class="path4"></span>
+                    <span class="path5"></span>
+                  </i>
+                </a>
+              </td>
+            </tr>
+          }
+          <!-- FIN DE CONTENEDOR DEL LISTADO DE PRODUCTOS -->
+        </tbody>
+        <!-- FIN DEL CUERPO DE LA TABLA -->
+        <!-- COMIENZO DEL PIE DE LA TABLA -->
+        <tfoot>
+        </tfoot>
+      <!-- FIN DEL PIE DE LA TABLA -->
       </table>
   </div>
 <!-- FIN DE LA TABLA -->

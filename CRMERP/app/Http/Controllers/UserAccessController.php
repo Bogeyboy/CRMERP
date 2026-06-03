@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
-use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Spatie\Permission\Models\Role;
 
 class UserAccessController extends Controller
 {
@@ -46,14 +47,7 @@ class UserAccessController extends Controller
             })
         ]);
     }
-
-    /* public function config()
-    {
-        return response()->json([
-            'roles' => Role::all(),
-        ]);
-    } */
-   public function config(Request $request)
+    public function config(Request $request)
     {
         try {
             $user = auth()->user();
@@ -108,20 +102,17 @@ class UserAccessController extends Controller
         //Comprobación de existencia del usuario a registrar
         if ($USER_EXIST)
         {
-            /* return response()->json([
-                'message' => 'El correo electrónico ya se encuentra registrado',
-            ], 403); */
             return response()->json([
                 'message' => 403,
                 'message_text' => 'El correo electrónico ya se encuentra registrado, con lo que el usuario ya existe',
             ]);
         }
 
-       //Seteamos la contraseña
-       if($request->password)
-       {
-            $request->request->add(['password' => bcrypt($request->password)]);
-       }
+        //Seteamos la contraseña
+        if($request->password)
+        {
+                $request->request->add(['password' => bcrypt($request->password)]);
+        }
         //Comprobación del tipo de archivo que se va a guardar
         //Se comprobará si es una imagen o no
         if($request->hasFile('imagen'))
@@ -169,37 +160,34 @@ class UserAccessController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    /* public function update(Request $request, string $id)
     {
         $USER_EXIST = User::where('email', $request->email)
                             ->where('id', '<>', $id)->first();
         //Comprobación de existencia del usuario a registrar
         if ($USER_EXIST) {
-            /* return response()->json([
-                'message' => 'El correo electrónico ya se encuentra registrado',
-            ], 403); */
             return response()->json([
                 'message' => 403,
                 'message_text' => 'El correo electrónico ya se encuentra registrado, con lo que el usuario ya existe',
             ]);
         }
-        //Comprobación de la contraseña
-        /* if($request->password != $request->password_confirmation)
-        {
-            // return response()->json([
-            //    'message' => 'Las contraseñas no coinciden',
-            //], 403);
-            return response()->json([
-                'message' => 403,
-                'message_text' => 'Las contraseñas no coinciden',
-            ]);
-        } */
+
         //Seteamos la contraseña
         if ($request->password) {
             $request->request->add(['password' => bcrypt($request->password)]);
         }
         //Comprobación del tipo de archivo que se va a guardar, Se comprobará si es una imagen o no
         $user = User::findOrFail($id);
+        if ($request->has('role'))
+        {
+            $user->syncRoles([$request->role]);
+        }
+        // O si usas 'rol_id'
+        if ($request->has('rol_id'))
+        {
+            $user->syncRoles([$request->rol_id]);
+        }
+
         if ($request->hasFile('imagen'))
         {
             if($user->avatar)
@@ -222,6 +210,7 @@ class UserAccessController extends Controller
         }
         //Finalmente actualizamos el usuario
         $user->update($request->all());
+        Log::info('Datos recibidos:', $request->all());
 
         return response()->json([
             'message' => 200,
@@ -242,7 +231,202 @@ class UserAccessController extends Controller
                 'address' => $user->address,
                 'gender' => $user->gender,
                 'avatar' => $user->avatar ? env('APP_URL') . 'storage/' . $user->avatar : null,
-                'created_format_at' => $user->created_at->format('d/m/Y H:i:s')
+                'created_format_at' => $user->created_at->format('d/m/Y H:i:s'),
+                'user' => $user->load('roles')
+            ]
+        ]);
+    } */
+    /**
+ * Update the specified resource in storage.
+ */
+    /* public function update(Request $request, string $id)
+    {
+        // Verificar si el email ya existe en otro usuario
+        $USER_EXIST = User::where('email', $request->email)
+                            ->where('id', '<>', $id)->first();
+
+        if ($USER_EXIST) {
+            return response()->json([
+                'message' => 403,
+                'message_text' => 'El correo electrónico ya se encuentra registrado',
+            ]);
+        }
+
+        $user = User::findOrFail($id);
+
+        // Crear array con los datos a actualizar
+        $dataToUpdate = $request->only([
+            'name', 'surname', 'email', 'phone',
+            'gender', 'type_document', 'document', 'address'
+        ]);
+
+        // Manejar rol_id si viene en la petición
+        if ($request->has('rol_id')) {
+            $dataToUpdate['rol_id'] = $request->rol_id;
+        }
+
+        // También aceptar 'role' o 'role_id' como alternativas
+        if ($request->has('role_id')) {
+            $dataToUpdate['rol_id'] = $request->role_id;
+        }
+        if ($request->has('role')) {
+            $dataToUpdate['rol_id'] = $request->role;
+        }
+
+        // Manejar contraseña
+        if ($request->has('password') && $request->password) {
+            $dataToUpdate['password'] = bcrypt($request->password);
+        }
+
+        // Manejar imagen
+        if ($request->hasFile('imagen')) {
+            if ($user->avatar) {
+                Storage::delete($user->avatar);
+            }
+            $path = Storage::putFile('public/users', $request->file('imagen'));
+            // Quitar 'public/' del path para guardar
+            $dataToUpdate['avatar'] = str_replace('public/', '', $path);
+        }
+
+        // Actualizar datos básicos
+        $user->update($dataToUpdate);
+
+        // Manejar roles con Spatie Permission
+        if (isset($dataToUpdate['rol_id']) && $dataToUpdate['rol_id']) {
+            try {
+                $rol = Role::findOrFail($dataToUpdate['rol_id']);
+                // syncRoles reemplaza todos los roles actuales por el nuevo
+                $user->syncRoles([$rol->name]);
+            } catch (\Exception $e) {
+                Log::error('Error asignando rol: ' . $e->getMessage());
+            }
+        }
+
+        Log::info('Usuario actualizado:', ['id' => $id, 'data' => $dataToUpdate]);
+
+        // Recargar el usuario con sus relaciones
+        $user->refresh();
+        $user->load('roles');
+
+        return response()->json([
+            'message' => 200,
+            'message_text' => 'Usuario actualizado correctamente',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'surname' => $user->surname,
+                'full_name' => $user->name . ' ' . $user->surname,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'rol_id' => $user->rol_id,
+                'roles' => $user->roles,
+                'sucursal_id' => $user->sucursal_id,
+                'document' => $user->document,
+                'type_document' => $user->type_document,
+                'address' => $user->address,
+                'gender' => $user->gender,
+                'avatar' => $user->avatar ? env('APP_URL') . 'storage/' . $user->avatar : null,
+                'created_format_at' => $user->created_at ? $user->created_at->format('d/m/Y H:i:s') : null,
+            ]
+        ]);
+    } */
+    /**
+ * Update the specified resource in storage.
+ */
+    public function update(Request $request, string $id)
+    {
+        // LOG PARA DEPURAR - Ver qué está llegando
+        Log::info('Método:', ['method' => $request->method()]);
+        Log::info('Todos los datos del request:', $request->all());
+        Log::info('Inputs:', $request->input());
+        Log::info('Request content:', ['content' => $request->getContent()]);
+
+        // Para FormData, necesitamos obtener los datos manualmente
+        $data = [];
+
+        // Obtener campos comunes
+        if ($request->has('name')) $data['name'] = $request->input('name');
+        if ($request->has('surname')) $data['surname'] = $request->input('surname');
+        if ($request->has('email')) $data['email'] = $request->input('email');
+        if ($request->has('phone')) $data['phone'] = $request->input('phone');
+        if ($request->has('rol_id')) $data['rol_id'] = $request->input('rol_id');
+        if ($request->has('gender')) $data['gender'] = $request->input('gender');
+        if ($request->has('type_document')) $data['type_document'] = $request->input('type_document');
+        if ($request->has('document')) $data['document'] = $request->input('document');
+        if ($request->has('address')) $data['address'] = $request->input('address');
+
+        Log::info('Datos procesados:', $data);
+
+        // Verificar si el email ya existe en otro usuario
+        if (isset($data['email'])) {
+            $USER_EXIST = User::where('email', $data['email'])
+                                ->where('id', '<>', $id)->first();
+            if ($USER_EXIST) {
+                return response()->json([
+                    'message' => 403,
+                    'message_text' => 'El correo electrónico ya se encuentra registrado',
+                ]);
+            }
+        }
+
+        $user = User::findOrFail($id);
+
+        // Manejar contraseña
+        if ($request->has('password') && $request->input('password')) {
+            $data['password'] = bcrypt($request->input('password'));
+        }
+
+        // Manejar imagen
+        if ($request->hasFile('imagen')) {
+            if ($user->avatar) {
+                Storage::delete('public/' . $user->avatar);
+            }
+            $path = $request->file('imagen')->store('users', 'public');
+            $data['avatar'] = $path;
+        }
+
+        // Si hay datos para actualizar
+        if (!empty($data)) {
+            $user->update($data);
+            Log::info('Usuario actualizado con datos:', $data);
+        } else {
+            Log::warning('No hay datos para actualizar');
+        }
+
+        // Manejar roles con Spatie Permission
+        if (isset($data['rol_id']) && $data['rol_id']) {
+            try {
+                $rol = Role::findOrFail($data['rol_id']);
+                $user->syncRoles([$rol->name]);
+                Log::info('Rol asignado:', ['rol_id' => $data['rol_id'], 'rol_name' => $rol->name]);
+            } catch (\Exception $e) {
+                Log::error('Error asignando rol: ' . $e->getMessage());
+            }
+        }
+
+        // Recargar el usuario con sus relaciones
+        $user->refresh();
+        $user->load('roles');
+
+        return response()->json([
+            'message' => 200,
+            'message_text' => 'Usuario actualizado correctamente',
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'surname' => $user->surname,
+                'full_name' => $user->name . ' ' . $user->surname,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'rol_id' => $user->rol_id,
+                'roles' => $user->roles,
+                'sucursal_id' => $user->sucursal_id,
+                'document' => $user->document,
+                'type_document' => $user->type_document,
+                'address' => $user->address,
+                'gender' => $user->gender,
+                'avatar' => $user->avatar ? env('APP_URL') . 'storage/' . $user->avatar : null,
+                'created_format_at' => $user->created_at ? $user->created_at->format('d/m/Y H:i:s') : null,
             ]
         ]);
     }

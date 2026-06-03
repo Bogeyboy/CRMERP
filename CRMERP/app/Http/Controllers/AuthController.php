@@ -54,20 +54,10 @@ class AuthController extends \Illuminate\Routing\Controller
         return $this->respondWithToken($token);
     }
 
-
     /**
      * Usuario autenticado
      */
-    /* public function me()
-    {
-        $user = auth('api')->user();
-        if (!$user) {
-            return response()->json(['error' => 'No autenticado'], 401);
-        }
-
-        return response()->json($this->formatUser($user));
-    } */
-   public function me()
+    public function me()
     {
         $user = auth('api')->user();
 
@@ -150,100 +140,33 @@ class AuthController extends \Illuminate\Routing\Controller
         ];
     }
 
-    /**
-     * Responder con token
-     */
-    /* protected function respondWithToken($token)
-    {
-        $user = auth('api')->user();
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type'   => 'bearer',
-            'expires_in'   => auth('api')->factory()->getTTL() * 60,
-            'user'         => $this->formatUser($user),
-        ]);
-    } */
-    /* protected function respondWithToken($token)
-    {
-        $user = auth('api')->user();
-        $isSuperAdmin = $user->hasRole('Super-Admin');
-
-        return response()->json([
-            'access_token' => $token,
-            'token_type'   => 'bearer',
-            'expires_in'   => auth('api')->factory()->getTTL() * 60,
-            'user' => [
-                'id'          => $user->id,
-                'name'        => $user->name,
-                'email'       => $user->email,
-                'roles'       => $user->getRoleNames(),
-                'is_super'    => $isSuperAdmin,
-                'permissions' => $isSuperAdmin
-                    ? [] // el frontend NO debe usarlos
-                    : $user->getAllPermissions()->pluck('name'),
-            ],
-        ]);
-    } */
-
-    /* protected function respondWithToken($token)
+    protected function respondWithToken($token)
     {
         $user = auth('api')->user();
         $isSuper = $user->hasRole('Super-Admin');
 
-        $permissions = [];
+        // Asegurar que permissions sea un array
+        $permissions = $isSuper ? ['*'] : $user->getAllPermissions()->pluck('name')->toArray();
 
-        if ($user->hasRole('Super-Admin')) {
-            $permissions = ['*'];
-        } else {
-            $permissions = $user->getAllPermissions()->pluck('name');
-        }
+        // Asegurar que roles sea un array
+        $roles = $user->getRoleNames()->toArray();
 
         return response()->json([
             'access_token' => $token,
-            'token_type'   => 'bearer',
-            'expires_in'   => auth('api')->factory()->getTTL() * 60,
+            'token_type' => 'bearer',
+            'expires_in' => auth('api')->factory()->getTTL() * 60,
             'user' => [
-                'id'          => $user->id,
-                'name'        => $user->name,
-                'email'       => $user->email,
-                'roles'       => $user->getRoleNames()->toArray(),
-                'is_super'    => $isSuper,
-
-                // 🔥 CLAVE PARA METRONIC
-                //'permissions' => $isSuper ? ['*'] : $user->getAllPermissions()->pluck('name')->toArray(),
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                // Campos que sidebar necesita
+                'roles' => $roles,
+                'is_super' => $isSuper,
                 'permissions' => $permissions,
+                // Campos adicionales para compatibilidad
+                'rol_name' => $isSuper ? 'Super-Admin' : (count($roles) > 0 ? $roles[0] : ''),
             ]
         ]);
-    } */
-
-    protected function respondWithToken($token)
-{
-    $user = auth('api')->user();
-    $isSuper = $user->hasRole('Super-Admin');
-
-    // Asegurar que permissions sea un array
-    $permissions = $isSuper ? ['*'] : $user->getAllPermissions()->pluck('name')->toArray();
-
-    // Asegurar que roles sea un array
-    $roles = $user->getRoleNames()->toArray();
-
-    return response()->json([
-        'access_token' => $token,
-        'token_type' => 'bearer',
-        'expires_in' => auth('api')->factory()->getTTL() * 60,
-        'user' => [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            // Campos que sidebar necesita
-            'roles' => $roles,
-            'is_super' => $isSuper,
-            'permissions' => $permissions,
-            // Campos adicionales para compatibilidad
-            'rol_name' => $isSuper ? 'Super-Admin' : (count($roles) > 0 ? $roles[0] : ''),
-        ]
-    ]);
-}
+    }
 
 }

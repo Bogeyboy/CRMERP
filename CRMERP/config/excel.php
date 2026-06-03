@@ -327,6 +327,8 @@ return [
         |
         */
         'local_path'          => storage_path('framework/cache/laravel-excel'),
+        'temp_path' => env('EXCEL_TEMP_PATH', storage_path('framework/cache/laravel-excel')),
+        //'temp_path' => env('EXCEL_TEMP_PATH', storage_path('storage/app/public/imports')),
 
         /*
         |--------------------------------------------------------------------------

@@ -50,16 +50,29 @@ export class EditUserComponent implements OnInit {
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
-    this.name = this.USER_SELECTED.name
-    this.surname = this.USER_SELECTED.surname
-    this.email = this.USER_SELECTED.email
-    this.phone = this.USER_SELECTED.phone
-    this.rol_id = this.USER_SELECTED.rol_id
-    this.gender = this.USER_SELECTED.gender
-    this.type_document = this.USER_SELECTED.type_document
-    this.document = this.USER_SELECTED.document
-    this.address = this.USER_SELECTED.address
-    this.imagen_previzualiza = this.USER_SELECTED.avatar
+    this.name = this.USER_SELECTED.name || '';
+    this.surname = this.USER_SELECTED.surname || '';
+    this.email = this.USER_SELECTED.email || '';
+    this.phone = this.USER_SELECTED.phone || '';
+
+    // Cargar rol_id correctamente
+    console.log('Usuario seleccionado:', this.USER_SELECTED);
+    if (this.USER_SELECTED.roles && this.USER_SELECTED.roles.length > 0)
+    {
+      this.rol_id = this.USER_SELECTED.roles[0].id;
+      console.log('Rol cargado desde roles[0]:', this.rol_id);
+    }
+    else if (this.USER_SELECTED.rol_id)
+    {
+      this.rol_id = this.USER_SELECTED.rol_id;
+      console.log('Rol cargado desde rol_id:', this.rol_id);
+    }
+
+    this.gender = this.USER_SELECTED.gender || '';
+    this.type_document = this.USER_SELECTED.type_document || '';
+    this.document = this.USER_SELECTED.document || '';
+    this.address = this.USER_SELECTED.address || '';
+    this.imagen_previzualiza = this.USER_SELECTED.avatar || '';
 
     this.loadRoles();
   }
@@ -106,7 +119,7 @@ export class EditUserComponent implements OnInit {
     });
   }
 
-fallbackToConfigAll(): void {
+  fallbackToConfigAll(): void {
     console.log('🔄 Intentando fallback con configAll...');
     this.usersService.configAll().subscribe({
       next: (resp: any) => {
@@ -191,16 +204,29 @@ fallbackToConfigAll(): void {
     if(this.file_name){
       formData.append("imagen",this.file_name);
     }
+    // Debug: Ver qué se está enviando
+    console.log('=== DEBUG FORM DATA ===');
+    console.log('Usuario ID:', this.USER_SELECTED.id);
+    for (let pair of (formData as any).entries()) {
+        console.log(pair[0] + ': ' + pair[1]);
+    }
+    console.log('========================');
 
-    this.usersService.updateUser(this.USER_SELECTED.id,formData).subscribe((resp:any) => {
-      //console.log(resp);
-      if(resp.message == 403){
-        this.toast.error("Validación",resp.message_text);
-      }else{
-        this.toast.success("Exito","El usuario se ha editado correctamente");
-        this.UserE.emit(resp.user);
-        this.modal.close();
+    this.usersService.updateUser(this.USER_SELECTED.id, formData).subscribe({
+      next: (resp: any) => {
+          console.log('Respuesta del servidor:', resp);
+          if(resp.message == 403){
+              this.toast.error("Validación", resp.message_text);
+          } else {
+              this.toast.success("Éxito", "El usuario se ha editado correctamente");
+              this.UserE.emit(resp.user);
+              this.modal.close();
+          }
+      },
+      error: (error) => {
+          console.error('Error en la petición:', error);
+          this.toast.error("Error", "No se pudo actualizar el usuario");
       }
-    })
+    });
   }
 }

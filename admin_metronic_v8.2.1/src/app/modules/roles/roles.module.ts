@@ -26,5 +26,6 @@ import { InlineSVGModule } from 'ng-inline-svg-2';
         ReactiveFormsModule,
         InlineSVGModule,
         NgbModalModule,
-        NgbPaginationModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        NgbPaginationModule]
+    , providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class RolesModule { }

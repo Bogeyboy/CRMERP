@@ -30,13 +30,23 @@ export class ProductWarehousesService {
       );
     }
 
-  updateProductWarehouse(ID_WAREHOUSE_PRODUCT:string,data:any) {
+  /* updateProductWarehouse(ID_WAREHOUSE_PRODUCT:string,data:any) {
     console.log("ID_WAREHOUSE_PRODUCT", ID_WAREHOUSE_PRODUCT);
     console.log("URL completa:", URL_SERVICIOS+"/product_warehouses/"+ID_WAREHOUSE_PRODUCT);
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     const URL = URL_SERVICIOS+"/product_warehouses/"+ID_WAREHOUSE_PRODUCT;
     return this.http.put(URL,data,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  } */
+  updateProductWarehouse(ID_WAREHOUSE_PRODUCT: string, data: any): Observable<any> {
+    console.log("ID_WAREHOUSE_PRODUCT", ID_WAREHOUSE_PRODUCT);
+    console.log("URL completa:", URL_SERVICIOS + "/product_warehouses/" + ID_WAREHOUSE_PRODUCT);
+    this.isLoadingSubject.next(true);
+    const headers = new HttpHeaders({'Authorization': 'Bearer ' + this.authservice.token});
+    const URL = URL_SERVICIOS + "/product_warehouses/" + ID_WAREHOUSE_PRODUCT;
+    return this.http.put(URL, data, {headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }

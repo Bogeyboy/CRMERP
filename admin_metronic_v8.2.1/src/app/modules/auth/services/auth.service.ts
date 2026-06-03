@@ -204,6 +204,20 @@ export class AuthService implements OnDestroy {
       return undefined;
     }
   }
+  public getToken(): AuthModel | undefined {
+    try {
+      
+      this.token = localStorage.getItem('token');
+      //this.user = JSON.parse(lsValue);
+
+      const authData = this.token;
+      return authData;
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  }
+
   ngOnDestroy() {
     this.unsubscribe.forEach((sb) => sb.unsubscribe());
   }

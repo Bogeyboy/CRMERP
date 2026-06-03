@@ -148,9 +148,11 @@
               <!--end::Select store template-->
               <!--begin::Select2-->
               <select class="form-select mb-2" [(ngModel)]="product_categorie_id" name="product_categorie_id">
-                @for (CATEGORIE of CATEGORIES; track CATEGORIE) {
+                <option value="">Seleccionar categoría</option>
+                <!-- @for (CATEGORIE of CATEGORIES; track CATEGORIE) {
                   <option [value]="CATEGORIE.id">{{ CATEGORIE.name }}</option>
-                }
+                } -->
+                  <option *ngFor="let cat of CATEGORIES" [value]="cat.id">{{ cat.name }}</option>
               </select>
               <!--end::Select2-->
               <!--begin::Description-->
@@ -235,13 +237,14 @@
                           <label class="required form-label">Proveedor principal</label>
                           <select class="form-select mb-2"
                             [(ngModel)]="provider_id"
-                            name="provider_id"
-                            placeholder="Seleccione el proveedor">
-                            @for (PROVIDER of PROVIDERS; track PROVIDER) {
-                              <option [ngValue]="PROVIDER.id">
-                                {{ PROVIDER.full_name + ' - ' + PROVIDER.comercial_name }}
-                              </option>
-                            }
+                            name="provider_id">
+                          <option value="0">Seleccionar proveedor</option>
+                          <!--  @for (PROVIDER of PROVIDERS; track PROVIDER) {
+                            <option [ngValue]="PROVIDER.id">
+                              {{ PROVIDER.full_name + ' - ' + PROVIDER.comercial_name }}
+                            </option>
+                          } -->
+                          <option *ngFor="let prov of PROVIDERS" [value]="prov.id">{{ prov.name }}</option>
                           </select>
                           <div class="text-muted fs-7">
                             Proveedor
