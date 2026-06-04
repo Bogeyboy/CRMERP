@@ -14,6 +14,8 @@ class ProductWarehouse extends Model
     use HasFactory;
     use SoftDeletes;
 
+    protected $table = 'product_warehouses';
+
     protected $fillable = [
         'product_id',
         'unit_id',

@@ -82,19 +82,17 @@ class Product extends Model
     {
         return $this->hasMany(ProductWarehouse::class, 'product_id');
     }
-    public function warehouses()
+    /* public function warehouses()
     {
         // Asegúrate de incluir 'stock' en el pivot
-        /* return $this->belongsToMany(ProductWarehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
+        return $this->belongsToMany(ProductWarehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
             ->withPivot('id', 'stock', 'unit_id') // IMPORTANTE: incluir 'stock'
-            ->withTimestamps(); */
-        /* return $this->belongsToMany(Warehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
-                    ->withPivot('unit_id', 'stock')
-                    ->withTimestamps(); */
-
-        return $this->hasMany(ProductWarehouse::class,'product_id','id');//(Warehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
-                    //->withPivot('unit_id', 'stock')
-                    //->withTimestamps();
+            ->withTimestamps();
+    } */
+    public function warehouses()
+    {
+        // Cambiado de belongsToMany a hasMany porque es una relación directa
+        return $this->hasMany(ProductWarehouse::class, 'product_id');
     }
 
     public function getImagenAttribute($value)

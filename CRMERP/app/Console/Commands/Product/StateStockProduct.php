@@ -134,14 +134,14 @@ class StateStockProduct extends Command
 
         foreach ($products as $product)
         {
-            dump([
+            /* dump([
                 'product_id' => $product->id,
                 'product_title' => $product->title,
                 'relations' => get_class_methods($product),
                 'warehouses_exists' => method_exists($product, 'warehouses'),
                 'warehouses_count' => $product->warehouses->count(),
-                'raw_warehouses' => DB::table('productwarehouses')->where('product_id', $product->id)->get()
-            ]);
+                'raw_warehouses' => DB::table('product_warehouses')->where('product_id', $product->id)->get()
+            ]); */
             // Log para debug
             $this->line("Procesando producto ID: {$product->id} - Título: {$product->title}");
 
