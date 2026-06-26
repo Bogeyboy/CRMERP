@@ -82,19 +82,11 @@ class Product extends Model
     {
         return $this->hasMany(ProductWarehouse::class, 'product_id');
     }
-    /* public function warehouses()
-    {
-        // Asegúrate de incluir 'stock' en el pivot
-        return $this->belongsToMany(ProductWarehouse::class, 'product_warehouses', 'product_id', 'warehouse_id')
-            ->withPivot('id', 'stock', 'unit_id') // IMPORTANTE: incluir 'stock'
-            ->withTimestamps();
-    } */
     public function warehouses()
     {
         // Cambiado de belongsToMany a hasMany porque es una relación directa
         return $this->hasMany(ProductWarehouse::class, 'product_id');
     }
-
     public function getImagenAttribute($value)
     {
         Log::info('🔍 Accessor getImagenAttribute llamado');
@@ -163,7 +155,9 @@ class Product extends Model
         $almacen_warehouse,
         $client_segment_price_multiple,
         $state,
-        $unit_warehouse)
+        $unit_warehouse,
+        $state_stock
+        )
         {
             if(!empty($search))
             {
@@ -171,47 +165,64 @@ class Product extends Model
                 $query->where(DB::raw("CONCAT(products.title,' ',products.sku)"), 'LIKE', "%{$search}%");
             }
             //Variable para el filtrado por categoria de producto
-            if (!empty($product_categorie_id)) {
+            if (!empty($product_categorie_id))
+            {
                 $query->where('product_categorie_id',$product_categorie_id);
             }
             //Variable para el filtrado por disponibilidad
-            if (!is_null($disponibilidad)) {
+            if (!is_null($disponibilidad))
+            {
                 $query->where('disponibilidad', $disponibilidad);
             }
             //Variable para el filtrado por impuesto seleccionado
-            if (!is_null($tax_selected)) {
+            if (!is_null($tax_selected))
+            {
                 $query->where('tax_selected', $tax_selected);
             }
+            if (!is_null($state_stock))
+            {
+                $query->where('state_stock', $state_stock);
+            }
             //Variable para el filtrado por proveedor
-                if (!is_null($provider_id) && $provider_id !== '') {
-                    $query->where('products.provider_id', (int)$provider_id);
-                }
+            if (!is_null($provider_id) && $provider_id !== '')
+            {
+                $query->where('products.provider_id', (int)$provider_id);
+            }
             //Variable para el filtrado por sucursal de precio
-            if($sucursale_price_multiple){
-                $query->whereHas('wallets',function($sub) use ($sucursale_price_multiple) {
+            if($sucursale_price_multiple)
+            {
+                $query->whereHas('wallets',function($sub) use ($sucursale_price_multiple)
+                {
                     $sub->where('sucursal_id', $sucursale_price_multiple);
                 });
             }
             //Variable para el filtrado por segmento de cliente
-            if ($client_segment_price_multiple) {
-                $query->whereHas('wallets', function ($sub) use ($client_segment_price_multiple) {
+            if ($client_segment_price_multiple)
+            {
+                $query->whereHas('wallets', function ($sub) use ($client_segment_price_multiple)
+                {
                     $sub->where('client_segment_id', $client_segment_price_multiple);
                 });
             }
             //Variable para el filtrado por almacén
-            if ($almacen_warehouse) {
-                $query->whereHas('productWarehouses', function ($sub) use ($almacen_warehouse) {
+            if ($almacen_warehouse)
+            {
+                $query->whereHas('productWarehouses', function ($sub) use ($almacen_warehouse)
+                {
                     $sub->where('warehouse_id', $almacen_warehouse);
                 });
             }
             //Variable para el filtrado por unidades de almacén
-            if ($unit_warehouse) {
-                $query->whereHas('productWarehouses', function ($sub) use ($unit_warehouse) {
+            if ($unit_warehouse)
+            {
+                $query->whereHas('productWarehouses', function ($sub) use ($unit_warehouse)
+                {
                     $sub->where('unit_id', $unit_warehouse);
                 });
             }
             //Variable para el filtrado por estado
-            if ($state) {
+            if ($state)
+            {
                 $query->where('state', $state);
             }
             return $query;

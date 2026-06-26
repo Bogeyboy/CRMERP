@@ -11,14 +11,15 @@ import { AuthService } from 'src/app/modules/auth';
   templateUrl: './create-client-segment.component.html',
   styleUrls: ['./create-client-segment.component.scss']
 })
-export class CreateClientSegmentComponent implements OnInit {
+export class CreateClientSegmentComponent implements OnInit
+{
   @Output() ClientSegmentC = new EventEmitter<any>();
-    
+
       //Variables
       name ='';
       address = '';
       isLoading:any;
-    
+
       constructor(
           public modal:NgbActiveModal,
           private http: HttpClient,
@@ -27,13 +28,13 @@ export class CreateClientSegmentComponent implements OnInit {
           public toast: ToastrService,
         )
       {
-        
+
       }
-    
+
       ngOnInit(): void {
         //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
         //Add 'implements OnInit' to the class.
-        
+
       }
       //Función para guardar los permisos
       store()
@@ -43,12 +44,12 @@ export class CreateClientSegmentComponent implements OnInit {
           this.toast.error("Validación","El nombre del segmento de cliente es requerido.");
           return false;
         }
-        
+
         const data = {
           name: this.name,
           //address: this.address
         }
-    
+
         this.clientSegmentService.registerClientSegment(data).subscribe((resp:any) => {
           console.log(resp);
           if(resp.message == 403)

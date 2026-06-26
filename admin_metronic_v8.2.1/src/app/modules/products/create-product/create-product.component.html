@@ -502,410 +502,410 @@
                                 <!-- FIN DE PRECIO, DISPONIBILIDAD, DESCUENTOS Y TIEMPO DE ABASTECIMIENTO -->
                               </div>
                               <!-- FIN DE LA PARTE DE PRECIO, DISPONIBILIDAD, DESCUENTOS Y TIEMPO DE ABASTECIMIENTO -->
+              </div>
+            </div>
+            <!-- FIN PESTAÑA GENERAL -->
+            <!-- COMIENZO PESTAÑA AVANZADO-->
+            <div class="tab-pane fade" [ngClass]="{'show active': tab_selected === 2}" id="kt_ecommerce_add_product_advanced" role="tab-panel">
+              <div class="d-flex flex-column gap-7 gap-lg-10">
+                <!-- COMIENZO CABECERA PARTE INVENTARIO -->
+                <div class="card card-flush py-4">
+                  <div class="card-header">
+                    <div class="card-title">
+                      <h2>Inventario</h2>
+                    </div>
+                  </div>
+                  <!-- COMIENZO DE TODO LO RELACIONADO CON EL INVENTARIO -->
+                  <div class="card-body pt-0">
+                    <!-- COMIENZO SKU y GRATUITO -->
+                    <div class="mb-10 fv-row row">
+                      <!-- COMIENZO SKU -->
+                      <div class="col-6">
+                        <label class="required form-label">SKU</label>
+                        <input type="text"
+                          [(ngModel)]="sku"
+                          name="sku"
+                          class="form-control mb-2"
+                          placeholder="Código SKU"
+                          value="" />
+                          <div class="text-muted fs-7">Introduce el SKU del producto.</div>
+                        </div>
+                        <!-- FIN SKU -->
+                        <!-- COMIENZO GRATUITO -->
+                        <div class="col-6">
+                          <label class="form-label">¿Es gratuito?</label>
+                          <div class="form-check form-check-custom form-check-solid mb-2">
+                            <input class="form-check-input" type="checkbox" (click)="isGift()" value="" />
+                            <label class="form-check-label">Si</label>
+                          </div>
+                          <div class="text-muted fs-7">Es posible que el producto tenga coste 0.</div>
+                        </div>
+                        <!-- FIN GRATUITO -->
+                      </div>
+                      <!-- FIN SKU y GRATUITO -->
+                      <!-- COMIENZO UMBRAL Y UNIDAD DE UMBRAL-->
+                      <div class="mb-10 fv-row row">
+                        <!-- COMIENZO UMBRAL -->
+                        <div class="col-6">
+                          <label class="required form-label">UMBRAL</label>
+                          <input type="text"
+                            [(ngModel)]="umbral"
+                            name="umbral"
+                            class="form-control mb-2"
+                            placeholder="Cantidad mínima para petición"
+                            value="" />
+                            <div class="text-muted fs-7">Introduce el UMBRAL del producto.</div>
+                          </div>
+                          <!-- FIN UMBRAL -->
+                          <!-- COMIENZO UNIDAD DE UMBREAL -->
+                          <div class="col-6">
+                            <label class="form-label">Unidad de UMBRAL:</label>
+                            <select class="form-select mb-2"
+                              [(ngModel)]="umbral_unit_id"
+                              name="umbral_unit_id"
+                              placeholder="Seleccione una opción.">
+                              @for (UNIT of UNITS; track UNIT) {
+                                <option [value]="UNIT.id">{{ UNIT.name }}</option>
+                              }
+                            </select>
+                            <div class="text-muted fs-7">Es posible que el producto .......</div>
+                          </div>
+                          <!-- FIN UNIDAD DE UMBREAL -->
+                        </div>
+                        <!-- FIN UMBRAL Y UNIDAD DE UMBRAL-->
+                        <!-- INICIO TIPO DE UNIDAD, ALMACÉN Y CANTIDAD -->
+                        <div class="mb-10 fv-row row">
+                          <!-- COMIENZO SELECCIONABLE TIPO DE UNIDAD -->
+                          <div class="col-4">
+                            <label class="required form-label">Unidad</label>
+                            <select class="form-select mb-2"
+                              [(ngModel)]="unit_warehouse"
+                              name="unit_warehouse"
+                              placeholder="Seleccione una opción.">
+                              @for (UNIT of UNITS; track UNIT) {
+                                <option [value]="UNIT.id">{{ UNIT.name }}</option>
+                              }
+                            </select>
+                            <div class="text-muted fs-7">Defina unidad.</div>
+                          </div>
+                          <!-- FIN SELECCIONABLE TIPO DE UNIDAD -->
+                          <!-- COMIENZO SELECCIONABLE ALMACEN -->
+                          <div class="col-4">
+                            <label class="required form-label">Almacen</label>
+                            <select class="form-select mb-2"
+                              [(ngModel)]="almacen_warehouse"
+                              name="almacen_warehouse"
+                              placeholder="Seleccione una opción">
+                              @for (WAREHOUSE of WAREHOUSES; track WAREHOUSE) {
+                                <option [value]="WAREHOUSE.id">{{ WAREHOUSE.name }}</option>
+                              }
+                            </select>
+                            <div class="text-muted fs-7">Seleccione Almacén.</div>
+                          </div>
+                          <!-- FIN SELECCIONABLE ALMACEN -->
+                          <!-- COMIENZO CANTIDAD -->
+                          <div class="col-3">
+                            <label class="required form-label">Cantidad</label>
+                            <div class="d-flex gap-3">
+                              <input type="number"
+                                [(ngModel)]="quantity_warehouse"
+                                name="quantity_warehouse"
+                                class="form-control mb-2"
+                                placeholder="En estantería."
+                                value="" />
+                              </div>
+                              <div class="text-muted fs-7">Introduce la cantidad de producto.</div>
+                            </div>
+                            <!-- FIN CANTIDAD -->
+                            <!-- COMIENZO DE BOTÓN DE AÑADIR A LA TABLA RESÚMEN -->
+                            <div class="col-1">
+                              <label class="required form-label">Agregar</label>
+                              <button class="btn btn-primary btn-sm" (click)="addWarehouse()">+</button>
+                            </div>
+                            <!-- FIN DEL BOTÓN DE AÑADIR A LA TABLA RESÚMEN -->
+                          </div>
+                          <!-- FIN TIPO DE UNIDAD, ALMACÉN Y CANTIDAD -->
+                          <!-- INICIO TABLA RESÚMEN DE PRODUCTO UNIDAD, ALMACEN, CANTIDAD, ESTADO Y ACCIONES -->
+                          <div class="mb-10 fv-row row">
+                            <div class="col-12">
+                              <div class="table-responsive">
+                                <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+                                  <thead>
+                                    <tr class="fw-bold text-muted">
+                                      <th class="">Unidad</th>
+                                      <th class="">Almacen</th>
+                                      <th class="">Cantidad</th>
+                                      <th class="">Actions</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    @for (WAREHOUSES_PROD of WAREHOUSES_PRODUCT; track WAREHOUSES_PROD) {
+                                      <tr>
+                                        <td>
+                                          <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">{{ WAREHOUSES_PROD.unit.name }}</a>
+                                          <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Code: PH</span> -->
+                                        </td>
+                                        <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                                          {{ WAREHOUSES_PROD.warehouse.name }}
+                                        </td>
+                                        <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                                          {{ WAREHOUSES_PROD.quantity }}
+                                        </td>
+                                        <td class="">
+                                          <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                          <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i></a> -->
+                                          <a href="#" onClick="return false" (click)="removeWarehouse(WAREHOUSES_PROD)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                                            <i class="ki-duotone ki-trash fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i></a>
+                                          </td>
+                                        </tr>
+                                      }
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                            <!-- FIN TABLA RESÚMEN DE PRODUCTO UNIDAD, ALMACEN, CANTIDAD, ESTADO Y ACCIONES -->
+                          </div>
+                          <!-- FIN DE TODO LO RELACIONADO CON EL INVENTARIO -->
+                        </div>
+                        <!-- FIN CABECERA PARTE INVENTARIO -->
+                        <!-- COMIENZO PRICES MULTIPLE-->
+                        <div class="card card-flush py-4">
+                          <div class="card-header">
+                            <div class="card-title">
+                              <h2>Price Multiple</h2>
                             </div>
                           </div>
-                          <!-- FIN PESTAÑA GENERAL -->
-                          <!-- COMIENZO PESTAÑA AVANZADO-->
-                          <div class="tab-pane fade" [ngClass]="{'show active': tab_selected === 2}" id="kt_ecommerce_add_product_advanced" role="tab-panel">
-                            <div class="d-flex flex-column gap-7 gap-lg-10">
-                              <!-- COMIENZO CABECERA PARTE INVENTARIO -->
-                              <div class="card card-flush py-4">
-                                <div class="card-header">
-                                  <div class="card-title">
-                                    <h2>Inventario</h2>
+                          <!-- COMIENZO DE TODO LO RELACIONADO CON PRICES MULTIPLE -->
+                          <div class="card-body pt-0">
+                            <!-- COMIENZO SECCION UNIDAD, SUCURSAL, SEGMENTO DE CLIENTE -->
+                            <div class="mb-10 fv-row row">
+                              <!-- COMIENZO SELECCIONABLE UNIDAD -->
+                              <div class="col-3">
+                                <label class="required form-label">Unidad</label>
+                                <!-- COMIENZO UNIDAD -->
+                                <select class="form-select mb-2"
+                                  [(ngModel)]="unit_price_multiple"
+                                  name="unit_price_multiple"
+                                  placeholder="Seleccione una opción">
+                                  @for (UNIT of UNITS; track UNIT) {
+                                    <option [value]="UNIT.id">{{ UNIT.name }}</option>
+                                  }
+                                </select>
+                                <!-- FIN UNIDAD -->
+                                <div class="text-muted fs-7">Defina unidad.</div>
+                              </div>
+                              <!-- FIN SELECCIONABLE UNIDAD -->
+                              <!-- COMIENZO SELECCIONABLE SUCURSAL -->
+                              <div class="col-3">
+                                <label class="required form-label">Sucursales</label>
+                                <!-- COMIENZO SUCURSALES -->
+                                <select class="form-select mb-2"
+                                  [(ngModel)]="sucursale_price_multiple"
+                                  name="sucursale_price_multiple"
+                                  placeholder="Seleccione una opción">
+                                  @for (SUCURSALE of SUCURSALES; track SUCURSALE) {
+                                    <option [value]="SUCURSALE.id">{{ SUCURSALE.name }}</option>
+                                  }
+                                </select>
+                                <!-- FIN SUCURSALES -->
+                                <div class="text-muted fs-7">Defina Sucursales.</div>
+                              </div>
+                              <!-- FIN SELECCIONABLE SUCURSAL -->
+                              <!-- COMIENZO SELECCIONABLE SEGMENTO DE CLIENTE -->
+                              <div class="col-3">
+                                <label class="required form-label">Segmento de cliente</label>
+                                <!-- SEGMENTO DE CLIENTE -->
+                                <select class="form-select mb-2"
+                                  [(ngModel)]="client_segment_price_multiple"
+                                  name="client_segment_price_multiple"
+                                  placeholder="Seleccione una opción">
+                                  @for (CLIENT_SEGMENT of CLIENT_SEGMENTS; track CLIENT_SEGMENT) {
+                                    <option [value]="CLIENT_SEGMENT.id">{{ CLIENT_SEGMENT.name }}</option>
+                                  }
+                                </select>
+                                <!-- FIN SEGMENTO DE CLIENTE -->
+                                <div class="text-muted fs-7">Defina Segmento de cliente.</div>
+                              </div>
+                              <!-- FIN SELECCIONABLE SEGMENTO DE CLIENTE -->
+                              <!-- COMIENZO INPUT PRECIO DEL PRODUCTO-->
+                              <div class="col-2">
+                                <label class="required form-label">Precio</label>
+                                <!-- COMIENZO DE PRECIO -->
+                                <div class="d-flex gap-3">
+                                  <input type="number"
+                                    [(ngModel)]="quantity_price_multiple"
+                                    name="quantity_price_multiple"
+                                    class="form-control mb-2"
+                                    placeholder="On shelf"
+                                    value="" />
+                                  </div>
+                                  <!-- FIN DE PRECIO -->
+                                  <div class="text-muted fs-7">Introduce el precio del producto.</div>
+                                </div>
+                                <!-- FIN INPUT PRECIO DEL PRODUCTO -->
+                                <!-- COMIENZO DEL BOTÓN DE AGREGAR -->
+                                <div class="col-1">
+                                  <label class="required form-label">Agregar</label>
+                                  <button class="btn btn-primary btn-sm" (click)="addPriceMultiple()">+</button>
+                                </div>
+                                <!-- FIN DEL BOTÓN DE AGREGAR -->
+                              </div>
+                              <!-- FIN SECCION UNIDAD, SUCURSAL, SEGMENTO DE CLIENTE -->
+                              <!-- COMIENZO TABLA RESÚMEN PRECIO MULTIPLE -->
+                              <div class="mb-10 fv-row row">
+                                <div class="col-12">
+                                  <div class="table-responsive">
+                                    <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+                                      <!-- INICIO CABECERA DE TABLA -->
+                                      <thead>
+                                        <tr class="fw-bold text-muted">
+                                          <th class="">Unidad</th>
+                                          <th class="">Sucursal</th>
+                                          <th class="">Segmento de cliente</th>
+                                          <th class="">Precio</th>
+                                          <th class="">Actions</th>
+                                        </tr>
+                                      </thead>
+                                      <!-- FIN CABECERA DE TABLA -->
+                                      <!-- INICIO CUERPO DE TABLA -->
+                                      <tbody>
+                                        @for (WALLETS_PROD of WALLETS_PRODUCT; track WALLETS_PROD) {
+                                          <tr>
+                                            <!-- NOMBRE DE UNIDAD -->
+                                            <td>
+                                              <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">{{ WALLETS_PROD.unit.name }}</a>
+                                              <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Code: PH</span> -->
+                                            </td>
+                                            <!-- NOMBRE DE SUCURSAL -->
+                                            <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                                              {{ WALLETS_PROD.sucursale ? WALLETS_PROD.sucursale.name : 'N/A' }}
+                                            </td>
+                                            <!-- NOMBRE DE SEGMENTO DE CLIENTE -->
+                                            <td>
+                                              <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">{{ WALLETS_PROD.client_segment ? WALLETS_PROD.client_segment.name : 'N/A' }}</a>
+                                            </td>
+                                            <!-- PRECIO -->
+                                            <td>
+                                              {{ WALLETS_PROD.price_general }} <!-- PEN -->
+                                            </td>
+                                            <!-- ACCIONES -->
+                                            <td class="">
+                                              <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                              <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i></a> -->
+                                              <a href="#" onClick="return false;" (click)="removePriceMultiple(WALLETS_PROD)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                                                <i class="ki-duotone ki-trash fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i></a>
+                                              </td>
+                                            </tr>
+                                          }
+
+                                        </tbody>
+                                        <!-- FIN CUERPO DE TABLA -->
+                                      </table>
+                                    </div>
                                   </div>
                                 </div>
-                                <!-- COMIENZO DE TODO LO RELACIONADO CON EL INVENTARIO -->
-                                <div class="card-body pt-0">
-                                  <!-- COMIENZO SKU y GRATUITO -->
-                                  <div class="mb-10 fv-row row">
-                                    <!-- COMIENZO SKU -->
-                                    <div class="col-6">
-                                      <label class="required form-label">SKU</label>
-                                      <input type="text"
-                                        [(ngModel)]="sku"
-                                        name="sku"
-                                        class="form-control mb-2"
-                                        placeholder="Código SKU"
-                                        value="" />
-                                        <div class="text-muted fs-7">Introduce el SKU del producto.</div>
-                                      </div>
-                                      <!-- FIN SKU -->
-                                      <!-- COMIENZO GRATUITO -->
-                                      <div class="col-6">
-                                        <label class="form-label">¿Es gratuito?</label>
-                                        <div class="form-check form-check-custom form-check-solid mb-2">
-                                          <input class="form-check-input" type="checkbox" (click)="isGift()" value="" />
-                                          <label class="form-check-label">Si</label>
-                                        </div>
-                                        <div class="text-muted fs-7">Es posible que el producto tenga coste 0.</div>
-                                      </div>
-                                      <!-- FIN GRATUITO -->
-                                    </div>
-                                    <!-- FIN SKU y GRATUITO -->
-                                    <!-- COMIENZO UMBRAL Y UNIDAD DE UMBRAL-->
-                                    <div class="mb-10 fv-row row">
-                                      <!-- COMIENZO UMBRAL -->
-                                      <div class="col-6">
-                                        <label class="required form-label">UMBRAL</label>
+                                <!-- FIN TABLA RESÚMEN PRECIO MULTIPLE -->
+                              </div>
+                              <!-- FIN DE TODO LO RELACIONADO CON PRICES MULTIPLE -->
+                            </div>
+                            <!-- FIN PRICES MULTIPLE -->
+                            <!-- COMIENZO PARTE DIMENSIONES-->
+                            <div class="card card-flush py-4">
+                              <!-- COMIENZO CABECERA -->
+                              <div class="card-header">
+                                <div class="card-title">
+                                  <h2>Dimensiones</h2>
+                                </div>
+                              </div>
+                              <!-- FIN CABECERA -->
+                              <!-- COMIENZO CUERPO FORMULARIO DE DIMENSIONES -->
+                              <div class="card-body pt-0">
+                                <!-- COMIENZO DEL FORMULARIO DE DIMENSIONES -->
+                                <div id="kt_ecommerce_add_product_shipping" class="">
+                                  <!-- COMIENZO DIMENSIONES Y PESO DEL PRODUCTO -->
+                                  <div class="fv-row row">
+                                    <label class="form-label">Dimensiones y peso del producto</label>
+                                    <div class="d-flex flex-wrap flex-sm-nowrap gap-3">
+                                      <!-- PESO -->
+                                      <div class="col-3">
+                                        <label class="form-label">Peso</label>
                                         <input type="text"
-                                          [(ngModel)]="umbral"
-                                          name="umbral"
+                                          [(ngModel)]="weight"
+                                          name="weight"
                                           class="form-control mb-2"
-                                          placeholder="Cantidad mínima para petición"
-                                          value="" />
-                                          <div class="text-muted fs-7">Introduce el UMBRAL del producto.</div>
+                                          placeholder="Peso del producto" value="" />
+                                          <div class="text-muted fs-7">Peso en kilogramos (kg).</div>
                                         </div>
-                                        <!-- FIN UMBRAL -->
-                                        <!-- COMIENZO UNIDAD DE UMBREAL -->
-                                        <div class="col-6">
-                                          <label class="form-label">Unidad de UMBRAL:</label>
-                                          <select class="form-select mb-2"
-                                            [(ngModel)]="umbral_unit_id"
-                                            name="umbral_unit_id"
-                                            placeholder="Seleccione una opción.">
-                                            @for (UNIT of UNITS; track UNIT) {
-                                              <option [value]="UNIT.id">{{ UNIT.name }}</option>
-                                            }
-                                          </select>
-                                          <div class="text-muted fs-7">Es posible que el producto .......</div>
-                                        </div>
-                                        <!-- FIN UNIDAD DE UMBREAL -->
-                                      </div>
-                                      <!-- FIN UMBRAL Y UNIDAD DE UMBRAL-->
-                                      <!-- INICIO TIPO DE UNIDAD, ALMACÉN Y CANTIDAD -->
-                                      <div class="mb-10 fv-row row">
-                                        <!-- COMIENZO SELECCIONABLE TIPO DE UNIDAD -->
-                                        <div class="col-4">
-                                          <label class="required form-label">Unidad</label>
-                                          <select class="form-select mb-2"
-                                            [(ngModel)]="unit_warehouse"
-                                            name="unit_warehouse"
-                                            placeholder="Seleccione una opción.">
-                                            @for (UNIT of UNITS; track UNIT) {
-                                              <option [value]="UNIT.id">{{ UNIT.name }}</option>
-                                            }
-                                          </select>
-                                          <div class="text-muted fs-7">Defina unidad.</div>
-                                        </div>
-                                        <!-- FIN SELECCIONABLE TIPO DE UNIDAD -->
-                                        <!-- COMIENZO SELECCIONABLE ALMACEN -->
-                                        <div class="col-4">
-                                          <label class="required form-label">Almacen</label>
-                                          <select class="form-select mb-2"
-                                            [(ngModel)]="almacen_warehouse"
-                                            name="almacen_warehouse"
-                                            placeholder="Seleccione una opción">
-                                            @for (WAREHOUSE of WAREHOUSES; track WAREHOUSE) {
-                                              <option [value]="WAREHOUSE.id">{{ WAREHOUSE.name }}</option>
-                                            }
-                                          </select>
-                                          <div class="text-muted fs-7">Seleccione Almacén.</div>
-                                        </div>
-                                        <!-- FIN SELECCIONABLE ALMACEN -->
-                                        <!-- COMIENZO CANTIDAD -->
+                                        <!-- ANCHO -->
                                         <div class="col-3">
-                                          <label class="required form-label">Cantidad</label>
-                                          <div class="d-flex gap-3">
+                                          <label class="form-label">Ancho</label>
+                                          <input type="number"
+                                            [(ngModel)]="width"
+                                            name="width"
+                                            class="form-control mb-2"
+                                            placeholder="Width (w)"
+                                            value="" />
+                                            <div class="text-muted fs-7">Ancho (cm).</div>
+                                          </div>
+                                          <!-- ALTO -->
+                                          <div class="col-3">
+                                            <label class="form-label">Alto</label>
                                             <input type="number"
-                                              [(ngModel)]="quantity_warehouse"
-                                              name="quantity_warehouse"
+                                              [(ngModel)]="height"
+                                              name="height"
                                               class="form-control mb-2"
-                                              placeholder="En estantería."
+                                              placeholder="Height (h)"
                                               value="" />
+                                              <div class="text-muted fs-7">Alto (cm).</div>
                                             </div>
-                                            <div class="text-muted fs-7">Introduce la cantidad de producto.</div>
-                                          </div>
-                                          <!-- FIN CANTIDAD -->
-                                          <!-- COMIENZO DE BOTÓN DE AÑADIR A LA TABLA RESÚMEN -->
-                                          <div class="col-1">
-                                            <label class="required form-label">Agregar</label>
-                                            <button class="btn btn-primary btn-sm" (click)="addWarehouse()">+</button>
-                                          </div>
-                                          <!-- FIN DEL BOTÓN DE AÑADIR A LA TABLA RESÚMEN -->
-                                        </div>
-                                        <!-- FIN TIPO DE UNIDAD, ALMACÉN Y CANTIDAD -->
-                                        <!-- INICIO TABLA RESÚMEN DE PRODUCTO UNIDAD, ALMACEN, CANTIDAD, ESTADO Y ACCIONES -->
-                                        <div class="mb-10 fv-row row">
-                                          <div class="col-12">
-                                            <div class="table-responsive">
-                                              <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
-                                                <thead>
-                                                  <tr class="fw-bold text-muted">
-                                                    <th class="">Unidad</th>
-                                                    <th class="">Almacen</th>
-                                                    <th class="">Cantidad</th>
-                                                    <th class="">Actions</th>
-                                                  </tr>
-                                                </thead>
-                                                <tbody>
-                                                  @for (WAREHOUSES_PROD of WAREHOUSES_PRODUCT; track WAREHOUSES_PROD) {
-                                                    <tr>
-                                                      <td>
-                                                        <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">{{ WAREHOUSES_PROD.unit.name }}</a>
-                                                        <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Code: PH</span> -->
-                                                      </td>
-                                                      <td class="text-gray-900 fw-bold text-hover-primary fs-6">
-                                                        {{ WAREHOUSES_PROD.warehouse.name }}
-                                                      </td>
-                                                      <td class="text-gray-900 fw-bold text-hover-primary fs-6">
-                                                        {{ WAREHOUSES_PROD.quantity }}
-                                                      </td>
-                                                      <td class="">
-                                                        <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                                        <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i></a> -->
-                                                        <a href="#" onClick="return false" (click)="removeWarehouse(WAREHOUSES_PROD)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                                          <i class="ki-duotone ki-trash fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i></a>
-                                                        </td>
-                                                      </tr>
-                                                    }
-                                                  </tbody>
-                                                </table>
+                                            <!-- LARGO -->
+                                            <div class="col-3">
+                                              <label class="form-label">Largo</label>
+                                              <input type="number"
+                                                [(ngModel)]="length"
+                                                name="length"
+                                                class="form-control mb-2"
+                                                placeholder="Lengtn (l)"
+                                                value="" />
+                                                <div class="text-muted fs-7">Largo (cm).</div>
                                               </div>
                                             </div>
                                           </div>
-                                          <!-- FIN TABLA RESÚMEN DE PRODUCTO UNIDAD, ALMACEN, CANTIDAD, ESTADO Y ACCIONES -->
+                                          <!-- FIN DIMENSIONES Y PESO DEL PRODUCTO -->
                                         </div>
-                                        <!-- FIN DE TODO LO RELACIONADO CON EL INVENTARIO -->
+                                        <!-- FIN DEL FORMULARIO DE DIMENSIONES -->
                                       </div>
-                                      <!-- FIN CABECERA PARTE INVENTARIO -->
-                                      <!-- COMIENZO PRICES MULTIPLE-->
-                                      <div class="card card-flush py-4">
-                                        <div class="card-header">
-                                          <div class="card-title">
-                                            <h2>Price Multiple</h2>
-                                          </div>
-                                        </div>
-                                        <!-- COMIENZO DE TODO LO RELACIONADO CON PRICES MULTIPLE -->
-                                        <div class="card-body pt-0">
-                                          <!-- COMIENZO SECCION UNIDAD, SUCURSAL, SEGMENTO DE CLIENTE -->
-                                          <div class="mb-10 fv-row row">
-                                            <!-- COMIENZO SELECCIONABLE UNIDAD -->
-                                            <div class="col-3">
-                                              <label class="required form-label">Unidad</label>
-                                              <!-- COMIENZO UNIDAD -->
-                                              <select class="form-select mb-2"
-                                                [(ngModel)]="unit_price_multiple"
-                                                name="unit_price_multiple"
-                                                placeholder="Seleccione una opción">
-                                                @for (UNIT of UNITS; track UNIT) {
-                                                  <option [value]="UNIT.id">{{ UNIT.name }}</option>
-                                                }
-                                              </select>
-                                              <!-- FIN UNIDAD -->
-                                              <div class="text-muted fs-7">Defina unidad.</div>
-                                            </div>
-                                            <!-- FIN SELECCIONABLE UNIDAD -->
-                                            <!-- COMIENZO SELECCIONABLE SUCURSAL -->
-                                            <div class="col-3">
-                                              <label class="required form-label">Sucursales</label>
-                                              <!-- COMIENZO SUCURSALES -->
-                                              <select class="form-select mb-2"
-                                                [(ngModel)]="sucursale_price_multiple"
-                                                name="sucursale_price_multiple"
-                                                placeholder="Seleccione una opción">
-                                                @for (SUCURSALE of SUCURSALES; track SUCURSALE) {
-                                                  <option [value]="SUCURSALE.id">{{ SUCURSALE.name }}</option>
-                                                }
-                                              </select>
-                                              <!-- FIN SUCURSALES -->
-                                              <div class="text-muted fs-7">Defina Sucursales.</div>
-                                            </div>
-                                            <!-- FIN SELECCIONABLE SUCURSAL -->
-                                            <!-- COMIENZO SELECCIONABLE SEGMENTO DE CLIENTE -->
-                                            <div class="col-3">
-                                              <label class="required form-label">Segmento de cliente</label>
-                                              <!-- SEGMENTO DE CLIENTE -->
-                                              <select class="form-select mb-2"
-                                                [(ngModel)]="client_segment_price_multiple"
-                                                name="client_segment_price_multiple"
-                                                placeholder="Seleccione una opción">
-                                                @for (CLIENT_SEGMENT of CLIENT_SEGMENTS; track CLIENT_SEGMENT) {
-                                                  <option [value]="CLIENT_SEGMENT.id">{{ CLIENT_SEGMENT.name }}</option>
-                                                }
-                                              </select>
-                                              <!-- FIN SEGMENTO DE CLIENTE -->
-                                              <div class="text-muted fs-7">Defina Segmento de cliente.</div>
-                                            </div>
-                                            <!-- FIN SELECCIONABLE SEGMENTO DE CLIENTE -->
-                                            <!-- COMIENZO INPUT PRECIO DEL PRODUCTO-->
-                                            <div class="col-2">
-                                              <label class="required form-label">Precio</label>
-                                              <!-- COMIENZO DE PRECIO -->
-                                              <div class="d-flex gap-3">
-                                                <input type="number"
-                                                  [(ngModel)]="quantity_price_multiple"
-                                                  name="quantity_price_multiple"
-                                                  class="form-control mb-2"
-                                                  placeholder="On shelf"
-                                                  value="" />
-                                                </div>
-                                                <!-- FIN DE PRECIO -->
-                                                <div class="text-muted fs-7">Introduce el precio del producto.</div>
-                                              </div>
-                                              <!-- FIN INPUT PRECIO DEL PRODUCTO -->
-                                              <!-- COMIENZO DEL BOTÓN DE AGREGAR -->
-                                              <div class="col-1">
-                                                <label class="required form-label">Agregar</label>
-                                                <button class="btn btn-primary btn-sm" (click)="addPriceMultiple()">+</button>
-                                              </div>
-                                              <!-- FIN DEL BOTÓN DE AGREGAR -->
-                                            </div>
-                                            <!-- FIN SECCION UNIDAD, SUCURSAL, SEGMENTO DE CLIENTE -->
-                                            <!-- COMIENZO TABLA RESÚMEN PRECIO MULTIPLE -->
-                                            <div class="mb-10 fv-row row">
-                                              <div class="col-12">
-                                                <div class="table-responsive">
-                                                  <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
-                                                    <!-- INICIO CABECERA DE TABLA -->
-                                                    <thead>
-                                                      <tr class="fw-bold text-muted">
-                                                        <th class="">Unidad</th>
-                                                        <th class="">Sucursal</th>
-                                                        <th class="">Segmento de cliente</th>
-                                                        <th class="">Precio</th>
-                                                        <th class="">Actions</th>
-                                                      </tr>
-                                                    </thead>
-                                                    <!-- FIN CABECERA DE TABLA -->
-                                                    <!-- INICIO CUERPO DE TABLA -->
-                                                    <tbody>
-                                                      @for (WALLETS_PROD of WALLETS_PRODUCT; track WALLETS_PROD) {
-                                                        <tr>
-                                                          <!-- NOMBRE DE UNIDAD -->
-                                                          <td>
-                                                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">{{ WALLETS_PROD.unit.name }}</a>
-                                                            <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Code: PH</span> -->
-                                                          </td>
-                                                          <!-- NOMBRE DE SUCURSAL -->
-                                                          <td class="text-gray-900 fw-bold text-hover-primary fs-6">
-                                                            {{ WALLETS_PROD.sucursale ? WALLETS_PROD.sucursale.name : 'N/A' }}
-                                                          </td>
-                                                          <!-- NOMBRE DE SEGMENTO DE CLIENTE -->
-                                                          <td>
-                                                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">{{ WALLETS_PROD.client_segment ? WALLETS_PROD.client_segment.name : 'N/A' }}</a>
-                                                          </td>
-                                                          <!-- PRECIO -->
-                                                          <td>
-                                                            {{ WALLETS_PROD.price_general }} <!-- PEN -->
-                                                          </td>
-                                                          <!-- ACCIONES -->
-                                                          <td class="">
-                                                            <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                                                            <i class="ki-duotone ki-pencil fs-2"><span class="path1"></span><span class="path2"></span></i></a> -->
-                                                            <a href="#" onClick="return false;" (click)="removePriceMultiple(WALLETS_PROD)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                                                              <i class="ki-duotone ki-trash fs-2"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span><span class="path5"></span></i></a>
-                                                            </td>
-                                                          </tr>
-                                                        }
-
-                                                      </tbody>
-                                                      <!-- FIN CUERPO DE TABLA -->
-                                                    </table>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                              <!-- FIN TABLA RESÚMEN PRECIO MULTIPLE -->
-                                            </div>
-                                            <!-- FIN DE TODO LO RELACIONADO CON PRICES MULTIPLE -->
-                                          </div>
-                                          <!-- FIN PRICES MULTIPLE -->
-                                          <!-- COMIENZO PARTE DIMENSIONES-->
-                                          <div class="card card-flush py-4">
-                                            <!-- COMIENZO CABECERA -->
-                                            <div class="card-header">
-                                              <div class="card-title">
-                                                <h2>Dimensiones</h2>
-                                              </div>
-                                            </div>
-                                            <!-- FIN CABECERA -->
-                                            <!-- COMIENZO CUERPO FORMULARIO DE DIMENSIONES -->
-                                            <div class="card-body pt-0">
-                                              <!-- COMIENZO DEL FORMULARIO DE DIMENSIONES -->
-                                              <div id="kt_ecommerce_add_product_shipping" class="">
-                                                <!-- COMIENZO DIMENSIONES Y PESO DEL PRODUCTO -->
-                                                <div class="fv-row row">
-                                                  <label class="form-label">Dimensiones y peso del producto</label>
-                                                  <div class="d-flex flex-wrap flex-sm-nowrap gap-3">
-                                                    <!-- PESO -->
-                                                    <div class="col-3">
-                                                      <label class="form-label">Peso</label>
-                                                      <input type="text"
-                                                        [(ngModel)]="weight"
-                                                        name="weight"
-                                                        class="form-control mb-2"
-                                                        placeholder="Peso del producto" value="" />
-                                                        <div class="text-muted fs-7">Peso en kilogramos (kg).</div>
-                                                      </div>
-                                                      <!-- ANCHO -->
-                                                      <div class="col-3">
-                                                        <label class="form-label">Ancho</label>
-                                                        <input type="number"
-                                                          [(ngModel)]="width"
-                                                          name="width"
-                                                          class="form-control mb-2"
-                                                          placeholder="Width (w)"
-                                                          value="" />
-                                                          <div class="text-muted fs-7">Ancho (cm).</div>
-                                                        </div>
-                                                        <!-- ALTO -->
-                                                        <div class="col-3">
-                                                          <label class="form-label">Alto</label>
-                                                          <input type="number"
-                                                            [(ngModel)]="height"
-                                                            name="height"
-                                                            class="form-control mb-2"
-                                                            placeholder="Height (h)"
-                                                            value="" />
-                                                            <div class="text-muted fs-7">Alto (cm).</div>
-                                                          </div>
-                                                          <!-- LARGO -->
-                                                          <div class="col-3">
-                                                            <label class="form-label">Largo</label>
-                                                            <input type="number"
-                                                              [(ngModel)]="length"
-                                                              name="length"
-                                                              class="form-control mb-2"
-                                                              placeholder="Lengtn (l)"
-                                                              value="" />
-                                                              <div class="text-muted fs-7">Largo (cm).</div>
-                                                            </div>
-                                                          </div>
-                                                        </div>
-                                                        <!-- FIN DIMENSIONES Y PESO DEL PRODUCTO -->
-                                                      </div>
-                                                      <!-- FIN DEL FORMULARIO DE DIMENSIONES -->
-                                                    </div>
-                                                    <!-- FIN CUERPO FORMULARIO DE DIMENSIONES -->
-                                                  </div>
-                                                  <!-- FIN PARTE DIMENSIONES -->
-                                                </div>
-                                              </div>
-                                              <!-- FIN PESTAÑA AVANZADO -->
-                                            </div>
-                                            <!-- FIN CONTENEDOR PESTAÑA GENERAL Y AVANZADO -->
-                                            <!-- COMIENZO BOTONES SALVAR CAMBIOS Y CANCELAR -->
-                                            <div class="d-flex justify-content-end">
-                                              <!--COMIENZO BOTÓN CANCELAR-->
-                                              <!-- <a href="apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">
-                                              Cancelar
-                                            </a> -->
-                                            <!--FIN BOTÓN CANCELAR-->
-                                            <!--COMIENZO BOTÓN SALVAR CAMBIOS-->
-                                            <button type="button" (click)="store()" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
-                                              <span class="indicator-label">Salvar cambios</span>
-                                              <span class="indicator-progress">Por favor, espera...
-                                                <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
-                                              </button>
-                                              <!--FIN BOTÓN SALVAR CAMBIOS-->
-                                            </div>
-                                            <!-- FIN BOTONES SALVAR CAMBIOS Y CANCELAR -->
-                                          </div>
-                                          <!-- FIN DE PANEL CENTRAL-->
-                                        </form>
-                                        <!-- FIN DEL FORMULARIO -->
-                                      </div>
-                                      <!--end::Content container-->
+                                      <!-- FIN CUERPO FORMULARIO DE DIMENSIONES -->
                                     </div>
-                                    <!--end::Content-->
-                                  </div>
+                                    <!-- FIN PARTE DIMENSIONES -->
+              </div>
+            </div>
+            <!-- FIN PESTAÑA AVANZADO -->
+          </div>
+          <!-- FIN CONTENEDOR PESTAÑA GENERAL Y AVANZADO -->
+          <!-- COMIENZO BOTONES SALVAR CAMBIOS Y CANCELAR -->
+          <div class="d-flex justify-content-end">
+            <!--COMIENZO BOTÓN CANCELAR-->
+            <!-- <a href="apps/ecommerce/catalog/products.html" id="kt_ecommerce_add_product_cancel" class="btn btn-light me-5">
+            Cancelar
+          </a> -->
+          <!--FIN BOTÓN CANCELAR-->
+          <!--COMIENZO BOTÓN SALVAR CAMBIOS-->
+          <button type="button" (click)="store()" id="kt_ecommerce_add_product_submit" class="btn btn-primary">
+            <span class="indicator-label">Salvar cambios</span>
+            <span class="indicator-progress">Por favor, espera...
+              <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>
+          </button>
+            <!--FIN BOTÓN SALVAR CAMBIOS-->
+          </div>
+          <!-- FIN BOTONES SALVAR CAMBIOS Y CANCELAR -->
+        </div>
+        <!-- FIN DE PANEL CENTRAL-->
+      </form>
+      <!-- FIN DEL FORMULARIO -->
+    </div>
+    <!--end::Content container-->
+  </div>
+  <!--end::Content-->
+</div>

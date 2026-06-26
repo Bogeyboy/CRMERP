@@ -28,24 +28,33 @@ import { EditWarehouseProductComponent } from './warehouse/edit-warehouse-produc
 import { DeleteWarehouseProductComponent } from './warehouse/delete-warehouse-product/delete-warehouse-product.component';
 
 
-@NgModule({ declarations: [
-        ProductsComponent,
-        CreateProductComponent,
-        ListProductComponent,
-        EditProductComponent,
-        DeleteProductComponent,
-        EditWalletPriceProductComponent,
-        DeleteWalletPriceProductComponent,
-        EditWarehouseProductComponent,
-        DeleteWarehouseProductComponent
-    ],
-    imports: [CommonModule,
-        ProductsRoutingModule,
-        RouterModule,
-        FormsModule,
-        NgbModule,
-        ReactiveFormsModule,
-        InlineSVGModule,
-        NgbModalModule,
-        NgbPaginationModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+@NgModule({
+  declarations:
+  [
+    ProductsComponent,
+    CreateProductComponent,
+    ListProductComponent,
+    EditProductComponent,
+    DeleteProductComponent,
+    EditWalletPriceProductComponent,
+    DeleteWalletPriceProductComponent,
+    EditWarehouseProductComponent,
+    DeleteWarehouseProductComponent
+  ],
+  imports:
+  [
+    CommonModule,
+    ProductsRoutingModule,
+    RouterModule,
+    FormsModule,
+    NgbModule,
+    ReactiveFormsModule,
+    InlineSVGModule,
+    NgbModalModule,
+    NgbPaginationModule
+  ],
+  providers:
+  [
+    provideHttpClient(withInterceptorsFromDi())
+  ] })
 export class ProductsModule { }

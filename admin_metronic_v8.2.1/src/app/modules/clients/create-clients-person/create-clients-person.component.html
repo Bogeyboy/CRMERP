@@ -1,0 +1,298 @@
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+  <!--begin::Modal header-->
+  <div class="modal-header" id="kt_modal_add_user_header">
+    <!--begin::Modal title-->
+    <h2 class="fw-bolder">Añadir Cliente particular</h2>
+
+    <!--end::Modal title-->
+    <!--begin::Close-->
+    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close" (click)="modal.dismiss()">
+      <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+      <span class="svg-icon svg-icon-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+          <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+        </svg>
+      </span>
+      <!--end::Svg Icon-->
+    </div>
+    <!--end::Close-->
+  </div>
+  <div class="modal-body scroll-y mx-5 my-7">
+    <!-- COMIENZO DEL FORMULARIO -->
+    <form id="kt_modal_add_user_form" class="form" action="#">
+
+      <!-- COMIENZO ETIQUETAS DIFERENTES PESTAÑAS, DATOS GENERALES Y DATOS AVANZADOS -->
+      <ul class="nav nav-custom nav-tabs nav-line-tabs nav-line-tabs-2x border-0 fs-4 fw-semibold mb-5">
+        <!-- COMIENZO ETIQUETA PESTAÑA DATOS GENERALES -->
+        <li class="nav-item">
+          <a class="nav-link text-active-primary pb-4"
+            [ngClass]="{'active': tab_selected === 1}"
+            data-bs-toggle="tab"
+            href="#kt_ecommerce_add_product_general"
+            onclick="return false;"
+            (click)="selectedTab(1)">Datos Generales
+          </a>
+        </li>
+        <!-- FIN ETIQUETA DATOS GENERALES -->
+        <!-- COMIENZO ETIQUETA PESTAÑA DATOS AVANZADOS -->
+        <li class="nav-item">
+          <a class="nav-link text-active-primary pb-4"
+            [ngClass]="{'active': tab_selected === 2}"
+            data-bs-toggle="tab"
+            href="#kt_ecommerce_add_product_advanced"
+            onclick="return false;"
+            (click)="selectedTab(2)">Datos Avanzados
+          </a>
+        </li>
+        <!-- FIN ETIQUETA PESTAÑA DATOS AVANZADOS -->
+      </ul>
+      <!-- FIN ETIQUETAS DIFERENTES PESTAÑAS, DATOS GENERALES Y DATOS AVANZADOS -->
+      <!-- INICIO CONTENIDO PESTAÑAS -->
+      <div class="tab-content">
+        <!-- INICIO PESTAÑA DATOS GENERALES -->
+        <div class="tab-pane fade"
+          [ngClass]="{'show active': tab_selected === 1}"
+          id="kt_ecommerce_add_product_general"
+          role="tab-panel">
+          <div class="d-flex flex-column scroll-y me-n7 pe-7 mt-5" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
+            <!-- INICIO DE SEGMENTO DE CLIENTE -->
+            <div class="fv-row row mb-7">
+              <!-- INICIO DE SEGMENTO DE CLIENTE -->
+              <div class="col-4">
+                <label class="required fw-bold fs-6 mb-2">Segmento de cliente: (*)</label>
+                <select
+                  class="form-control form-select-solid fw-bolder"
+                  name="client_segment_id"
+                  [(ngModel)]="client_segment_id"
+                  placeholder="Seleccione un segmento">
+                    <option value="">Ninguno</option>
+                </select>
+              </div>
+              <!-- FIN DE SEGMENTO DE CLIENTE -->
+            </div>
+            <!-- FIN DE SEGMENTO DE CLIENTE -->
+            <!-- INICIO NOMBRE, APELLIDO -->
+            <div class="fv-row row mb-7">
+              <!-- INICIO DE NOMBRE DE CLIENTE -->
+              <div class="col-4">
+                <label class="required fw-bold fs-6 mb-2">Nombre de cliente: (*)</label>
+                <input type="text"
+                  name="name"
+                  [(ngModel)]="name"
+                  class="form-control form-control-solid mb-3 mb-lg-0"
+                  placeholder="Nombre"/>
+              </div>
+              <!-- FIN DE NOMBRE DE CLIENTE -->
+              <!-- INICIO DE APELLIDO DE CLIENTE -->
+              <div class="col-4">
+                <label class="required fw-bold fs-6 mb-2">Apellido de cliente: (*)</label>
+                <input type="text"
+                  name="surname"
+                  [(ngModel)]="surname"
+                  class="form-control form-control-solid mb-3 mb-lg-0"
+                  placeholder="Apellidos"/>
+              </div>
+              <!-- FIN DE APELLIDO DE CLIENTE -->
+            </div>
+            <!-- FIN NOMBRE, APELLIDO -->
+            <!-- INICIO TIPO Y NÚMERO DE DOCUMENTO Y ORIGEN -->
+            <div class="fv-row row mb-7">
+              <!-- INICIO DE TIPO DE DOCUMENTO -->
+              <div class="col-2">
+                <label class="required fw-bold fs-6 mb-2">Tipo documento: (*)</label>
+                <select
+                  class="form-control form-select-solid fw-bolder"
+                  name="type_document"
+                  [(ngModel)]="type_document"
+                  placeholder="#000000000">
+                  <option value="">Ninguno</option>
+                </select>
+              </div>
+              <!-- FIN DE TIPO DE DOCUMENTO -->
+              <!-- INICIO DE NÚMERO DE DOCUMENTO -->
+              <div class="col-3">
+                <label class="required fw-bold fs-6 mb-2">Número documento: (*)</label>
+                <input type="text"
+                  name="document_number"
+                  [(ngModel)]="n_document"
+                  class="form-control form-control-solid mb-3 mb-lg-0"
+                  placeholder="Número de documento"/>
+              </div>
+              <!-- FIN DE NÚMERO DE DOCUMENTO -->
+              <!-- INICIO DE ORIGEN -->
+              <div class="col-3">
+                <label class="required fw-bold fs-6 mb-2">Origen: (*)</label>
+                <select
+                  class="form-control form-select-solid fw-bolder"
+                  name="origin"
+                  [(ngModel)]="origen"
+                  placeholder="#000000000">
+                  <option value="">Ninguno</option>
+                </select>
+              </div>
+              <!-- FIN DE ORIGEN -->
+            </div>
+            <!-- FIN TIPO Y NÚMERO DE DOCUMENTO Y ORIGEN -->
+            <!-- INICIO SEXO, CUMPLEAÑOS Y TELEFONO -->
+            <div class="fv-row row mb-7">
+              <!-- INICIO DE SEXO -->
+              <div class="col-3">
+                <label class="required fw-bold fs-6 mb-2">Sexo: (*)</label>
+                <div class="d-flex mt-3">
+                  <div class="form-check form-check-custom form-check-solid me-2">
+                    <input class="form-check-input" type="radio" value="1" name="sexo" id="sexo_masculino" [(ngModel)]="sexo">
+                    <label class="form-check-label" for="sexo_masculino">
+                        Masculino
+                    </label>
+                  </div>
+                  <div class="form-check form-check-custom form-check-solid me-2">
+                    <input class="form-check-input" type="radio" value="2" name="sexo" id="sexo_femenino" [(ngModel)]="sexo">
+                    <label class="form-check-label" for="sexo_femenino">
+                        Femenino
+                    </label>
+                  </div>
+                  <div class="form-check form-check-custom form-check-solid">
+                    <input class="form-check-input" type="radio" value="3" name="sexo" id="sexo_no" [(ngModel)]="sexo">
+                    <label class="form-check-label" for="sexo_no">
+                        N/A
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!-- FIN DE SEXO -->
+              <!-- INICIO CUMPLEAÑOS -->
+              <div class="col-3">
+                <label class="required fw-bold fs-6 mb-2">Cumpleaños: (*)</label>
+                <input type="date"
+                  name="birthdate"
+                  [(ngModel)]="birthdate"
+                  class="form-control form-control-solid mb-3 mb-lg-0"
+                  placeholder="Cumpleaños"/>
+              </div>
+              <!-- FIN CUMPLEAÑOS -->
+              <!-- INICIO TELEFONO -->
+              <div class="col-3">
+                <label class="required fw-bold fs-6 mb-2">Teléfono: (*)</label>
+                <input type="text"
+                  name="phone"
+                  [(ngModel)]="phone"
+                  class="form-control form-control-solid mb-3 mb-lg-0"
+                  placeholder="Número de teléfono"/>
+              </div>
+              <!-- FIN TELEFONO -->
+              <!-- INICIO TELEFONO -->
+              <div class="col-3">
+                <label class="required fw-bold fs-6 mb-2">Email: (*)</label>
+                <input type="text"
+                  name="email"
+                  [(ngModel)]="email"
+                  class="form-control form-control-solid mb-3 mb-lg-0"
+                  placeholder="example@example.com"/>
+              </div>
+              <!-- FIN TELEFONO -->
+            </div>
+            <!-- FIN SEXO, CUMPLEAÑOS Y TELEFONO -->
+          </div>
+        </div>
+        <!-- FIN PESTAÑA DATOS GENERALES -->
+        <!-- INICIO PESTAÑA DATOS AVANZADOS -->
+        <div class="tab-pane fade" [ngClass]="{'show active': tab_selected === 2}" id="kt_ecommerce_add_product_advanced" role="tab-panel">
+          <!-- INICIO DE DATOS AVANZADOS -->
+          <div class="d-flex flex-column scroll-y me-n7 pe-7 mt-5" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
+            <!-- INICIO DE COMUNIDAD, PROVINCIA Y POBLACIÓN -->
+            <div class="fv-row row mb-7">
+              <!-- INICIO DE COMUNIDAD -->
+              <div class="col-4">
+                <label class="required fw-bold fs-6 mb-2">Comunidad: (*)</label>
+                <select
+                  class="form-control form-select-solid fw-bolder"
+                  name="ubigeo_region"
+                  [(ngModel)]="ubigeo_region"
+                  placeholder="Seleccione Comunidad."
+                  (change)="changeRegion($event)">
+                  <option value="">Ninguno</option>
+                  <ng-container *ngFor="let REGION of REGIONES">
+                    <option [value]=" REGION.id " > {{ REGION.name }}</option>
+                  </ng-container>
+                </select>
+              </div>
+              <!-- FIN DE COMUNIDAD -->
+              <!-- INICIO DE PROVINCIA -->
+              <div class="col-4">
+                <label class="required fw-bold fs-6 mb-2">Provincia: (*)</label>
+                <select
+                  class="form-control form-select-solid fw-bolder"
+                  name="ubigeo_provincia"
+                  [(ngModel)]="ubigeo_provincia"
+                  placeholder="Seleccione Provincia."
+                  (change)="changeProvincia($event)">
+                  <option value="">Ninguno</option>
+                  <ng-container *ngFor="let PROVINCIA of PROVINCIA_SELECTEDS">
+                    <option [value]=" PROVINCIA.id " > {{ PROVINCIA.name }}</option>
+                  </ng-container>
+                </select>
+              </div>
+              <!-- FIN DE PROVINCIA -->
+              <!-- INICIO DE POBLACIÓN -->
+              <div class="col-4">
+                <label class="required fw-bold fs-6 mb-2">Población: (*)</label>
+                <select
+                  class="form-control form-select-solid fw-bolder"
+                  name="ubigeo_distrito"
+                  [(ngModel)]="ubigeo_distrito"
+                  placeholder="Seleccione Población.">
+                  <option value="">Ninguno</option>
+                  <ng-container *ngFor="let DISTRITO of DISTRITOS_SELECTEDS">
+                    <option [value]=" DISTRITO.id " > {{ DISTRITO.name }}</option>
+                  </ng-container>
+                </select>
+              </div>
+              <!-- FIN DE POBLACIÓN -->
+            </div>
+            <!-- FIN DE COMUNIDAD, PROVINCIA Y POBLACIÓN -->
+            <!-- INICIO DE DIRECCIÓN -->
+            <div class="fv-row row mb-7">
+              <!-- DIRECCION -->
+              <div class="col-6">
+                <label class="required fw-bold fs-6 mb-2">Dirección: (*)</label>
+                <input type="text"
+                  name="address"
+                  [(ngModel)]="address"
+                  class="form-control form-control-solid mb-3 mb-lg-0"
+                  placeholder="Dirección"/>
+              </div>
+              <div class="col-3">
+                <label class="required fw-bold fs-6 mb-2">¿Necesita adelanto? (*)</label>
+                  <div class="form-check form-check-custom form-check-solid mb-2">
+                    <input class="form-check-input" type="checkbox" (click)="selectedParcial()"/>
+                    <label class="form-check-label">{{ is_parcial == 2 ? 'Sí' : 'No' }}</label>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <!-- FIN DE DATOS AVANZADOS -->
+        </div>
+        <!-- FIN PESTAÑA DATOS AVANZADOS -->
+      </div>
+      <!-- FIN CONTENIDO PESTAÑAS -->
+
+      <!-- COMIENZO DE BOTONES DE ACCIÓN -->
+      <div class="text-center pt-15">
+        <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()">Cerrar</button>
+        <button type="button" (click)="store()" class="btn btn-primary" data-kt-users-modal-action="submit">
+          <span class="indicator-label">Registrar</span>
+
+          @if (isLoading) {
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+          }
+          <!-- <span class="indicator-progress">Please wait...
+          <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span> -->
+        </button>
+      </div>
+      <!-- FIN DE BOTONES DE ACCIÓN -->
+    </form>
+    <!-- FIN DEL FORMULARIO -->
+  </div>
+</div>

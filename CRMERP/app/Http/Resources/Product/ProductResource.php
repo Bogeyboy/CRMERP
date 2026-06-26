@@ -33,6 +33,7 @@ class ProductResource extends JsonResource
             'is_gift' => $this->resource->is_gift,
             'umbral' => $this->resource->umbral,
             'state' => $this->resource->state,
+            'state_stock' => $this->resource->state_stock,
             'umbral_unit_id' => $this->resource->umbral_unit_id,
             'umbral_unit' => $this->resource->umbral_unit ? [
                 'id' => $this->resource->umbral_unit->id,

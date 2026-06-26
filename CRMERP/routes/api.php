@@ -1,21 +1,22 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserAccessController;
-use App\Http\Controllers\RolePermissionController;
-use App\Http\Controllers\Product\ProductController;
-use App\Http\Controllers\Configuration\UnitController;
-use App\Http\Controllers\Product\ProductWalletController;
-use App\Http\Controllers\Configuration\ProviderController;
-use App\Http\Controllers\Configuration\SucursaleController;
-use App\Http\Controllers\Configuration\WarehouseController;
-use App\Http\Controllers\Product\ProductWarehouseController;
+use App\Http\Controllers\Client\ClientController;
 use App\Http\Controllers\Configuration\ClientSegmentController;
 use App\Http\Controllers\Configuration\MethodPaymentController;
 use App\Http\Controllers\Configuration\ProductCategorieController;
+use App\Http\Controllers\Configuration\ProviderController;
 use App\Http\Controllers\Configuration\SucursalDeliverieController;
+use App\Http\Controllers\Configuration\SucursaleController;
+use App\Http\Controllers\Configuration\UnitController;
+use App\Http\Controllers\Configuration\WarehouseController;
+use App\Http\Controllers\Product\ProductController;
+use App\Http\Controllers\Product\ProductWalletController;
+use App\Http\Controllers\Product\ProductWarehouseController;
+use App\Http\Controllers\RolePermissionController;
+use App\Http\Controllers\UserAccessController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -108,11 +109,11 @@ Route::middleware(['auth:api', 'role:Super-Admin'])->group(function () {
 
     // Productos - Solo lo que realmente requiere Super-Admin
     // NOTA: products/index, products/config y products/{id} ya están definidos fuera
-    
+
     //Route::post('/products/import', [ProductController::class, 'import_product']);
     //Route::post('/products/import', [ProductController::class, 'import_product']);
         //->middleware('permission:register_product');
-    
+
     // Si necesitas store, update, delete solo para Super-Admin, descomenta:
     // Route::post('/products', [ProductController::class, 'store']);
     // Route::put('/products/{id}', [ProductController::class, 'update']);
@@ -120,6 +121,10 @@ Route::middleware(['auth:api', 'role:Super-Admin'])->group(function () {
 
     Route::resource('product_wallets', ProductWalletController::class);
     Route::resource('product_warehouses', ProductWarehouseController::class);
+
+    Route::get('/clients/config', [ClientController::class, 'config']);
+    Route::resource('clients', ClientController::class);
+
 });
 
 // Exportación de excel (accesible para todos los autenticados con permiso)

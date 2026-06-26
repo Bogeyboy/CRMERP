@@ -210,10 +210,24 @@
         <div class="text-muted fs-7">Unidad/Almacén</div>
       </div>
       <!-- FIN DE FILTRADO POR UNIDADES DE ALMACEN -->
-      <!-- COMIENZO DE LOS BOTONES DE DESCARGA E IMPORTACIÓN -->
+      <!-- COMIENZO DEL FILTRADO POR ESTADO DE STOCK -->
       <div class="col-2">
+        <select class="form-select mb-2"
+          name="state_stock"
+          [(ngModel)]="state_stock"
+          (change)="listProducts()"
+          placeholder="Seleccione una opción.">
+          <option value="1">Disponible</option>
+          <option value="2">Casi agotdo</option>
+          <option value="3">Agotado</option>
+        </select>
+        <div class="text-muted fs-7">Disponibilidad de Stock</div>
+      </div>
+      <!-- FIN DEL FILTRADO POR ESTADO DE STOCK -->
+      <!-- COMIENZO DE LOS BOTONES DE DESCARGA E IMPORTACIÓN -->
+      <div class="col-3">
         <!-- COMIENZO DE BOTÓN DE DESCARGA -->
-        <button class="btn btn-success btn-md" (click)="downloadProducts()">
+        <button class="btn btn-success btn-sm" (click)="downloadProducts()">
           <i class="ki-duotone ki-folder-down">
             <span class="path1"></span>
             <span class="path2"></span>
@@ -221,13 +235,31 @@
         </button>
         <!-- FIN DEL BOTÓN DE DESCARGA -->
         <!-- COMIENZO DEL BOTÓN DE IMPORTACIÓN -->
-        <button class="btn btn-primary btn-md mx-1" (click)="importProducts()">
+        <button class="btn btn-primary btn-sm mx-1" (click)="importProducts()">
           <i class="ki-duotone ki-folder-up">
             <span class="path1"></span>
             <span class="path2"></span>
           </i>
         </button>
         <!-- FIN DEL BOTÓN DE IMPORTACIÓN -->
+        <!-- INICIO BOTONES DE FILTRADO POR ESTADO DE STOCK -->
+        <!-- INICIO AGOTADO -->
+        @if (num_products_agotado > 0)
+        {
+          <button class="btn btn-danger btn-sm mx-1" (click)="selectAgotado()">
+            ({{ num_products_agotado }})
+          </button>
+        }
+        <!-- FIN AGOTADO -->
+        <!-- CASI AGOTADO -->
+        @if (num_products_casi_agotado > 0)
+        {
+          <button class="btn btn-warning btn-sm mx-1" (click)="selectCasiAgotado()">
+            ({{ num_products_casi_agotado }})
+          </button>
+        }
+        <!-- FIN CASI AGOTADO -->
+        <!-- FIN BOTONES DE FILTRADO POR ESTADO DE STOCK -->
       </div>
       <!-- FIN DE LOS BOTONES DE DESCARGA E IMPORTACIÓN -->
       <!-- COMIENZO DEL FILTRADO POR ESTADO DEL PRODUCTO -->
@@ -354,6 +386,19 @@
                     <span class="text-muted fw-semibold text-muted d-block fs-7">
                       Peso: {{ PRODUCT.weight }}
                     </span>
+                    <!-- STATE_STOCK -->
+                    @if (PRODUCT.state_stock === 1)
+                    {
+                      <span class="badge badge-light-primary">Disponible</span>
+                    }
+                    @if (PRODUCT.state_stock === 2)
+                    {
+                      <span class="badge badge-light-warning">Casi agotado</span>
+                    }
+                    @if (PRODUCT.state_stock === 3)
+                    {
+                      <span class="badge badge-light-danger">Agotado</span>
+                    }
                     <!-- FIN DE PESO DEL PRODUCTO -->
                   </div>
                   <!-- FIN DE NOMBRE Y PESO DEL PRODUCTO -->
@@ -382,12 +427,16 @@
               </td>
               <!-- ESTADO DEL PRODUCTO -->
               <td>
-                @if (PRODUCT.state === 1) {
+                @if (PRODUCT.state === 1)
+                {
                   <span class="badge badge-light-success">Activo</span>
                 }
-                @if (PRODUCT.state === 2) {
+                @if (PRODUCT.state === 2)
+                {
                   <span class="badge badge-light-danger">Inactivo</span>
                 }
+                <br>
+
               </td>
               <!-- BOTONES DE ACCIÓN DE PRODUCTO -->
               <td>

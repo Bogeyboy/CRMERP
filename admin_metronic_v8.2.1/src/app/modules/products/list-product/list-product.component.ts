@@ -38,6 +38,9 @@ export class ListProductComponent implements OnInit {
   //Variables para el filtrado por estado del producto
   state = 0;
   STATES:any = [];
+  state_stock ='';
+  num_products_agotado = 0;
+  num_products_casi_agotado = 0;
 
   //Variables para el filtrado por unidades de almacén
   UNITS:any = [];
@@ -72,14 +75,28 @@ export class ListProductComponent implements OnInit {
   loadPage($event:any){
     this.listProducts();
   }
-  ngOnInit(): void {
+  selectAgotado()
+  {
+    this.state_stock = '3';
+    this.listProducts();
+  }
+  selectCasiAgotado()
+  {
+    this.state_stock = '2';
+    this.listProducts();
+  }
+  ngOnInit(): void
+  {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
     this.isLoading$ = this.productService.isLoading$;
     this.listProducts();
     this.configAll();
+
   }
-  configAll(){
+
+  configAll()
+  {
     this.productService.configAll().subscribe((resp:any) => {
       //console.log(resp.almacenes);
       this.CATEGORIES = resp.categories;
@@ -88,11 +105,13 @@ export class ListProductComponent implements OnInit {
       this.CLIENT_SEGMENTS = resp.segments_clients;
       this.UNITS = resp.units;
       this.PROVIDERS = resp.providers;
+      //this.state_stock = resp.state_stock;
       //this.diagnosticarFiltros();
     })
   }
 
-  diagnosticarFiltros() {
+  diagnosticarFiltros()
+  {
     console.log('=== DIAGNÓSTICO DE FILTROS ===');
     console.log('1. Valores actuales:');
     console.log('   - sucursale_price_multiple:', this.sucursale_price_multiple);
@@ -109,51 +128,66 @@ export class ListProductComponent implements OnInit {
     console.log('   - CATEGORÍAS cargadas:', this.CATEGORIES.length);
   }
 
-  listProducts(page = 1) {
+  listProducts(page = 1)
+  {
     // Construir objeto de filtros
     //this.debugFilters();
 
     const filters: any = {};
 
-    if (this.product_categorie_id && this.product_categorie_id.toString().trim() !== '') {
+    if (this.product_categorie_id && this.product_categorie_id.toString().trim() !== '')
+    {
       filters.product_categorie_id = this.product_categorie_id;
     }
 
-    if (this.disponibilidad && this.disponibilidad.toString().trim() !== '') {
+    if (this.disponibilidad && this.disponibilidad.toString().trim() !== '')
+    {
       filters.disponibilidad = this.disponibilidad;
     }
 
-    if (this.tax_selected && this.tax_selected.toString().trim() !== '') {
+    if (this.tax_selected && this.tax_selected.toString().trim() !== '')
+    {
       filters.tax_selected = this.tax_selected;
     }
 
-    if (this.search && this.search.trim() !== '') {
+    if (this.search && this.search.trim() !== '')
+    {
       filters.search = this.search;
     }
 
-    if (this.provider_id && this.provider_id.toString().trim() !== '') {
+    if (this.provider_id && this.provider_id.toString().trim() !== '')
+    {
       filters.provider_id = this.provider_id;
     }
 
-    if (this.sucursale_price_multiple && this.sucursale_price_multiple.toString().trim() !== '') {
+    if (this.sucursale_price_multiple && this.sucursale_price_multiple.toString().trim() !== '')
+    {
       filters.sucursale_price_multiple = this.sucursale_price_multiple;
     }
 
-    if (this.almacen_warehouse && this.almacen_warehouse.toString().trim() !== '') {
+    if (this.almacen_warehouse && this.almacen_warehouse.toString().trim() !== '')
+    {
       filters.almacen_warehouse = this.almacen_warehouse;
     }
 
-    if (this.client_segment_price_multiple && this.client_segment_price_multiple.toString().trim() !== '') {
+    if (this.client_segment_price_multiple && this.client_segment_price_multiple.toString().trim() !== '')
+    {
       filters.client_segment_price_multiple = this.client_segment_price_multiple;
     }
 
-    if (this.unit_warehouse && this.unit_warehouse.toString().trim() !== '') {
+    if (this.unit_warehouse && this.unit_warehouse.toString().trim() !== '')
+    {
       filters.unit_warehouse = this.unit_warehouse;
     }
 
-    // Estado - solo si es diferente de 0
-    if (this.state !== 0 && this.state !== null && this.state !== undefined) {
+    if (this.state !== 0 && this.state !== null && this.state !== undefined)
+    {
       filters.state = this.state;
+    }
+
+    if (this.state_stock && this.state_stock.toString().trim() !== '')
+    {
+        filters.state_stock = this.state_stock;
     }
 
     this.productService.listProducts(page, filters).subscribe({
@@ -161,6 +195,9 @@ export class ListProductComponent implements OnInit {
         console.log('📦 RESPUESTA COMPLETA DEL SERVIDOR:', resp.data);
         this.procesarRespuesta(resp);
         this.currentPage = page;
+        this.state_stock = resp.state_stock;
+        this.num_products_agotado = resp.num_products_agotado;
+        this.num_products_casi_agotado = resp.num_products_casi_agotado;
       },
       error: (error) => {
         console.error('❌ ERROR EN LA PETICIÓN:', error);
@@ -169,44 +206,59 @@ export class ListProductComponent implements OnInit {
     });
   }
 
-  procesarRespuesta(resp: any) {
+  procesarRespuesta(resp: any)
+  {
     console.log('📦 Procesando respuesta:', resp);
 
     // Limpiar productos anteriores
     this.PRODUCTS = [];
 
     // Caso 1: Respuesta con propiedad 'data' (formato paginado)
-    if (resp.data && Array.isArray(resp.data)) {
+    if (resp.data && Array.isArray(resp.data))
+    {
       this.PRODUCTS = resp.data;
       this.totalPages = resp.total || resp.data.total || 0;
       console.log('✅ Formato 1: data como array');
     }
     // Caso 2: Respuesta con propiedad 'products'
-    else if (resp.products) {
-      if (Array.isArray(resp.products)) {
+    else if (resp.products)
+    {
+      if (Array.isArray(resp.products))
+      {
         this.PRODUCTS = resp.products;
-      } else if (resp.products.data && Array.isArray(resp.products.data)) {
+      }
+      else if (resp.products.data && Array.isArray(resp.products.data))
+      {
         this.PRODUCTS = resp.products.data;
       }
       this.totalPages = resp.total || resp.products.total || this.PRODUCTS.length;
       console.log('✅ Formato 2: products');
     }
     // Caso 3: Respuesta es directamente un array
-    else if (Array.isArray(resp)) {
+    else if (Array.isArray(resp))
+    {
       this.PRODUCTS = resp;
       this.totalPages = resp.length;
       console.log('✅ Formato 3: array directo');
     }
     // Caso 4: Buscar en otras propiedades
-    else {
+    else
+    {
       const possibleProps = ['items', 'results', 'lista', 'productos'];
-      for (const prop of possibleProps) {
-        if (resp[prop]) {
-          if (Array.isArray(resp[prop])) {
+      for (const prop of possibleProps)
+      {
+        if (resp[prop])
+        {
+          if (Array.isArray(resp[prop]))
+          {
             this.PRODUCTS = resp[prop];
-          } else if (resp[prop].data && Array.isArray(resp[prop].data)) {
+          }
+          else if (resp[prop].data && Array.isArray(resp[prop].data))
+          {
             this.PRODUCTS = resp[prop].data;
-          } else {
+          }
+          else
+          {
             continue;
           }
           this.totalPages = resp.total || resp[prop]?.total || this.PRODUCTS.length;
@@ -217,16 +269,17 @@ export class ListProductComponent implements OnInit {
     }
 
     // Si no se encontró nada, array vacío
-    if (this.PRODUCTS.length === 0) {
+    if (this.PRODUCTS.length === 0)
+    {
       console.log('⚠️ No se encontraron productos');
       this.PRODUCTS = [];
       this.totalPages = 0;
     }
-
     console.log('✅ Productos cargados:', this.PRODUCTS.length);
   }
 
-  resetListProducts (){
+  resetListProducts ()
+  {
     console.log('🔄 RESETEANDO FILTROS');
     this.product_categorie_id = '';
     this.disponibilidad = '';
@@ -236,13 +289,15 @@ export class ListProductComponent implements OnInit {
     this.almacen_warehouse = '';
     this.client_segment_price_multiple = '';
     this.state = 1;
+    this.state_stock = '';
     this.unit_warehouse = '';
     this.provider_id = '';
     console.log('✅ Filtros reseteados');
     this.listProducts(1);
   }
 
-  resetFilters(event: Event){
+  resetFilters(event: Event)
+  {
     //const etiqueta = (event.target as HTMLElement).tagName;
     const etiqueta = event.target as HTMLInputElement | HTMLSelectElement;
     const nombre = etiqueta.getAttribute('name');
@@ -308,15 +363,17 @@ export class ListProductComponent implements OnInit {
     }
     return TEXTO;
   }
-  
-  isLoadingProcess(){
+
+  isLoadingProcess()
+  {
     this.productService.isLoadingSubject.next(true);
     setTimeout(() => {
       this.productService.isLoadingSubject.next(false);
     }, 50);
   }
 
-  importProducts(){
+  importProducts()
+  {
     const modalRef = this.modalService.open(ImportProductsComponent,{centered:true, size: 'md'});
     //modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
     modalRef.componentInstance.ImportProductD.subscribe((prod:any) => {
@@ -324,7 +381,8 @@ export class ListProductComponent implements OnInit {
     })
   }
 
-  downloadProducts(){
+  downloadProducts()
+  {
     /* const data = {
       product_categorie_id: this.product_categorie_id,
       disponibilidad: this.disponibilidad,
@@ -339,37 +397,51 @@ export class ListProductComponent implements OnInit {
     } */
     let LINK ="";
 
-    if (this.product_categorie_id){
+    if (this.product_categorie_id)
+    {
       LINK += "&product_categorie_id="+this.product_categorie_id;
     }
-    if (this.disponibilidad){
+    if (this.disponibilidad)
+    {
       LINK += "&disponibilidad="+this.disponibilidad;
     }
-    if (this.tax_selected){
+    if (this.tax_selected)
+    {
       LINK += "&tax_selected="+this.tax_selected;
     }
-    if (this.search){
+    if (this.search)
+    {
       LINK += "&search="+this.search;
     }
-    if (this.provider_id){
+    if (this.provider_id)
+    {
       LINK += "&provider_id="+this.provider_id;
     }
-    if (this.sucursale_price_multiple){
+    if (this.sucursale_price_multiple)
+    {
       LINK += "&sucursale_price_multiple="+this.sucursale_price_multiple;
     }
-    if (this.almacen_warehouse){
+    if (this.almacen_warehouse)
+    {
       LINK += "&almacen_warehouse="+this.almacen_warehouse;
     }
-    if (this.client_segment_price_multiple){
+    if (this.client_segment_price_multiple)
+    {
       LINK += "&client_segment_price_multiple="+this.client_segment_price_multiple;
     }
-    if (this.state){
+    if (this.state)
+    {
       LINK += "&state="+this.state;
+    }
+    if (this.state_stock)
+    {
+      LINK += "&state_stock="+this.state_stock;
     }
     window.open(URL_SERVICIOS+"/excel/export-products?k=1"+LINK,"_blank");
   }
 
-  deleteProduct(PRODUCT:any){
+  deleteProduct(PRODUCT:any)
+  {
       const modalRef = this.modalService.open(DeleteProductComponent,{centered:true, size: 'md'});
       modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
 
