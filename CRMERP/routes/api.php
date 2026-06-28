@@ -68,6 +68,27 @@ Route::middleware('auth:api')->group(function () {
 
     Route::delete('/products/{id}', [ProductController::class, 'destroy'])
         ->middleware('permission:delete_product');
+    
+    // Clientes - rutas con permisos
+    Route::get('/clients/config', [ClientController::class, 'config']);
+    
+    // CRUD de clientes con permisos específicos
+    Route::get('/clients', [ClientController::class, 'index'])
+        ->middleware('permission:list_clients');
+    
+    Route::get('/clients/{id}', [ClientController::class, 'show'])
+        ->middleware('permission:list_clients');
+    
+    Route::post('/clients', [ClientController::class, 'store'])
+        ->middleware('permission:register_client');
+    
+    Route::put('/clients/{id}', [ClientController::class, 'update'])
+        ->middleware('permission:edit_client');
+    
+    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])
+        ->middleware('permission:delete_client');
+
+
 });
 
 // ---------- SOLO SUPER-ADMIN ----------

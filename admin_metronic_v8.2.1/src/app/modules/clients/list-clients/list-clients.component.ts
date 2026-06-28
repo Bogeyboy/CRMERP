@@ -6,6 +6,7 @@ import { EditClientsCompanyComponent } from '../edit-clients-company/edit-client
 import { EditClientsPersonComponent } from '../edit-clients-person/edit-clients-person.component';
 import { DeleteClientsComponent } from '../delete-clients/delete-clients.component';
 import { ClientsService } from '../service/clients.service';
+import { ThisReceiver } from '@angular/compiler';
 
 @Component({
   selector: 'app-list-clients',
@@ -22,6 +23,9 @@ export class ListClientsComponent {
   totalPages = 0;
   currentPage = 1;
 
+  client_segments: any = [];
+  asesores:any = [];
+
   // Prefer inject() over constructor injection
   public modalService = inject(NgbModal);
   public clientsService = inject(ClientsService);
@@ -34,8 +38,17 @@ export class ListClientsComponent {
     //Add 'implements OnInit' to the class.
     this.isLoading$ = this.clientsService.isLoading$;
     this.listClients();
+    this.listConfig();
   }
-
+  //PARA OBTENER LA CONFIGURACIÓN DE CLIENTES
+  listConfig()
+  {
+    this.clientsService.listConfig().subscribe((resp:any) => {
+      console.log(resp);
+      this.client_segments = resp.client_segments;
+      this.asesores = resp.asesores;
+    });
+  }
   //PARA CREAR CLIENTES
   createClientCompany()
   {
@@ -49,7 +62,9 @@ export class ListClientsComponent {
   }
   createClientPerson()
   {
-    const modalRef = this.modalService.open(CreateClientsPersonComponent,{centered:true,size: 'fullscreen'});
+    const modalRef = this.modalService.open(CreateClientsPersonComponent,{centered:true,size: 'xl'});
+    modalRef.componentInstance.client_segments = this.client_segments;
+    modalRef.componentInstance.asesores = this.asesores;
     //Recibimos los datos del componente hijo
     modalRef.componentInstance.ClientsC.subscribe((client_segment:any) => {
       console.log(client_segment);
@@ -57,7 +72,6 @@ export class ListClientsComponent {
       this.CLIENTS.unshift(client_segment);//Se agrega al principio del listado
     });
   }
-
   //PARA EL ISTADO DE CLIENTES
   listClients(page = 1)
   {

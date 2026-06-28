@@ -57,7 +57,7 @@
           id="kt_ecommerce_add_product_general"
           role="tab-panel">
           <div class="d-flex flex-column scroll-y me-n7 pe-7 mt-5" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
-            <!-- INICIO DE SEGMENTO DE CLIENTE -->
+            <!-- INICIO DE SEGMENTO DE CLIENTE Y ORIGEN -->
             <div class="fv-row row mb-7">
               <!-- INICIO DE SEGMENTO DE CLIENTE -->
               <div class="col-4">
@@ -67,12 +67,33 @@
                   name="client_segment_id"
                   [(ngModel)]="client_segment_id"
                   placeholder="Seleccione un segmento">
-                    <option value="">Ninguno</option>
+                    <option>Ninguno</option>
+                    @for (client_segment of client_segments; track client_segment.id)
+                    {
+                      <option [value]="client_segment.id">{{ client_segment.name }}</option>
+                    }
                 </select>
               </div>
               <!-- FIN DE SEGMENTO DE CLIENTE -->
+              <!-- INICIO DE ORIGEN -->
+              <div class="col-3">
+                <label class="required fw-bold fs-6 mb-2">Origen: (*)</label>
+                <select
+                  class="form-control form-select-solid fw-bolder"
+                  name="origin"
+                  [(ngModel)]="origen"
+                  placeholder="#000000000">
+                  <option value="">Ninguno</option>
+                  <option value="FACEBOOK">FACEBOOK</option>
+                  <option value="GOOGLE">GOOGLE</option>
+                  <option value="YOUTUBE">YOUTUBE</option>
+                  <option value="EMAIL">EMAIL</option>
+                  <option value="TIKTOK">TIKTOK</option>
+                </select>
+              </div>
+              <!-- FIN DE ORIGEN -->
             </div>
-            <!-- FIN DE SEGMENTO DE CLIENTE -->
+            <!-- FIN DE SEGMENTO DE CLIENTE Y ORIGEN -->
             <!-- INICIO NOMBRE, APELLIDO -->
             <div class="fv-row row mb-7">
               <!-- INICIO DE NOMBRE DE CLIENTE -->
@@ -106,8 +127,13 @@
                   class="form-control form-select-solid fw-bolder"
                   name="type_document"
                   [(ngModel)]="type_document"
-                  placeholder="#000000000">
+                  placeholder="#000000000"
+                  (change)="changeDocumentMask($event)">
                   <option value="">Ninguno</option>
+                  <option value="DNI">DNI</option>
+                  <option value="DNI">NIF</option>
+                  <option value="NIE">NIE</option>
+                  <option value="PASAPORTE">PASAPORTE</option>
                 </select>
               </div>
               <!-- FIN DE TIPO DE DOCUMENTO -->
@@ -121,18 +147,7 @@
                   placeholder="Número de documento"/>
               </div>
               <!-- FIN DE NÚMERO DE DOCUMENTO -->
-              <!-- INICIO DE ORIGEN -->
-              <div class="col-3">
-                <label class="required fw-bold fs-6 mb-2">Origen: (*)</label>
-                <select
-                  class="form-control form-select-solid fw-bolder"
-                  name="origin"
-                  [(ngModel)]="origen"
-                  placeholder="#000000000">
-                  <option value="">Ninguno</option>
-                </select>
-              </div>
-              <!-- FIN DE ORIGEN -->
+              
             </div>
             <!-- FIN TIPO Y NÚMERO DE DOCUMENTO Y ORIGEN -->
             <!-- INICIO SEXO, CUMPLEAÑOS Y TELEFONO -->
@@ -254,21 +269,47 @@
             <!-- FIN DE COMUNIDAD, PROVINCIA Y POBLACIÓN -->
             <!-- INICIO DE DIRECCIÓN -->
             <div class="fv-row row mb-7">
-              <!-- DIRECCION -->
+              <!-- INICIO DIRECCION -->
               <div class="col-6">
                 <label class="required fw-bold fs-6 mb-2">Dirección: (*)</label>
-                <input type="text"
+                <!-- <input type="text"
                   name="address"
                   [(ngModel)]="address"
                   class="form-control form-control-solid mb-3 mb-lg-0"
-                  placeholder="Dirección"/>
+                  placeholder="Dirección"/> -->
+                  <textarea 
+                    name="address"
+                    [(ngModel)]="address"
+                    class="form-control form-control-solid"
+                    rows="3"
+                    placeholder="Dirección">
+                  </textarea>
               </div>
+              <!-- FIN DE DIRECION -->
+              <!-- INICIO DE PARCIAL -->
               <div class="col-3">
                 <label class="required fw-bold fs-6 mb-2">¿Necesita adelanto? (*)</label>
                   <div class="form-check form-check-custom form-check-solid mb-2">
                     <input class="form-check-input" type="checkbox" (click)="selectedParcial()"/>
                     <label class="form-check-label">{{ is_parcial == 2 ? 'Sí' : 'No' }}</label>
                   </div>
+              </div>
+              <!-- FIN DE PARCIAL -->
+              <!-- INICIO DE ASESORES -->
+              <div class="col-3">
+                <label class="required fw-bold fs-6 mb-2">Asesor: (*)</label>
+                <select
+                  class="form-control form-select-solid fw-bolder"
+                  name="asesor_id"
+                  [(ngModel)]="asesor_id"
+                  placeholder="Seleccione asesor."
+                  (change)="changeRegion($event)">
+                  <option value="">Ninguno</option>
+                  <ng-container *ngFor="let asesor of asesores">
+                    <option [value]=" asesor.id " > {{ asesor.full_name }}</option>
+                  </ng-container>
+                </select>
+                <!-- FIN DE ASESORES -->
               </div>
             </div>
           </div>

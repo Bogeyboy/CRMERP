@@ -20,7 +20,8 @@ export class ClientsService {
     this.isLoading$ = this.isLoadingSubject.asObservable();
   }
 
-  registerClient(data:any) {
+  registerClient(data:any)
+  {
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     const URL = URL_SERVICIOS+"/clients";
@@ -29,7 +30,18 @@ export class ClientsService {
     );
   }
 
-  listClients(page = 1,search = ''){
+  listConfig()
+  {
+    this.isLoadingSubject.next(true);
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/clients/config";
+    return this.http.get(URL,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  listClients(page = 1,search = '')
+  {
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     const URL = URL_SERVICIOS+"/clients?page="+page+"&search="+search;
@@ -38,7 +50,8 @@ export class ClientsService {
     );
   }
 
-  updateClient(ID_CLIENT_SEGMENT:string,data:any) {
+  updateClient(ID_CLIENT_SEGMENT:string,data:any)
+  {
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     //console.log(data);
@@ -49,7 +62,8 @@ export class ClientsService {
     );
   }
 
-  deleteClient(ID_CLIENT_SEGMENT:string) {
+  deleteClient(ID_CLIENT_SEGMENT:string)
+  {
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
     const URL = URL_SERVICIOS + '/clients/' + ID_CLIENT_SEGMENT;

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { ClientsService } from '../service/clients.service';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
@@ -21,6 +21,9 @@ import { UBIGEO_DISTRITOS } from '../../../config/ubigeo_distritos';
 export class CreateClientsPersonComponent
 {
   @Output() ClientsC = new EventEmitter<any>();
+  
+  @Input() client_segments: any = [];
+  @Input() asesores: any = [];
 
   tab_selected = 1;
 
@@ -33,15 +36,19 @@ export class CreateClientsPersonComponent
   birthdate:any = null;
   type_document = '';
   client_segment_id = '';
+  //client_segment = '';
   n_document = '';
   address = '';
   origen = '';
   is_parcial = 1;
 
+
   //Variables datos específicos
   ubigeo_region = '';
   ubigeo_provincia = '';
   ubigeo_distrito = '';
+
+  asesor_id = '';
 
   REGIONES:any = UBIGEO_REGIONES;
   PROVINCIAS: any = UBIGEO_PROVINCIAS;
@@ -62,6 +69,11 @@ export class CreateClientsPersonComponent
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
     //Add 'implements OnInit' to the class.
+  }
+  changeDocumentMask($event)
+  {
+    let TIPODOCUMENTO = $event.target.value;
+    console.log(TIPODOCUMENTO);
   }
   changeRegion($event: any)
   {
@@ -87,7 +99,7 @@ export class CreateClientsPersonComponent
   {
     this.is_parcial = this.is_parcial == 1 ? 2 : 1;
   }
-  //Función para guardar los permisos
+  //Función para guardar los clientes persona
   store()
   {
     if(!this.name)

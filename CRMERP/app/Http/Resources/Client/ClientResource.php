@@ -58,7 +58,8 @@ class ClientResource extends JsonResource
             'region' => $this->resource->region,
             'provincia' => $this->resource->provincia,
             'distrito' => $this->resource->distrito,
-            'created_at' => $this->resource->created_at->format('d-m-Y H:i:s'),
+            //'created_at' => $this->resource->created_at->format('d-m-Y H:i:s'),
+            'created_at' => $this->resource->created_at ? $this->resource->created_at->format('d-m-Y H:i:s') : null,
         ];
     }
 }
