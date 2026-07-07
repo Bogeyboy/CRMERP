@@ -1,4 +1,12 @@
-import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
+import { UBIGEO_DISTRITOS } from '../../../config/ubigeo_distritos';
+import { UBIGEO_PROVINCIAS } from '../../../config/ubigeo_provincias';
+import { UBIGEO_REGIONES } from '../../../config/ubigeo_regiones';
+import { AuthService } from '../../auth';
+import { ClientsService } from '../service/clients.service';
 
 @Component({
   selector: 'app-edit-clients-person',
@@ -8,5 +16,185 @@ import { Component } from '@angular/core';
   styleUrl: './edit-clients-person.component.scss'
 })
 export class EditClientsPersonComponent {
+  @Output() ClientsE = new EventEmitter<any>();
 
+  @Input() client_selected: any;
+  @Input() client_segments: any = [];
+  @Input() asesores: any = [];
+
+  tab_selected = 1;
+
+  //Variables datos generales
+  name ='';
+  surname = '';
+  sexo = '';
+  phone = 0;
+  email = '';
+  birthdate:any = null;
+  type_document = '';
+  client_segment_id = '';
+  //client_segment = '';
+  n_document = '';
+  address = '';
+  origen = '';
+  is_parcial = 1;
+
+
+  //Variables datos específicos
+  distrito = '';
+  region = '';
+  provincia = '';
+  ubigeo_region = '';
+  ubigeo_provincia = '';
+  ubigeo_distrito = '';
+
+  asesor_id = '';
+
+  REGIONES:any = UBIGEO_REGIONES;
+  PROVINCIAS: any = UBIGEO_PROVINCIAS;
+  PROVINCIA_SELECTEDS: any = [];
+  DISTRITOS: any = UBIGEO_DISTRITOS;
+  DISTRITOS_SELECTEDS: any = [];
+
+  //Otras variables
+  isLoading:any;
+
+  // Prefer inject() for standalone injection of framework-provided tokens
+  public modal = inject(NgbActiveModal);
+  private http = inject(HttpClient);
+  public authservice = inject(AuthService);
+  public clientsService = inject(ClientsService);
+  public toast = inject(ToastrService);
+
+  ngOnInit(): void {
+    this.name = this.client_selected.name;
+    this.surname = this.client_selected.surname;
+    this.sexo = this.client_selected.sexo;
+    this.phone = this.client_selected.phone;
+    this.email = this.client_selected.email;
+    this.birthdate = this.client_selected.birthdate;
+    this.type_document = this.client_selected.type_document;
+    this.client_segment_id = this.client_selected.client_segment_id;
+    this.n_document = this.client_selected.n_document;
+    this.address = this.client_selected.address;
+    this.origen = this.client_selected.origen;
+    this.is_parcial = this.client_selected.is_parcial;
+    this.ubigeo_region = this.client_selected.ubigeo_region;
+    this.ubigeo_provincia = this.client_selected.ubigeo_provincia;
+    this.ubigeo_distrito = this.client_selected.ubigeo_distrito;
+    this.asesor_id = this.client_selected.asesor_id;
+
+    this.changeRegion({target:{value: this.client_selected.ubigeo_region}});
+    this.changeProvincia({target:{value: this.client_selected.ubigeo_provincia}});
+
+  }
+  changeDocumentMask($event)
+  {
+    let TIPODOCUMENTO = $event.target.value;
+    console.log(TIPODOCUMENTO);
+  }
+  changeRegion($event: any)
+  {
+    console.log($event.target.value);
+    let REGION_ID = $event.target.value;
+    //let REGION_SELECTED = this.REGIONES.find((region:any)=>region.id = REGION_ID);
+    let REGION_SELECTED = this.REGIONES.find((region:any)=>region.id === REGION_ID);
+    if(REGION_SELECTED)
+    {
+      this.region = REGION_SELECTED.name;
+    }
+
+    let provincias = this.PROVINCIAS.filter((provincia:any) => provincia.department_id == REGION_ID);
+    this.PROVINCIA_SELECTEDS = provincias;
+    console.log(provincias);
+  }
+  changeProvincia($event: any)
+  {
+    console.log($event.target.value);
+    let PROVINCIA_ID = $event.target.value;
+    //let PROVINCIA_SELECTED = this.PROVINCIAS.find((prov:any)=>prov.id = PROVINCIA_ID);
+    let PROVINCIA_SELECTED = this.PROVINCIAS.find((prov:any)=>prov.id === PROVINCIA_ID);
+    if(PROVINCIA_SELECTED)
+    {
+      this.provincia = PROVINCIA_SELECTED.name;
+    }
+    let distritos = this.DISTRITOS.filter((distrito:any) => distrito.province_id == PROVINCIA_ID);
+    this.DISTRITOS_SELECTEDS = distritos;
+    console.log(distritos);
+  }
+  selectedTab(val: number)
+  {
+    this.tab_selected = val;
+  }
+  selectedParcial()
+  {
+    this.is_parcial = this.is_parcial == 1 ? 2 : 1;
+  }
+  //Función para guardar los clientes persona
+  store()
+  {
+    if(!this.name ||
+      !this.surname ||
+      !this.client_segment_id ||
+      !this.type_document ||
+      !this.n_document ||
+      !this.origen ||
+      !this.sexo ||
+      !this.birthdate ||
+      !this.phone ||
+      !this.ubigeo_distrito ||
+      !this.ubigeo_provincia ||
+      !this.ubigeo_region ||
+      !this.address)
+    {
+      this.toast.error("Validación","Es necesario rellenar todos los campos obligatorios.");
+      return false;
+    }
+
+    //let DISTRITO_SELECTED = this.DISTRITOS.find((distr:any)=>distr.id = this.ubigeo_distrito)
+    let DISTRITO_SELECTED = this.DISTRITOS.find((distr:any)=>distr.id === this.ubigeo_distrito)
+    if(DISTRITO_SELECTED)
+    {
+      this.distrito = DISTRITO_SELECTED.name;
+    };
+
+    let data = {
+      name: this.name,
+      surname: this.surname,
+      full_name : this.name + ' ' + this.surname,
+      sexo: this.sexo,
+      phone: this.phone,
+      email: this.email,
+      birthdate: this.birthdate,
+      type_document: this.type_document,
+      client_segment_id: this.client_segment_id,
+      n_document: this.n_document,
+      address: this.address,
+      origen: this.origen,
+      is_parcial: this.is_parcial,
+      ubigeo_region: this.ubigeo_region,
+      ubigeo_provincia: this.ubigeo_provincia,
+      ubigeo_distrito: this.ubigeo_distrito,
+      region: this.region,
+      distrito: this.distrito,
+      provincia: this.provincia,
+      asesor_id: this.asesor_id,
+      type: 1
+      //address: this.address
+    }
+
+    this.clientsService.registerClient(data).subscribe((resp:any) => {
+      console.log(resp);
+      if(resp.message == 403)
+      {
+        this.toast.error("Error de validación",resp.message_text);
+      }
+      else
+      {
+        this.toast.success("Éxito","Cliente añadido correctamente.");
+        this.ClientsE.emit(resp.client);
+        this.modal.close();
+      }
+    });
+  }
 }

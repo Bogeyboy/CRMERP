@@ -147,7 +147,7 @@
                   placeholder="Número de documento"/>
               </div>
               <!-- FIN DE NÚMERO DE DOCUMENTO -->
-              
+
             </div>
             <!-- FIN TIPO Y NÚMERO DE DOCUMENTO Y ORIGEN -->
             <!-- INICIO SEXO, CUMPLEAÑOS Y TELEFONO -->
@@ -199,7 +199,7 @@
               <!-- FIN TELEFONO -->
               <!-- INICIO TELEFONO -->
               <div class="col-3">
-                <label class="required fw-bold fs-6 mb-2">Email: (*)</label>
+                <label class="required fw-bold fs-6 mb-2">Email: (Opcional)</label>
                 <input type="text"
                   name="email"
                   [(ngModel)]="email"
@@ -277,7 +277,7 @@
                   [(ngModel)]="address"
                   class="form-control form-control-solid mb-3 mb-lg-0"
                   placeholder="Dirección"/> -->
-                  <textarea 
+                  <textarea
                     name="address"
                     [(ngModel)]="address"
                     class="form-control form-control-solid"
@@ -288,7 +288,7 @@
               <!-- FIN DE DIRECION -->
               <!-- INICIO DE PARCIAL -->
               <div class="col-3">
-                <label class="required fw-bold fs-6 mb-2">¿Necesita adelanto? (*)</label>
+                <label class="required fw-bold fs-6 mb-2">¿Necesita adelanto? (Opcional)</label>
                   <div class="form-check form-check-custom form-check-solid mb-2">
                     <input class="form-check-input" type="checkbox" (click)="selectedParcial()"/>
                     <label class="form-check-label">{{ is_parcial == 2 ? 'Sí' : 'No' }}</label>
@@ -297,13 +297,12 @@
               <!-- FIN DE PARCIAL -->
               <!-- INICIO DE ASESORES -->
               <div class="col-3">
-                <label class="required fw-bold fs-6 mb-2">Asesor: (*)</label>
+                <label class="required fw-bold fs-6 mb-2">Asesor: (Opcional)</label>
                 <select
                   class="form-control form-select-solid fw-bolder"
                   name="asesor_id"
                   [(ngModel)]="asesor_id"
-                  placeholder="Seleccione asesor."
-                  (change)="changeRegion($event)">
+                  placeholder="Seleccione asesor.">
                   <option value="">Ninguno</option>
                   <ng-container *ngFor="let asesor of asesores">
                     <option [value]=" asesor.id " > {{ asesor.full_name }}</option>

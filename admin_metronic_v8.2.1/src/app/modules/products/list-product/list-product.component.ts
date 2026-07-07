@@ -130,8 +130,6 @@ export class ListProductComponent implements OnInit {
 
   listProducts(page = 1)
   {
-    // Construir objeto de filtros
-    //this.debugFilters();
 
     const filters: any = {};
 

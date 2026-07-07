@@ -36,7 +36,7 @@ class User extends Authenticatable implements JWTSubject
         'avatar',
         'gender',
         'rol_id',
-        'sucursal_id',
+        'sucursale_id',
         'deleted_at',
     ];
 

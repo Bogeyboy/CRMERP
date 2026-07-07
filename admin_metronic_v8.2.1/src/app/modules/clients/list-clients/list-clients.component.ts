@@ -17,13 +17,18 @@ import { ThisReceiver } from '@angular/compiler';
 })
 export class ListClientsComponent {
   search = '';
-  CLIENTS:any[];
+  CLIENTS:any =[];
   isLoading$:any;
 
   totalPages = 0;
   currentPage = 1;
 
   client_segments: any = [];
+  client_segment_id = '';
+  type = '';
+
+  asesor_id='';
+
   asesores:any = [];
 
   // Prefer inject() over constructor injection
@@ -52,12 +57,14 @@ export class ListClientsComponent {
   //PARA CREAR CLIENTES
   createClientCompany()
   {
-    const modalRef = this.modalService.open(CreateClientsCompanyComponent,{centered:true,size: 'fullscreen'});
+    const modalRef = this.modalService.open(CreateClientsCompanyComponent,{centered:true,size: 'xl'});
+    modalRef.componentInstance.client_segments = this.client_segments;
+    modalRef.componentInstance.asesores = this.asesores;
     //Recibimos los datos del componente hijo
-    modalRef.componentInstance.ClientsC.subscribe((client_segment:any) => {
-      console.log(client_segment);
+    modalRef.componentInstance.ClientsC.subscribe((client:any) => {
+      console.log(client);
       //this.CLIENTS.push(client_segment);//Se agrega al final del listado
-      this.CLIENTS.unshift(client_segment);//Se agrega al principio del listado
+      this.CLIENTS.unshift(client);//Se agrega al principio del listado
     });
   }
   createClientPerson()
@@ -66,21 +73,43 @@ export class ListClientsComponent {
     modalRef.componentInstance.client_segments = this.client_segments;
     modalRef.componentInstance.asesores = this.asesores;
     //Recibimos los datos del componente hijo
-    modalRef.componentInstance.ClientsC.subscribe((client_segment:any) => {
-      console.log(client_segment);
-      //this.CLIENTS.push(client_segment);//Se agrega al final del listado
-      this.CLIENTS.unshift(client_segment);//Se agrega al principio del listado
+    modalRef.componentInstance.ClientsC.subscribe((client:any) => {
+      console.log(client);
+      if (this.CLIENTS)
+      {
+        this.CLIENTS.unshift(this.client_segments);//Se agrega al principio del listado
+      }
+      else
+      {
+        this.CLIENTS = [this.client_segments];
+      }
     });
   }
   //PARA EL ISTADO DE CLIENTES
   listClients(page = 1)
   {
-    this.clientsService.listClients(page,this.search).subscribe((resp:any) => {
+    let data = {
+      search: this.search,
+      client_segment_id: this.client_segment_id,
+      type: this.type,
+      asesor_id: this.asesor_id
+    };
+
+    this.clientsService.listClients(page,data).subscribe((resp:any) => {
       console.log(resp);
-      this.CLIENTS = resp.CLIENTS;
+      //this.CLIENTS = resp.CLIENTS;
+      this.CLIENTS = resp.clients.data;
       this.totalPages = resp.total;
       this.currentPage = page;
     });
+  }
+  resetListClients()
+  {
+    this.search = '';
+    this.client_segment_id = '';
+    this.type = '';
+    this.asesor_id = '';
+    this.listClients();
   }
   //EDICIÓN DE CLIENTES
   editClientCompany(CLIENT_SEGMENT:any)
@@ -98,18 +127,20 @@ export class ListClientsComponent {
       }
     });
   }
-  editClientPerson(CLIENT_SEGMENT:any)
+  editClientPerson(CLIENT_SELECTED:any)
   {
-    const modalRef = this.modalService.open(EditClientsPersonComponent,{centered:true,size:'md'});
-    modalRef.componentInstance.CLIENT_SEGMENT_SELECTED = CLIENT_SEGMENT;
+    const modalRef = this.modalService.open(EditClientsPersonComponent,{centered:true,size:'xl'});
+    modalRef.componentInstance.client_selected = CLIENT_SELECTED;
+    modalRef.componentInstance.client_segments = this.client_segments;
+    modalRef.componentInstance.asesores = this.asesores;
 
     //Recibimos los datos del componente hijo
-    modalRef.componentInstance.ClientSegmentE.subscribe((client_segment:any) => {
-      const INDEX = this.CLIENTS.findIndex((client_seg:any) => client_seg.id == CLIENT_SEGMENT.id);
+    modalRef.componentInstance.ClientsE.subscribe((clientE:any) => {
+      const INDEX = this.CLIENTS.findIndex((client:any) => client.id == CLIENT_SELECTED.id);
       //console.log(INDEX);
       if(INDEX!=-1)
       {
-        this.CLIENTS[INDEX] = client_segment;
+        this.CLIENTS[INDEX] = clientE;
       }
     });
   }
@@ -129,6 +160,16 @@ export class ListClientsComponent {
         this.CLIENTS.splice(INDEX,1); //para eliminar un rol
       }
     });
+  }
+  //EXPORTACIÓN DE CLIENTES
+  exportClients()
+  {
+    // Lógica para exportar clientes
+  }
+  //IMPORTACIÓN DE CLIENTES
+  importClients()
+  {
+    // Lógica para importar clientes
   }
   //Función para las acciones tras el cambio de pagina en la paginación
   loadPage($event:any)

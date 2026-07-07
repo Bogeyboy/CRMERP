@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class Client extends Model
 {
@@ -19,6 +20,8 @@ class Client extends Model
         'surname',
         'full_name',
         'client_segment_id',
+        'origen',
+        'sexo',
         'state',
         'phone',
         'email',
@@ -51,6 +54,34 @@ class Client extends Model
     public function sucursale()
     {
         return $this->belongsTo(Sucursale::class, 'sucursale_id');
+    }
+
+    public function scopeFilterAdvance($query, $search, $client_segment_id, $type, $asesor_id)
+    {
+        if ($search)
+        {
+            $query->where(DB::raw("CONCAT(clients.full_name, ' ', clients.phone, ' ', clients.n_document)"), 'like', "%" . $search . "%");
+            /* 'full_name', 'like', "%" . $search . "%")
+                ->orWhere('phone', 'like', "%" . $search . "%")
+                ->orWhere('n_document', 'like', "%" . $search . "%"); */
+        }
+
+        if ($client_segment_id)
+        {
+            $query->where('client_segment_id', $client_segment_id);
+        }
+
+        if ($type)
+        {
+            $query->where('type', $type);
+        }
+
+        if ($asesor_id)
+        {
+            $query->where('asesor_id', $asesor_id);
+        }
+
+        return $query;
     }
 
     public function setCreatedAtAttribute($value)

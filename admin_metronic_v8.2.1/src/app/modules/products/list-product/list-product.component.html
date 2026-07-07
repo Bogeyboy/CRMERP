@@ -1,4 +1,5 @@
 <div class="card">
+  <!-- COMIENZO CABECERA DE LA TARJETA -->
   <div class="card-header border-0 pt-6">
     <!-- COMIENZO DE LOS PARÁMETROS DE BÚSQUEDA Y FILTRADO -->
     <div class="card-title">
@@ -89,18 +90,19 @@
       </div>
     </div>
     <!-- FIN DE LOS PARÁMETROS DE BÚSQUEDA Y FILTRADO -->
-    @if (isLoading$ | async) {
+    @if (isLoading$ | async)
+    {
       <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
     }
     <!--begin::Card toolbar-->
     <div class="card-toolbar">
       <!--begin::Toolbar-->
       <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
-        <!--begin::Add customer-->
+        <!-- COMIENZO BOTÓN AÑADIR PRODUCTO -->
         <button type="button" class="btn btn-primary" routerLink="/productos/register">
           + Añadir Producto
         </button>
-        <!--end::Add customer-->
+        <!-- FIN BOTÓN AÑADIR PRODUCTO -->
       </div>
       <!--end::Toolbar-->
 
@@ -117,6 +119,8 @@
     </div>
   <!--end::Card toolbar-->
   </div>
+  <!-- FIN DE CABECERA DE LA TARJETA -->
+  <!-- COMIENZO DEL CUERPO DE LA TARJETA -->
   <!-- COMIENZO DEL FILTRADO ESPECIAL DE PRODUCTOS -->
   <div class="card-body pt-0">
     <div class="row">
@@ -484,9 +488,5 @@
   </div>
 <!-- FIN DE TABLA DE LISTADO DE PRODUCTOS -->
   </div>
-  <!-- <div class="mt-3">
-    <button class="btn btn-info btn-sm" (click)="diagnosticarFiltros()">
-      Diagnosticar Filtros
-    </button>
-  </div> -->
+  <!-- FIN DEL CUERPO DE LA TARJETA -->
 </div>

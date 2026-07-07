@@ -44,6 +44,9 @@ export class CreateClientsPersonComponent
 
 
   //Variables datos específicos
+  distrito = '';
+  region = '';
+  provincia = '';
   ubigeo_region = '';
   ubigeo_provincia = '';
   ubigeo_distrito = '';
@@ -79,6 +82,13 @@ export class CreateClientsPersonComponent
   {
     console.log($event.target.value);
     let REGION_ID = $event.target.value;
+    //let REGION_SELECTED = this.REGIONES.find((region:any)=>region.id = REGION_ID);
+    let REGION_SELECTED = this.REGIONES.find((region:any)=>region.id === REGION_ID);
+    if(REGION_SELECTED)
+    {
+      this.region = REGION_SELECTED.name;
+    }
+
     let provincias = this.PROVINCIAS.filter((provincia:any) => provincia.department_id == REGION_ID);
     this.PROVINCIA_SELECTEDS = provincias;
     console.log(provincias);
@@ -87,6 +97,12 @@ export class CreateClientsPersonComponent
   {
     console.log($event.target.value);
     let PROVINCIA_ID = $event.target.value;
+    //let PROVINCIA_SELECTED = this.PROVINCIAS.find((prov:any)=>prov.id = PROVINCIA_ID);
+    let PROVINCIA_SELECTED = this.PROVINCIAS.find((prov:any)=>prov.id === PROVINCIA_ID);
+    if(PROVINCIA_SELECTED)
+    {
+      this.provincia = PROVINCIA_SELECTED.name;
+    }
     let distritos = this.DISTRITOS.filter((distrito:any) => distrito.province_id == PROVINCIA_ID);
     this.DISTRITOS_SELECTEDS = distritos;
     console.log(distritos);
@@ -102,14 +118,53 @@ export class CreateClientsPersonComponent
   //Función para guardar los clientes persona
   store()
   {
-    if(!this.name)
+    if(!this.name ||
+      !this.surname ||
+      !this.client_segment_id ||
+      !this.type_document ||
+      !this.n_document ||
+      !this.origen ||
+      !this.sexo ||
+      !this.birthdate ||
+      !this.phone ||
+      !this.ubigeo_distrito ||
+      !this.ubigeo_provincia ||
+      !this.ubigeo_region ||
+      !this.address)
     {
-      this.toast.error("Validación","El nombre de cliente es requerido.");
+      this.toast.error("Validación","Es necesario rellenar todos los campos obligatorios.");
       return false;
     }
 
-    const data = {
+    //let DISTRITO_SELECTED = this.DISTRITOS.find((distr:any)=>distr.id = this.ubigeo_distrito)
+    let DISTRITO_SELECTED = this.DISTRITOS.find((distr:any)=>distr.id === this.ubigeo_distrito)
+    if(DISTRITO_SELECTED)
+    {
+      this.distrito = DISTRITO_SELECTED.name;
+    };
+
+    let data = {
       name: this.name,
+      surname: this.surname,
+      full_name : this.name + ' ' + this.surname,
+      sexo: this.sexo,
+      phone: this.phone,
+      email: this.email,
+      birthdate: this.birthdate,
+      type_document: this.type_document,
+      client_segment_id: this.client_segment_id,
+      n_document: this.n_document,
+      address: this.address,
+      origen: this.origen,
+      is_parcial: this.is_parcial,
+      ubigeo_region: this.ubigeo_region,
+      ubigeo_provincia: this.ubigeo_provincia,
+      ubigeo_distrito: this.ubigeo_distrito,
+      region: this.region,
+      distrito: this.distrito,
+      provincia: this.provincia,
+      asesor_id: this.asesor_id,
+      type: 1
       //address: this.address
     }
 
@@ -117,7 +172,7 @@ export class CreateClientsPersonComponent
       console.log(resp);
       if(resp.message == 403)
       {
-        this.toast.error("Validación",resp.message_text);
+        this.toast.error("Error de validación",resp.message_text);
       }
       else
       {

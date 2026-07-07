@@ -40,12 +40,12 @@ export class ClientsService {
     );
   }
 
-  listClients(page = 1,search = '')
+  listClients(page = 1,data:any = {})
   {
     this.isLoadingSubject.next(true);
     const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
-    const URL = URL_SERVICIOS+"/clients?page="+page+"&search="+search;
-    return this.http.get(URL,{headers: headers}).pipe(
+    const URL = URL_SERVICIOS+"/clients/index?page="+page;
+    return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }

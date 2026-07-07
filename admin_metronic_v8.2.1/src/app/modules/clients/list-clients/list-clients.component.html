@@ -1,23 +1,111 @@
 <div class="card">
-  <!-- INICIO DE LA CABECERA DE LA TARJETA -->
+  <!-- COMIENZO CABECERA DE LA TARJETA -->
   <div class="card-header border-0 pt-6">
+    <!-- COMIENZO DE LOS PARÁMETROS DE BÚSQUEDA Y FILTRADO -->
     <div class="card-title">
-      <!-- COMIENZO DE BARRA DE BÚSQUEDA -->
-      <div class="d-flex align-items-center position-relative my-1">
-        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
-          <span class="path1"></span>
-          <span class="path2"></span>
-        </i>
-        <input type="text"
-          class="form-control form-control-solid w-250px ps-12"
-          [(ngModel)]="search"
-          (keyup.enter)="listClients()"
-          name="search"
-          data-kt-customer-table-filter="search"
-          placeholder="Buscar cliente">
+
+      <div class="row align-items-center">
+        <!-- COMIENZO INPUT DE BUSQUEDA NORMAL -->
+        <div class="col-3">
+          <div class="d-flex align-items-center position-relative my-1">
+            <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-5">
+              <span class="path1"></span>
+              <span class="path2"></span>
+            </i>
+            <input type="text"
+              class="form-control form-control-solid ps-12"
+              name="search"
+              [(ngModel)]="search"
+              (keyup.enter)="listClients()"
+              data-kt-customer-table-filter="search"
+              placeholder="Search Client (Nombre,apellido,ruc o dni,telefono)">
+          </div>
+        </div>
+        <!-- FIN INPUT DE BUSQUEDA NORMAL -->
+        <!-- COMIENZO DE BUSQUEDA POR SEGMENTO -->
+        <div class="col-3">
+          <select
+            class="form-control"
+            name="client_segment_id"
+            [(ngModel)]="client_segment_id"
+
+            placeholder="Selec. Segment">
+              <option value="">Ninguno</option>
+                @for (client_segment of client_segments; track client_segment.id)
+                {
+                  <option [value]="client_segment.id">{{ client_segment.name }}</option>
+                }
+          </select>
+          <div class="text-muted fs-7">
+            Segmento de cliente.
+          </div>
+        </div>
+        <!-- FIN DE BUSQUEDA POR SEGMENTO -->
+        <!-- COMIENZO DE BUSQUEDA POR TIPO DE CLIENTE -->
+        <div class="col-2">
+          <select
+            class="form-control form-select-solid fw-bolder"
+            name="type"
+            [(ngModel)]="type"
+            (change)="listClients()"
+            placeholder="Seleccione un tipo">
+              <option value="">Ninguno</option>
+              <option value="1">Persona</option>
+              <option value="2">Empresa</option>
+          </select>
+          <div class="text-muted fs-7">
+            Tipo de cliente
+          </div>
+        </div>
+        <!-- FIN DE BUSQUEDA POR TIPO DE CLIENTE -->
+        <!-- COMIENZO DE BUSQUEDA POR ASESOR -->
+        <div class="col-3">
+          <select
+            class="form-select mb-2"
+            name="asesor_id"
+            [(ngModel)]="asesor_id"
+            (change)="listClients()"
+            placeholder="Seleccione un asesor">
+            <option value="">Ninguno</option>
+            @for (asesor of asesores; track asesor.id)
+              {
+                <option [value]="asesor.id">{{ asesor.full_name }}</option>
+              }
+          </select>
+          <div class="text-muted fs-7">
+            Asesores
+          </div>
+        </div>
+        <!-- FIN DE BUSQUEDA POR ASESOR -->
+        <!-- COMIENZO DE BOTONES DE ACCIÓN -->
+        <div class="col-1 d-flex">
+          <!-- Comienzo del botón de aplicar filtros -->
+          <button class="btn btn-primary btn-sm mx-1" (click)="listClients()">
+              <i class="ki-duotone ki-magnifier fs-2"><span class="path1"></span><span class="path2"></span></i>
+          </button>
+          <!-- Fin del botón de aplicar filtros -->
+          <!-- Comienzo del botón de resetear filtros -->
+          <button class="btn btn-dark btn-sm mx-1"  (click)="resetListClients()">
+              <i class="ki-duotone ki-loading fs-2"><span class="path1"></span><span class="path2"></span></i>
+          </button>
+          <!-- Fin del botón de resetear filtros -->
+          <!-- Comienzo del botón de exportar clientes -->
+          <button class="btn btn-success btn-sm mx-1"  (click)="exportClients()">
+              <i class="ki-duotone ki-folder-down fs-2"><span class="path1"></span><span class="path2"></span></i>
+          </button>
+          <!-- Fin del botón de exportar clientes -->
+          <!-- Comienzo del botón de importar clientes -->
+          <button class="btn btn-success btn-sm mx-1"  (click)="importClients()">
+              <i class="ki-duotone ki-update-folder fs-2"><span class="path1"></span><span class="path2"></span></i>
+          </button>
+          <!-- Fin del botón de importar clientes -->
+        </div>
+        <!-- FIN DE BOTONES DE ACCIÓN -->
       </div>
-      <!-- FIN DE BARRA DE BÚSQUEDA -->
+
+      <!--end::Search-->
     </div>
+    <!-- FIN DE LOS PARÁMETROS DE BÚSQUEDA Y FILTRADO -->
     @if (isLoading$ | async)
     {
       <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
@@ -49,22 +137,22 @@
       <!-- FIN DE ACCIONES -->
     </div>
     <!-- FIN BARRA DE HERRAMIENTAS SUPERIOR -->
-  </div>
-  <!-- FIN DE LA CABECERA DE LA TARJETA -->
-  <!-- INICIO DEL CUERPO DE LA TARJETA PRINCIPAL -->
+  <!-- FIN DE CABECERA DE LA TARJETA -->
+  <!-- COMIENZO DEL CUERPO DE LA TARJETA -->
+  <!-- COMIENZO DEL FILTRADO ESPECIAL DE PRODUCTOS -->
   <div class="card-body pt-0">
-    <!-- INICIO DE TABLA GENERAL -->
+    <!-- COMIENZO DE TABLA DE LISTADO DE PRODUCTOS -->
     <div id="kt_customers_table_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
+      <!-- COMIENZO DE LA TABLA -->
       <div id="" class="table-responsive">
-        <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable" id="kt_customers_table"
-          style="width: 100%;">
-          <!-- Cabecera de la tabla -->
+        <table class="table align-middle table-row-dashed fs-6 gy-5 dataTable" id="kt_customers_table" style="width: 1199.5px;">
+          <!-- COMIENZO DE CABECERA DE LA TABLA -->
           <thead>
             <tr class="text-start text-gray-500 fw-bold fs-7 text-uppercase gs-0">
               <!-- INICIO DE DATOS DE CLIENTE -->
               <th class="min-w-125px dt-orderable-asc dt-orderable-desc"
                 data-dt-column="1" rowspan="1" colspan="1" aria-label="Customer Name: Activate to sort" tabindex="0">
-                  <span class="dt-column-title" role="button">Datos de cliente</span>
+                  <span class="dt-column-title" role="button">Nombre de cliente</span>
                   <span class="dt-column-order"></span>
               </th>
               <!-- FIN DE DATOS DE CLIENTE -->
@@ -124,22 +212,55 @@
               </th>
             </tr>
           </thead>
-          <!-- INICIO DE TABLA PARA EL LISTADO DE CLIENTES -->
+          <!-- FIN DE CABECERA DE LA TABLA -->
+          <!-- COMIENZO DEL CUERPO DE LA TABLA -->
           <tbody class="fw-semibold text-gray-600">
             @for (CLIENT of CLIENTS; track CLIENT)
             {
               <tr>
                 <!-- INICIO DEL CAMPO PARA EL NOMBRE DEL CLIENTE -->
                 <td>
-                  {{ CLIENT.name }}
+                  <div class="d-flex align-items-center">
+                    <div class="d-flex justify-content-start flex-column">
+                      <a href="#" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">{{ CLIENT.full_name }}</a>
+                      <span class="text-muted fw-semibold text-muted d-block fs-7">Tipo: {{ CLIENT.type === 1 ? 'Persona' : 'Empresa' }}</span>
+                    </div>
+                  </div>
                 </td>
                 <!-- FIN DEL CAMPO PARA EL NOMBRE DEL CLIENTE -->
+                <!-- INICIO DEL CAMPO PARA EL SEGMENTO DE CLIENTE -->
+                <td>
+                  {{ CLIENT.client_segment.name }}
+                </td>
+                <!-- FIN DEL CAMPO PARA EL SEGMENTO DE CLIENTE -->
+                <!-- INICIO DEL CAMPO PARA EL TIPO DE DOCUMENTO -->
+                <td>
+                  {{ CLIENT.type_document }}
+                </td>
+                <!-- FIN DEL CAMPO PARA EL TIPO DE DOCUMENTO -->
+                <!-- INICIO DEL CAMPO PARA EL NÚMERO DE DOCUMENTO -->
+                <td>
+                  {{ CLIENT.n_document }}
+                </td>
+                <!-- FIN DEL CAMPO PARA EL NÚMERO DE DOCUMENTO -->
+                <!-- INICIO DEL CAMPO PARA EL TELÉFONO -->
+                <td>
+                  {{ CLIENT.phone }}
+                </td>
+                <!-- FIN DEL CAMPO PARA EL TELÉFONO -->
+                <!-- INICIO DEL CAMPO PARA LA UBICACIÓN -->
+                <td>
+                  {{ CLIENT.region }} / {{ CLIENT.provincia }} / {{ CLIENT.distrito }}
+                </td>
+                <!-- FIN DEL CAMPO PARA LA UBICACIÓN -->
                 <!-- INICIO DEL CAMPO PARA EL ESTADO DE CLIENTE -->
                 <td>
-                  @if (CLIENT.state === 1) {
+                  @if (CLIENT.state === 1)
+                  {
                     <span class="badge badge-light-success">Activo</span>
                   }
-                  @if (CLIENT.state === 2) {
+                  @if (CLIENT.state === 2)
+                  {
                     <span class="badge badge-light-danger">Inactivo</span>
                   }
                 </td>
@@ -151,19 +272,27 @@
                 <!-- FIN DEL CAMPO PARA LA FECHA DE CREACIÓN DEL CLIENTE -->
                 <!--INICIO DE BOTONES DE EDICIÓN Y ELIMINACIÓN -->
                 <td class="">
-                  <a href="#" onclick="return false;" (click)="editClientCompany(CLIENT)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                  <a href="#" onclick="return false;"
+                    *ngIf="CLIENT.type == 2"
+                    (click)="editClientCompany(CLIENT)"
+                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                     <i class="ki-duotone ki-pencil fs-2">
                       <span class="path1"></span>
                       <span class="path2"></span>
                     </i>
                   </a>
-                  <a href="#" onclick="return false;" (click)="editClientPerson(CLIENT)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                  <a href="#" onclick="return false;"
+                    *ngIf="CLIENT.type == 1"
+                    (click)="editClientPerson(CLIENT)"
+                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                     <i class="ki-duotone ki-pencil fs-2">
                       <span class="path1"></span>
                       <span class="path2"></span>
                     </i>
                   </a>
-                  <a href="#" onclick="return false;" (click)="deleteClient(CLIENT)" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                  <a href="#" onclick="return false;"
+                    (click)="deleteClient(CLIENT)"
+                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
                     <i class="ki-duotone ki-trash fs-2">
                       <span class="path1"></span>
                       <span class="path2"></span>
@@ -177,20 +306,26 @@
               </tr>
             }
           </tbody>
-          <!-- FIN DE TABLA PARA EL LISTADO DE CLIENTES -->
-          <tfoot></tfoot>
+          <!-- FIN DEL CUERPO DE LA TABLA -->
+          <!-- COMIENZO DEL PIE DE LA TABLA -->
+          <tfoot>
+          </tfoot>
+        <!-- FIN DEL PIE DE LA TABLA -->
         </table>
-      </div>
-      <ngb-pagination
-        [collectionSize]="totalPages"
-        [(page)]="currentPage"
-        [pageSize]="25"
-        [rotate]="true"
-        [boundaryLinks]="true"
-        (pageChange)="loadPage($event)">
-      </ngb-pagination>
     </div>
-    <!-- FIN DE TABLA GENERAL -->
+  <!-- FIN DE LA TABLA -->
+  <!-- INICIO DE LA PAGINACIÓN -->
+  <ngb-pagination
+    [collectionSize]="totalPages"
+    [(page)]="currentPage"
+    [pageSize]="25"
+    [rotate]="true"
+    [boundaryLinks]="true"
+    (pageChange)="loadPage($event)">
+  </ngb-pagination>
+  <!-- FIN DE LA PAGINACIÓN -->
+    </div>
+    <!-- FIN DE TABLA DE LISTADO DE PRODUCTOS -->
   </div>
-  <!-- FIN DEL CUERPO DE LA TARJETA PRINCIPAL -->
+  <!-- FIN DEL CUERPO DE LA TARJETA -->
 </div>
