@@ -96,4 +96,18 @@ class Client extends Model
         /* $this->attributes['deleted_at'] = Carbon::now(); */
         $this->attributes['updated_at'] = Carbon::now();
     }
+
+    public function setBirthdateAttribute($value)
+    {
+        // Si la fecha viene en formato DD-MM-YYYY, convertir a YYYY-MM-DD
+        if ($value && preg_match('/^\d{2}-\d{2}-\d{4}$/', $value))
+        {
+            $date = \Carbon\Carbon::createFromFormat('d-m-Y', $value);
+            $this->attributes['birthdate'] = $date->format('Y-m-d');
+        }
+        else
+        {
+            $this->attributes['birthdate'] = $value;
+        }
+    }
 }

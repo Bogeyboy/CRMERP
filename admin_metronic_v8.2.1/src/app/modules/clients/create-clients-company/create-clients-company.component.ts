@@ -29,8 +29,10 @@ export class CreateClientsCompanyComponent {
   phone = 0;
   email = '';
   birthdate:any = null;
+  displayBirthdate= '';
   type_document = 'NIF';
   client_segment_id = '';
+
   //client_segment = '';
   n_document = '';
   address = '';
@@ -63,6 +65,57 @@ export class CreateClientsCompanyComponent {
   public authservice = inject(AuthService);
   public clientsService = inject(ClientsService);
   public toast = inject(ToastrService);
+
+  convertToBackendFormat(dateStr: string): string | null
+  {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+  }
+  // Función para convertir de backend a input
+  convertToInputFormat(dateStr: string): string | null
+  {
+    if (!dateStr) return null;
+    const [day, month, year] = dateStr.split('-');
+    return `${year}-${month}-${day}`;
+  }
+
+  updateBirthdate(event: any)
+  {
+    const value = event.target.value;
+    if (value) {
+      const [year, month, day] = value.split('-');
+      this.birthdate = `${day}-${month}-${year}`;
+    } else {
+      this.birthdate = null;
+    }
+  }
+
+  setBirthdateFromBackend(dateStr: string)
+  {
+    if (dateStr)
+    {
+      // Si viene en formato DD-MM-YYYY, lo convertimos a YYYY-MM-DD para el input
+      const parts = dateStr.split('-');
+      if (parts.length === 3 && parts[0].length === 2)
+      {
+        this.displayBirthdate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        // También actualizamos birthdate para el backend
+        this.birthdate = dateStr;
+      }
+      else
+      {
+        // Si ya viene en otro formato, lo usamos directamente
+        this.displayBirthdate = dateStr;
+        this.birthdate = dateStr;
+      }
+    }
+    else
+    {
+      this.displayBirthdate = '';
+      this.birthdate = null;
+    }
+  }
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
@@ -129,6 +182,21 @@ export class CreateClientsCompanyComponent {
       return false;
     }
 
+    //VALIDACIÓN PARA FECHA DE ANIVERSARIO
+    let birthdateToSend = this.birthdate;
+    console.log("birthdateToSend: ", birthdateToSend);
+    if (birthdateToSend && typeof birthdateToSend === 'string')
+    {
+      // Si está en formato YYYY-MM-DD, convertirlo a DD-MM-YYYY
+      console.log(" Dentro del primer if birthdateToSend: ", birthdateToSend);
+      if (birthdateToSend.match(/^\d{4}-\d{2}-\d{2}$/))
+      {
+        console.log(" Dentro del segundo if birthdateToSend: ", birthdateToSend);
+        const [year, month, day] = birthdateToSend.split('-');
+        birthdateToSend = `${day}-${month}-${year}`;
+      }
+    }
+
     //let DISTRITO_SELECTED = this.DISTRITOS.find((distr:any)=>distr.id = this.ubigeo_distrito)
     let DISTRITO_SELECTED = this.DISTRITOS.find((distr:any)=>distr.id === this.ubigeo_distrito)
     if(DISTRITO_SELECTED)
@@ -140,7 +208,8 @@ export class CreateClientsCompanyComponent {
       full_name : this.full_name,
       phone: this.phone,
       email: this.email,
-      birthdate: this.birthdate,
+      //birthdate: this.birthdate,
+      birthdate: birthdateToSend,
       type_document: this.type_document,
       client_segment_id: this.client_segment_id,
       n_document: this.n_document,
@@ -166,7 +235,8 @@ export class CreateClientsCompanyComponent {
       }
       else
       {
-        this.toast.success("Éxito","Cliente añadido correctamente.");
+        console.log("Empresa añadida correctamente: ", resp.client);
+        this.toast.success("Éxito","Empresa añadida correctamente.");
         this.ClientsC.emit(resp.client);
         this.modal.close();
       }

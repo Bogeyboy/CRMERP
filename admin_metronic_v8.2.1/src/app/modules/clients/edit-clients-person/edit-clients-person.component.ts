@@ -31,6 +31,7 @@ export class EditClientsPersonComponent {
   phone = 0;
   email = '';
   birthdate:any = null;
+  displayBirthdate= '';
   type_document = '';
   client_segment_id = '';
   //client_segment = '';
@@ -38,6 +39,7 @@ export class EditClientsPersonComponent {
   address = '';
   origen = '';
   is_parcial = 1;
+  type = 1; // 1 = empresa, 2 = persona
 
 
   //Variables datos específicos
@@ -66,13 +68,56 @@ export class EditClientsPersonComponent {
   public clientsService = inject(ClientsService);
   public toast = inject(ToastrService);
 
+  // Función para convertir fecha de input a formato backend
+  convertToBackendFormat(dateStr: string): string | null
+  {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+  }
+  // Función para convertir de backend a input
+  convertToInputFormat(dateStr: string): string | null
+  {
+    if (!dateStr) return null;
+    const [day, month, year] = dateStr.split('-');
+    return `${year}-${month}-${day}`;
+  }
+
+  setBirthdateFromBackend(dateStr: string)
+  {
+    if (dateStr)
+    {
+      // Si viene en formato DD-MM-YYYY, lo convertimos a YYYY-MM-DD para el input
+      const parts = dateStr.split('-');
+      if (parts.length === 3 && parts[0].length === 2)
+      {
+        this.displayBirthdate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        // También actualizamos birthdate para el backend
+        this.birthdate = dateStr;
+      }
+      else
+      {
+        // Si ya viene en otro formato, lo usamos directamente
+        this.displayBirthdate = dateStr;
+        this.birthdate = dateStr;
+      }
+    }
+    else
+    {
+      this.displayBirthdate = '';
+      this.birthdate = null;
+    }
+  }
+
   ngOnInit(): void {
     this.name = this.client_selected.name;
     this.surname = this.client_selected.surname;
     this.sexo = this.client_selected.sexo;
     this.phone = this.client_selected.phone;
     this.email = this.client_selected.email;
-    this.birthdate = this.client_selected.birthdate;
+    //this.birthdate = this.client_selected.birthdate;
+    this.setBirthdateFromBackend(this.client_selected.birthdate);
+    this.type = this.client_selected.type;
     this.type_document = this.client_selected.type_document;
     this.client_segment_id = this.client_selected.client_segment_id;
     this.n_document = this.client_selected.n_document;
@@ -130,9 +175,32 @@ export class EditClientsPersonComponent {
   {
     this.is_parcial = this.is_parcial == 1 ? 2 : 1;
   }
+  updateBirthdate(event: any)
+  {
+    const value = event.target.value;
+    if (value)
+    {
+      const [year, month, day] = value.split('-');
+      this.birthdate = `${day}-${month}-${year}`;
+    }
+    else
+    {
+      this.birthdate = null;
+    }
+  }
   //Función para guardar los clientes persona
   store()
   {
+    let birthdateToSend = this.birthdate;
+    if (birthdateToSend && typeof birthdateToSend === 'string')
+    {
+      // Si está en formato YYYY-MM-DD, convertirlo a DD-MM-YYYY
+      if (birthdateToSend.match(/^\d{4}-\d{2}-\d{2}$/))
+      {
+        const [year, month, day] = birthdateToSend.split('-');
+        birthdateToSend = `${day}-${month}-${year}`;
+      }
+    }
     if(!this.name ||
       !this.surname ||
       !this.client_segment_id ||
@@ -151,13 +219,13 @@ export class EditClientsPersonComponent {
       return false;
     }
 
+
     //let DISTRITO_SELECTED = this.DISTRITOS.find((distr:any)=>distr.id = this.ubigeo_distrito)
     let DISTRITO_SELECTED = this.DISTRITOS.find((distr:any)=>distr.id === this.ubigeo_distrito)
     if(DISTRITO_SELECTED)
     {
       this.distrito = DISTRITO_SELECTED.name;
     };
-
     let data = {
       name: this.name,
       surname: this.surname,
@@ -165,7 +233,8 @@ export class EditClientsPersonComponent {
       sexo: this.sexo,
       phone: this.phone,
       email: this.email,
-      birthdate: this.birthdate,
+      //birthdate: this.birthdate,
+      birthdate: birthdateToSend,
       type_document: this.type_document,
       client_segment_id: this.client_segment_id,
       n_document: this.n_document,
@@ -179,11 +248,11 @@ export class EditClientsPersonComponent {
       distrito: this.distrito,
       provincia: this.provincia,
       asesor_id: this.asesor_id,
-      type: 1
+      type: this.type
       //address: this.address
     }
 
-    this.clientsService.registerClient(data).subscribe((resp:any) => {
+    this.clientsService.updateClient(this.client_selected.id, data).subscribe((resp:any) => {
       console.log(resp);
       if(resp.message == 403)
       {
@@ -191,7 +260,7 @@ export class EditClientsPersonComponent {
       }
       else
       {
-        this.toast.success("Éxito","Cliente añadido correctamente.");
+        this.toast.success("Éxito","Cliente actualizado correctamente.");
         this.ClientsE.emit(resp.client);
         this.modal.close();
       }

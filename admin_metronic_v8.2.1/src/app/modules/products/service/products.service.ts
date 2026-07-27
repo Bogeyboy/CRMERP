@@ -95,4 +95,15 @@ export class ProductsService {
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
+
+  deleteProduct(PRODUCT_ID:string)
+  {
+    this.isLoadingSubject.next(true);
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    //const URL = URL_SERVICIOS + '/products/' + PRODUCT_ID;
+    const URL = `${this.apiUrl}/products/${PRODUCT_ID}`;
+    return this.http.delete(URL,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
 }

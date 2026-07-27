@@ -65,6 +65,7 @@ export class ListClientsComponent {
       console.log(client);
       //this.CLIENTS.push(client_segment);//Se agrega al final del listado
       this.CLIENTS.unshift(client);//Se agrega al principio del listado
+      this.listClients(this.currentPage);
     });
   }
   createClientPerson()
@@ -77,11 +78,15 @@ export class ListClientsComponent {
       console.log(client);
       if (this.CLIENTS)
       {
-        this.CLIENTS.unshift(this.client_segments);//Se agrega al principio del listado
+        //this.CLIENTS.unshift(this.client_segments);//Se agrega al principio del listado
+        this.CLIENTS.unshift(client);
+        this.listClients(this.currentPage);
       }
       else
       {
-        this.CLIENTS = [this.client_segments];
+        //this.CLIENTS = [this.client_segments];
+        this.CLIENTS = [client];
+        this.listClients(this.currentPage);
       }
     });
   }
@@ -112,18 +117,20 @@ export class ListClientsComponent {
     this.listClients();
   }
   //EDICIÓN DE CLIENTES
-  editClientCompany(CLIENT_SEGMENT:any)
+  editClientCompany(CLIENT_SELECTED:any)
   {
-    const modalRef = this.modalService.open(EditClientsCompanyComponent,{centered:true,size:'md'});
-    modalRef.componentInstance.CLIENT_SEGMENT_SELECTED = CLIENT_SEGMENT;
+    const modalRef = this.modalService.open(EditClientsCompanyComponent,{centered:true,size:'xl'});
+    modalRef.componentInstance.client_selected = CLIENT_SELECTED;
+    modalRef.componentInstance.client_segments = this.client_segments;
+    modalRef.componentInstance.asesores = this.asesores;
 
     //Recibimos los datos del componente hijo
-    modalRef.componentInstance.ClientSegmentE.subscribe((client_segment:any) => {
-      const INDEX = this.CLIENTS.findIndex((client_seg:any) => client_seg.id == CLIENT_SEGMENT.id);
+    modalRef.componentInstance.ClientsE.subscribe((client:any) => {
+      const INDEX = this.CLIENTS.findIndex((client_s:any) => client_s.id == CLIENT_SELECTED.id);
       //console.log(INDEX);
       if(INDEX!=-1)
       {
-        this.CLIENTS[INDEX] = client_segment;
+        this.CLIENTS[INDEX] = client;
       }
     });
   }
@@ -145,15 +152,15 @@ export class ListClientsComponent {
     });
   }
   //ELIMINACIÓN DE CLIENTES
-  deleteClient(CLIENT_SEGMENT:any)
+  deleteClient(CLIENT_SELECTED:any)
   {
     const modalRef = this.modalService.open(DeleteClientsComponent,{centered:true,size:'md'});
 
-    modalRef.componentInstance.CLIENT_SEGMENT_SELECTED = CLIENT_SEGMENT;
+    modalRef.componentInstance.client_selected = CLIENT_SELECTED;
 
     //Recibimos los datos del componente hijo
-    modalRef.componentInstance.ClientSegmentD.subscribe((client_segment:any) => {
-      const INDEX = this.CLIENTS.findIndex((client_seg:any) => client_seg.id == CLIENT_SEGMENT.id);
+    modalRef.componentInstance.ClientsD.subscribe((client_s:any) => {
+      const INDEX = this.CLIENTS.findIndex((client_s:any) => client_s.id == CLIENT_SELECTED.id);
       if(INDEX!=-1)
       {
         //this.ROLES[INDEX] = rol;

@@ -443,7 +443,7 @@ export class ListProductComponent implements OnInit {
       const modalRef = this.modalService.open(DeleteProductComponent,{centered:true, size: 'md'});
       modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
 
-      modalRef.componentInstance.ProductD.subscribe((prod:any) => {
+      modalRef.componentInstance.ProductsD.subscribe((prod:any) => {
         const INDEX = this.PRODUCTS.findIndex((prod:any) => prod.id == PRODUCT.id);
         if(INDEX != -1){
           this.PRODUCTS.splice(INDEX,1);

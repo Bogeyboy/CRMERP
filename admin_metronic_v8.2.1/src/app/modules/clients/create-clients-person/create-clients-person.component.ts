@@ -21,7 +21,7 @@ import { UBIGEO_DISTRITOS } from '../../../config/ubigeo_distritos';
 export class CreateClientsPersonComponent
 {
   @Output() ClientsC = new EventEmitter<any>();
-  
+
   @Input() client_segments: any = [];
   @Input() asesores: any = [];
 
@@ -33,7 +33,8 @@ export class CreateClientsPersonComponent
   sexo = '';
   phone = 0;
   email = '';
-  birthdate:any = null;
+  birthdate: any = null;
+  displayBirthdate = '';
   type_document = '';
   client_segment_id = '';
   //client_segment = '';
@@ -68,6 +69,36 @@ export class CreateClientsPersonComponent
   public authservice = inject(AuthService);
   public clientsService = inject(ClientsService);
   public toast = inject(ToastrService);
+
+
+  // Función para convertir fecha de input a formato backend
+  convertToBackendFormat(dateStr: string): string | null
+  {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+  }
+  // Función para convertir de backend a input
+  convertToInputFormat(dateStr: string): string | null
+  {
+    if (!dateStr) return null;
+    const [day, month, year] = dateStr.split('-');
+    return `${year}-${month}-${day}`;
+  }
+
+  updateBirthdate(event: any)
+  {
+    const value = event.target.value;
+    if (value)
+    {
+      const [year, month, day] = value.split('-');
+      this.birthdate = `${day}-${month}-${year}`;
+    }
+    else
+    {
+      this.birthdate = null;
+    }
+  }
 
   ngOnInit(): void {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
@@ -118,6 +149,16 @@ export class CreateClientsPersonComponent
   //Función para guardar los clientes persona
   store()
   {
+    // AÑADE ESTA CONVERSIÓN DE FECHA AL PRINCIPIO DEL MÉTODO
+    // Convertir birthdate al formato que espera MySQL (YYYY-MM-DD)
+    let birthdateToSend = this.birthdate;
+    if (birthdateToSend && typeof birthdateToSend === 'string') {
+      // Si viene en formato DD-MM-YYYY (como viene del input)
+      if (birthdateToSend.match(/^\d{2}-\d{2}-\d{4}$/)) {
+        const [day, month, year] = birthdateToSend.split('-');
+        birthdateToSend = `${year}-${month}-${day}`;
+      }
+    }
     if(!this.name ||
       !this.surname ||
       !this.client_segment_id ||
@@ -150,7 +191,8 @@ export class CreateClientsPersonComponent
       sexo: this.sexo,
       phone: this.phone,
       email: this.email,
-      birthdate: this.birthdate,
+      //birthdate: this.birthdate,
+      birthdate: birthdateToSend,
       type_document: this.type_document,
       client_segment_id: this.client_segment_id,
       n_document: this.n_document,
@@ -176,6 +218,7 @@ export class CreateClientsPersonComponent
       }
       else
       {
+        console.log("Cliente añadido correctamente: ", resp.client);
         this.toast.success("Éxito","Cliente añadido correctamente.");
         this.ClientsC.emit(resp.client);
         this.modal.close();

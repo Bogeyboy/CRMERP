@@ -36,7 +36,9 @@ class ClientResource extends JsonResource
             'type' => $this->resource->type,
             'type_document' => $this->resource->type_document,
             'n_document' => $this->resource->n_document,
-            'birthdate' => $this->resource->birthdate ? Carbon::parse($this->resource->birthdate)->format('d-m-Y') : null,
+            'birthdate' => $this->resource->birthdate ? Carbon::parse($this->resource->birthdate)->format('Y-m-d') : null,
+            //'birthdate' => $this->resource->birthdate ? Carbon::parse($this->resource->birthdate)->format('d-m-Y') : null,
+            //'birthdate' => $this->resource->birthdate ? Carbon::parse($this->resource->birthdate)->format('Y-m-d') : null,
             'address' => $this->resource->address,
             'sucursal_id' => $this->resource->sucursal_id,
 
@@ -45,10 +47,6 @@ class ClientResource extends JsonResource
                 'id' => $this->resource->sucursale->id,
                 'name' => $this->resource->sucursale->name,
             ] : null,
-            /* 'sucursale' => $this->resource->sucursal ? [
-                'id' => $this->resource->sucursal->id,
-                'name' => $this->resource->sucursal->name,
-            ] : null, */
 
             //RELACIÓN CON USER (ASESOR)
             'asesor' => $this->resource->asesor ? [

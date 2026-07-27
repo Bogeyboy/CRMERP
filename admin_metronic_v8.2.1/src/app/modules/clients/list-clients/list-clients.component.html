@@ -28,7 +28,7 @@
             class="form-control"
             name="client_segment_id"
             [(ngModel)]="client_segment_id"
-
+            (change)="listClients()"
             placeholder="Selec. Segment">
               <option value="">Ninguno</option>
                 @for (client_segment of client_segments; track client_segment.id)
@@ -223,7 +223,15 @@
                   <div class="d-flex align-items-center">
                     <div class="d-flex justify-content-start flex-column">
                       <a href="#" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">{{ CLIENT.full_name }}</a>
-                      <span class="text-muted fw-semibold text-muted d-block fs-7">Tipo: {{ CLIENT.type === 1 ? 'Persona' : 'Empresa' }}</span>
+                      @if (CLIENT.type === 1)
+                      {
+                        <span class="badge badge-light-primary">Persona</span>
+                      }
+                      @if (CLIENT.type === 2)
+                      {
+                        <span class="badge badge-light-warning">Empresa</span>
+                      }
+
                     </div>
                   </div>
                 </td>
@@ -259,9 +267,13 @@
                   {
                     <span class="badge badge-light-success">Activo</span>
                   }
-                  @if (CLIENT.state === 2)
+                  @else if (CLIENT.state === 2)
                   {
                     <span class="badge badge-light-danger">Inactivo</span>
+                  }
+                  @else
+                  {
+                    <span class="badge badge-light-secondary">Pendiente</span>
                   }
                 </td>
                 <!-- FIN DEL CAMPO PARA EL ESTADO DE CLIENTE -->
@@ -272,24 +284,28 @@
                 <!-- FIN DEL CAMPO PARA LA FECHA DE CREACIÓN DEL CLIENTE -->
                 <!--INICIO DE BOTONES DE EDICIÓN Y ELIMINACIÓN -->
                 <td class="">
-                  <a href="#" onclick="return false;"
-                    *ngIf="CLIENT.type == 2"
-                    (click)="editClientCompany(CLIENT)"
-                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                    <i class="ki-duotone ki-pencil fs-2">
-                      <span class="path1"></span>
-                      <span class="path2"></span>
-                    </i>
-                  </a>
-                  <a href="#" onclick="return false;"
-                    *ngIf="CLIENT.type == 1"
-                    (click)="editClientPerson(CLIENT)"
-                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                    <i class="ki-duotone ki-pencil fs-2">
-                      <span class="path1"></span>
-                      <span class="path2"></span>
-                    </i>
-                  </a>
+                  @if (CLIENT.type === 2)
+                  {
+                    <a href="#" onclick="return false;"
+                      (click)="editClientCompany(CLIENT)"
+                      class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                      <i class="ki-duotone ki-pencil fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                      </i>
+                    </a>
+                  }
+                  @else if (CLIENT.type === 1)
+                  {
+                    <a href="#" onclick="return false;"
+                      (click)="editClientPerson(CLIENT)"
+                      class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                      <i class="ki-duotone ki-pencil fs-2">
+                        <span class="path1"></span>
+                        <span class="path2"></span>
+                      </i>
+                    </a>
+                  }
                   <a href="#" onclick="return false;"
                     (click)="deleteClient(CLIENT)"
                     class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">

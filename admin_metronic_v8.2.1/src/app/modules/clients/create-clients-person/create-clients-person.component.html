@@ -1,7 +1,7 @@
 <!--begin::Modal content CREATE-->
 <div class="modal-content">
   <!--begin::Modal header-->
-  <div class="modal-header" id="kt_modal_add_user_header">
+  <div class="modal-header d-flex justify-content-between align-items-center" id="kt_modal_add_user_header">
     <!--begin::Modal title-->
     <h2 class="fw-bolder">Añadir Cliente particular</h2>
 
@@ -181,9 +181,10 @@
               <div class="col-3">
                 <label class="required fw-bold fs-6 mb-2">Cumpleaños: (*)</label>
                 <input type="date"
-                  name="birthdate"
-                  [(ngModel)]="birthdate"
                   class="form-control form-control-solid mb-3 mb-lg-0"
+                  name="birthdate"
+                  [value]="displayBirthdate"
+                  (change)="updateBirthdate($event)"
                   placeholder="Cumpleaños"/>
               </div>
               <!-- FIN CUMPLEAÑOS -->

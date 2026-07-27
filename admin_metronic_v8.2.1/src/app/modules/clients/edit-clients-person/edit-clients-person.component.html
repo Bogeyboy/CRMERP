@@ -1,7 +1,7 @@
 <!--begin::Modal content CREATE-->
 <div class="modal-content">
   <!--begin::Modal header-->
-  <div class="modal-header" id="kt_modal_add_user_header">
+  <div class="modal-header d-flex justify-content-between align-items-center" id="kt_modal_add_user_header">
     <!--begin::Modal title-->
     <h2 class="fw-bolder">Editar Cliente particular: {{ client_selected.full_name}}</h2>
 
@@ -209,7 +209,8 @@
                 <label class="required fw-bold fs-6 mb-2">Cumpleaños: (*)</label>
                 <input type="date"
                   name="birthdate"
-                  [(ngModel)]="birthdate"
+                  [value]="displayBirthdate"
+                  (change)="updateBirthdate($event)"
                   class="form-control form-control-solid mb-3 mb-lg-0"
                   placeholder="Cumpleaños"/>
               </div>
@@ -349,7 +350,7 @@
       <div class="text-center pt-15">
         <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()">Cerrar</button>
         <button type="button" (click)="store()" class="btn btn-primary" data-kt-users-modal-action="submit">
-          <span class="indicator-label">Registrar</span>
+          <span class="indicator-label">Editar</span>
 
           @if (isLoading) {
             <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
