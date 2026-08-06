@@ -7,6 +7,8 @@ import { EditClientsPersonComponent } from '../edit-clients-person/edit-clients-
 import { DeleteClientsComponent } from '../delete-clients/delete-clients.component';
 import { ClientsService } from '../service/clients.service';
 import { ThisReceiver } from '@angular/compiler';
+import { URL_SERVICIOS } from '../../../config/config';
+import { ImportClientsComponent } from '../import-clients/import-clients.component';
 
 @Component({
   selector: 'app-list-clients',
@@ -171,12 +173,39 @@ export class ListClientsComponent {
   //EXPORTACIÓN DE CLIENTES
   exportClients()
   {
+    let LINK ="";
+    /* search: this.search,
+    client_segment_id: this.client_segment_id,
+    type: this.type,
+    asesor_id: this.asesor_id */
+    if(this.search)
+    {
+      LINK += "&search="+this.search;
+    }
+    if(this.client_segment_id)
+    {
+      LINK += "&client_segment_id="+this.client_segment_id;
+    }
+    if(this.type)
+    {
+      LINK += "&type="+this.type;
+    }
+    if(this.asesor_id)
+    {
+      LINK += "&asesor_id="+this.asesor_id;
+    }
     // Lógica para exportar clientes
+    //window.open(URL_SERVICIOS + '/excel/export-clients', '_blank');
+    window.open(URL_SERVICIOS+"/excel/export-clients?k=1"+LINK,"_blank");
   }
   //IMPORTACIÓN DE CLIENTES
   importClients()
   {
-    // Lógica para importar clientes
+    const modalRef = this.modalService.open(ImportClientsComponent,{centered:true,size:'md'});
+
+    modalRef.componentInstance.importClient.subscribe((resp:any) => {
+      this.listClients();
+    });
   }
   //Función para las acciones tras el cambio de pagina en la paginación
   loadPage($event:any)

@@ -2,19 +2,7 @@
 
 namespace App\Imports;
 
-/* use App\Models\Configuration\ProductCategorie;
-use App\Models\Configuration\Sucursale;
-use App\Models\Configuration\Unit;
-use App\Models\Configuration\Warehouse;
-use App\Models\Product\Product;
-use App\Models\Product\ProductWallet;
-use App\Models\Product\ProductWarehouse;
-use Illuminate\Support\Facades\Log;
-use Maatwebsite\Excel\Concerns\Importable;
-use Maatwebsite\Excel\Concerns\SkipsErrors;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Maatwebsite\Excel\Concerns\WithValidation; */
+
 use App\Models\Configuration\ProductCategorie;
 use App\Models\Configuration\Sucursale;
 use App\Models\Configuration\Unit;
@@ -35,7 +23,7 @@ use Throwable;
 class ProductsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOnFailure, SkipsOnError
 {
     use Importable;
-    
+
     private $importedCount = 0;
     private $importErrors = [];
     private $rowNumber = 0;
@@ -43,32 +31,36 @@ class ProductsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
     public function model(array $row)
     {
         $this->rowNumber++;
-        
-        try {
+
+        try
+        {
             Log::info('Procesando fila ' . $this->rowNumber . ':', $row);
-            
+
             // Validar datos requeridos
-            if (empty($row['title']) || empty($row['categorie']) || empty($row['price']) || empty($row['sku'])) {
+            if (empty($row['title']) || empty($row['categorie']) || empty($row['price']) || empty($row['sku']))
+            {
                 $this->importErrors[] = "Fila {$this->rowNumber}: Faltan datos requeridos (title, categorie, price, sku)";
                 return null;
             }
 
             // Buscar categoría
             $categorie = ProductCategorie::where('name', 'like', '%' . trim($row['categorie']) . '%')->first();
-            if (!$categorie) {
+            if (!$categorie)
+            {
                 $this->importErrors[] = "Fila {$this->rowNumber}: Categoria no encontrada: " . $row['categorie'];
                 return null;
             }
 
             // Buscar unidad de umbral (opcional)
             $umbral_unit = null;
-            if (!empty($row['umbral_unit'])) {
+            if (!empty($row['umbral_unit']))
+            {
                 $umbral_unit = Unit::where('name', 'like', '%' . trim($row['umbral_unit']) . '%')->first();
             }
 
             // Mapear disponibilidad
             $disponibilidad = $this->mapDisponibilidad($row['disponibilidad'] ?? 'Vender los productos sin stock');
-            
+
             // Mapear impuesto
             $tax_selected = $this->mapTaxSelected($row['tax_selected'] ?? 'Libre de impuestos');
 
@@ -77,7 +69,8 @@ class ProductsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
 
             // Verificar si el producto ya existe por SKU
             $existingProduct = Product::where('sku', $sku/* trim($row['sku']) */)->first();
-            if ($existingProduct) {
+            if ($existingProduct)
+            {
                 $this->importErrors[] = "Fila {$this->rowNumber}: Producto con SKU '{$sku}' ya existe";
                 return null;
             }
@@ -106,11 +99,13 @@ class ProductsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
             Log::info('Producto creado: ID ' . $product->id . ' - ' . $product->title);
 
             // Crear existencia en almacén (opcional)
-            if (!empty($row['unidad_warehouse']) && !empty($row['almacen_warehouse'])) {
+            if (!empty($row['unidad_warehouse']) && !empty($row['almacen_warehouse']))
+            {
                 $unit = Unit::where('name', 'like', '%' . trim($row['unidad_warehouse']) . '%')->first();
                 $warehouse = Warehouse::where('name', 'like', '%' . trim($row['almacen_warehouse']) . '%')->first();
 
-                if ($unit && $warehouse) {
+                if ($unit && $warehouse)
+                {
                     ProductWarehouse::create([
                         'product_id' => $product->id,
                         'warehouse_id' => $warehouse->id,
@@ -122,15 +117,18 @@ class ProductsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
             }
 
             // Crear precio múltiple (opcional)
-            if (!empty($row['unidad_price_multitple']) && isset($row['price_multiple'])) {
+            if (!empty($row['unidad_price_multitple']) && isset($row['price_multiple']))
+            {
                 $unit = Unit::where('name', 'like', '%' . trim($row['unidad_price_multitple']) . '%')->first();
                 $sucursale = null;
 
-                if (!empty($row['sucursal_price_multiple'])) {
+                if (!empty($row['sucursal_price_multiple']))
+                {
                     $sucursale = Sucursale::where('name', 'like', '%' . trim($row['sucursal_price_multiple']) . '%')->first();
                 }
 
-                if ($unit) {
+                if ($unit)
+                {
                     ProductWallet::create([
                         'product_id' => $product->id,
                         'unit_id' => $unit->id,
@@ -145,7 +143,9 @@ class ProductsImport implements ToModel, WithHeadingRow, WithValidation, SkipsOn
             $this->importedCount++;
             return $product;
 
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             Log::error('Error en fila ' . $this->rowNumber . ': ' . $e->getMessage());
             $this->importErrors[] = "Fila {$this->rowNumber}: " . $e->getMessage();
             return null;

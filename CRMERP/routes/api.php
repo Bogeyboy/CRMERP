@@ -79,6 +79,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/clients/index', [ClientController::class, 'index'])
         ->middleware('permission:list_clientes');
 
+    Route::post('/clients/import', [ClientController::class, 'import_clients'])
+        ->middleware('permission:list_clientes');
+
     Route::get('/clients/{eid}', [ClientController::class, 'show'])
         ->middleware('permission:list_clientes');
 
@@ -155,3 +158,9 @@ Route::middleware('auth:api')->group(function() {
     Route::get("excel/export-products", [ProductController::class,"export_products"])
         ->middleware('permission:list_product');
 });
+
+Route::get("excel/export-clients", [ClientController::class,"export_clients"]);
+/* Route::middleware('auth:api')->group(function() {
+    Route::get("excel/export-clients", [ClientController::class,"export_clients"])
+        ->middleware('permission:list_client');
+}); */

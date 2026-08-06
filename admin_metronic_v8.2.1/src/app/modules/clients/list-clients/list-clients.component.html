@@ -3,7 +3,6 @@
   <div class="card-header border-0 pt-6">
     <!-- COMIENZO DE LOS PARÁMETROS DE BÚSQUEDA Y FILTRADO -->
     <div class="card-title">
-
       <div class="row align-items-center">
         <!-- COMIENZO INPUT DE BUSQUEDA NORMAL -->
         <div class="col-3">
@@ -80,37 +79,51 @@
         <!-- COMIENZO DE BOTONES DE ACCIÓN -->
         <div class="col-1 d-flex">
           <!-- Comienzo del botón de aplicar filtros -->
-          <button class="btn btn-primary btn-sm mx-1" (click)="listClients()">
-              <i class="ki-duotone ki-magnifier fs-2"><span class="path1"></span><span class="path2"></span></i>
+          <button class="btn btn-primary btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Aplicar filtros"
+            (click)="listClients()">
+              <i class="ki-duotone ki-magnifier fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
           </button>
           <!-- Fin del botón de aplicar filtros -->
           <!-- Comienzo del botón de resetear filtros -->
-          <button class="btn btn-dark btn-sm mx-1"  (click)="resetListClients()">
-              <i class="ki-duotone ki-loading fs-2"><span class="path1"></span><span class="path2"></span></i>
+          <button class="btn btn-dark btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Resetear filtros"
+            (click)="resetListClients()">
+              <i class="ki-duotone ki-loading fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
           </button>
           <!-- Fin del botón de resetear filtros -->
           <!-- Comienzo del botón de exportar clientes -->
-          <button class="btn btn-success btn-sm mx-1"  (click)="exportClients()">
-              <i class="ki-duotone ki-folder-down fs-2"><span class="path1"></span><span class="path2"></span></i>
+          <button class="btn btn-success btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar clientes"
+            (click)="exportClients()">
+              <i class="ki-duotone ki-folder-down fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
           </button>
           <!-- Fin del botón de exportar clientes -->
           <!-- Comienzo del botón de importar clientes -->
-          <button class="btn btn-success btn-sm mx-1"  (click)="importClients()">
-              <i class="ki-duotone ki-update-folder fs-2"><span class="path1"></span><span class="path2"></span></i>
+          <button class="btn btn-primary btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Importar clientes"
+            (click)="importClients()">
+              <i class="ki-duotone ki-update-folder fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
           </button>
           <!-- Fin del botón de importar clientes -->
         </div>
         <!-- FIN DE BOTONES DE ACCIÓN -->
       </div>
-
-      <!--end::Search-->
     </div>
     <!-- FIN DE LOS PARÁMETROS DE BÚSQUEDA Y FILTRADO -->
     @if (isLoading$ | async)
     {
       <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
     }
-    <!-- INICIO BARRA DE HERRAMIENTAS SUPERIOR -->
+    <!-- INICIO BARRA DE HERRAMIENTAS SUPERIOR CON LOS BOTONES DE AÑADIR CLIENTES-->
     <div class="card-toolbar">
       <div class="d-flex justify-content-end" data-kt-customer-table-toolbar="base">
         <!-- PRINCIPIO AÑADIR CLIENTE EMPRESA -->
@@ -129,14 +142,13 @@
         <div class="fw-bold me-5">
           <span class="me-2" data-kt-customer-table-select="selected_count"></span> Seleccionado
         </div>
-
         <button type="button" class="btn btn-danger" data-kt-customer-table-select="delete_selected">
           Eliminar Seleccionado
         </button>
       </div>
       <!-- FIN DE ACCIONES -->
     </div>
-    <!-- FIN BARRA DE HERRAMIENTAS SUPERIOR -->
+    <!-- FIN BARRA DE HERRAMIENTAS SUPERIOR CON LOS BOTONES DE AÑADIR CLIENTES-->
   <!-- FIN DE CABECERA DE LA TARJETA -->
   <!-- COMIENZO DEL CUERPO DE LA TARJETA -->
   <!-- COMIENZO DEL FILTRADO ESPECIAL DE PRODUCTOS -->

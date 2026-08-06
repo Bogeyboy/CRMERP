@@ -71,4 +71,18 @@ export class ClientsService {
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
+
+  //importClient(data:any)
+  importClient(formData: FormData, headers?: any)
+  {
+    this.isLoadingSubject.next(true);
+    const defaultHeaders = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    //const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+    const URL = URL_SERVICIOS+"/clients/import";
+    return this.http.post(URL, formData,{
+      headers: headers || defaultHeaders,
+    }).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
 }

@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->unsignedBigInteger('sucursale_id')->nullable(); // ← Corregido
             $table->unsignedBigInteger('asesor_id')->nullable(); // ← Corregido
-            $table->unsignedTinyInteger('is_parcial')->comment('1=Parcial, 2=No Parcial'); // ← Corregido
+            $table->unsignedTinyInteger('is_parcial')->nullable()->comment('1=Parcial, 2=No Parcial'); // ← Corregido
             // ¡OJO! Tenías 'address' duplicado, eliminé la línea repetida
             $table->string('ubigeo_region', 40)->nullable();
             $table->string('ubigeo_provincia', 40)->nullable();

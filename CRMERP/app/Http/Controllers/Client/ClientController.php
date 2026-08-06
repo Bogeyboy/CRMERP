@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Exports\Client\ExportClient;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Client\ClientCollection;
 use App\Http\Resources\Client\ClientResource;
+use App\Imports\ClientsImport;
 use App\Models\Client\Client;
 use App\Models\Configuration\client_segment;
 use App\Models\User;
@@ -12,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
+//use Maatwebsite\Excel\Excel;
 
 class ClientController extends Controller
 {
@@ -233,6 +237,118 @@ class ClientController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function import_clients(Request $request)
+    {
+        // Log de inicio
+        Log::info('User authenticated: ' . ($request->user() ? $request->user()->id : 'No user'));
+        Log::info('=== INICIO IMPORTACIÓN ===');
+        Log::info('=== import_clients METHOD CALLED ===');
+        Log::info('Request method: ' . $request->method());
+        Log::info('Request path: ' . $request->path());
+        Log::info('All request data:', $request->all());
+        Log::info('Request all:', $request->all());
+        Log::info('Has file: ' . $request->hasFile('import_file'));
+
+        try
+        {
+            if (!$request->hasFile('import_file'))
+            {
+                Log::error('No file in request');
+                return response()->json([
+                    'message' => 400,
+                    'message_text' => 'No se ha seleccionado ningún archivo'
+                ], 400);
+            }
+
+            $file = $request->file('import_file');
+            Log::info('File info:', [
+                'name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+                'mime' => $file->getMimeType(),
+                'extension' => $file->getClientOriginalExtension()
+            ]);
+
+            // Validar extensión manualmente
+            $extension = strtolower($file->getClientOriginalExtension());
+            $allowedExtensions = ['xlsx', 'xls', 'csv', 'ods'];
+
+            if (!in_array($extension, $allowedExtensions))
+            {
+                Log::error('Invalid extension: ' . $extension);
+                return response()->json([
+                    'message' => 400,
+                    'message_text' => 'Extensión no válida. Permitidas: ' . implode(', ', $allowedExtensions)
+                ], 400);
+            }
+
+            // Crear el import y procesar
+            $import = new ClientsImport();
+
+            Log::info('Starting Excel import');
+            Excel::import($import, $file);
+            Log::info('Excel import completed');
+
+            $importedCount = $import->getImportedCount();
+            $errors = $import->getImportErrors();
+
+            Log::info('Import results:', [
+                'imported' => $importedCount,
+                'errors' => $errors
+            ]);
+
+            if ($importedCount > 0)
+            {
+                return response()->json([
+                    'message' => 200,
+                    'message_text' => "Se importaron {$importedCount} clientes correctamente.",
+                    'imported' => $importedCount,
+                    'errors' => $errors
+                ]);
+            }
+            else
+            {
+                if (empty($errors)) {
+                    return response()->json([
+                        'message' => 200,
+                        'message_text' => "El archivo no contiene datos para importar.",
+                        'imported' => 0,
+                        'errors' => []
+                    ]);
+                }
+                else
+                {
+                    return response()->json([
+                        'message' => 400,
+                        'message_text' => 'No se importaron clientes. Errores: ' . implode(', ', $errors),
+                        'errors' => $errors
+                    ], 400);
+                }
+            }
+
+        }
+        catch (\Exception $e)
+        {
+            Log::error('EXCEPTION in import_clients: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return response()->json([
+                'message' => 500,
+                'message_text' => 'Error: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function export_clients(Request $request)
+    {
+        $search = $request->get('search');
+        $client_segment_id = $request->get('client_segment_id');
+        $type = $request->get('type');
+        $asesor_id = $request->get('asesor_id');
+
+        $clients = Client::filterAdvance($search, $client_segment_id, $type, $asesor_id)->orderBy('id', 'asc')->get();
+        return Excel::download(new ExportClient($clients),"Clientes_descargados.xlsx");
     }
 
     /**
