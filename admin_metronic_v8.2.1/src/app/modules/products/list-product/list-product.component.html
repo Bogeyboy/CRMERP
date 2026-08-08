@@ -382,7 +382,7 @@
                   <!-- COMIENZO DE NOMBRE Y PESO DEL PRODUCTO -->
                   <div class="d-flex justify-content-start flex-column">
                     <!-- COMIENZO DE NOMBRE DEL PRODUCTO -->
-                    <a href="#" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">
+                    <a href="#" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6" [routerLink]="'/productos/list/edit/' + PRODUCT.id ">
                       {{ PRODUCT.title }}
                     </a>
                     <!-- FIN DE NOMBRE DEL PRODUCTO -->
@@ -435,9 +435,13 @@
                 {
                   <span class="badge badge-light-success">Activo</span>
                 }
-                @if (PRODUCT.state === 2)
+                @else if (PRODUCT.state === 2)
                 {
                   <span class="badge badge-light-danger">Inactivo</span>
+                }
+                @else
+                {
+                  <span class="badge badge-light-warning">Pendiente de asignar</span>
                 }
                 <br>
 

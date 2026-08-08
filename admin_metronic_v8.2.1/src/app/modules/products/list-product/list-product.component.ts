@@ -12,7 +12,8 @@ import { ImportProductsComponent } from '../import-products/import-products.comp
   templateUrl: './list-product.component.html',
   styleUrls: ['./list-product.component.scss']
 })
-export class ListProductComponent implements OnInit {
+export class ListProductComponent implements OnInit
+{
 
   search = '';
   PRODUCTS:any = [];
@@ -52,17 +53,18 @@ export class ListProductComponent implements OnInit {
   //provider_id: number = 0;
 
   //Objeto que contiene los filtros
-  filtros: Record<string, any> = {
-  product_categorie_id: '',
-  disponibilidad: '',
-  tax_selected: '',
-  search: '',
-  sucursale_price_multiple: '',
-  almacen_warehouse: '',
-  client_segment_price_multiple: '',
-  state: '',
-  //provider_id: '',
-}
+  filtros: Record<string, any> =
+  {
+    product_categorie_id: '',
+    disponibilidad: '',
+    tax_selected: '',
+    search: '',
+    sucursale_price_multiple: '',
+    almacen_warehouse: '',
+    client_segment_price_multiple: '',
+    state: '',
+    //provider_id: '',
+  }
 
   totalPages = 0;
   currentPage = 1;
@@ -72,19 +74,23 @@ export class ListProductComponent implements OnInit {
   ) {
 
   }
-  loadPage($event:any){
+  loadPage($event:any)
+  {
     this.listProducts();
   }
+
   selectAgotado()
   {
     this.state_stock = '3';
     this.listProducts();
   }
+
   selectCasiAgotado()
   {
     this.state_stock = '2';
     this.listProducts();
   }
+
   ngOnInit(): void
   {
     //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
@@ -381,18 +387,6 @@ export class ListProductComponent implements OnInit {
 
   downloadProducts()
   {
-    /* const data = {
-      product_categorie_id: this.product_categorie_id,
-      disponibilidad: this.disponibilidad,
-      tax_selected: this.tax_selected,
-      search: this.search,
-      //FILTRADO ESPECIAL
-      provider_id: this.provider_id,
-      sucursale_price_multiple: this.sucursale_price_multiple,
-      almacen_warehouse: this.almacen_warehouse,
-      client_segment_price_multiple: this.client_segment_price_multiple,
-      state: this.state
-    } */
     let LINK ="";
 
     if (this.product_categorie_id)
@@ -443,9 +437,11 @@ export class ListProductComponent implements OnInit {
       const modalRef = this.modalService.open(DeleteProductComponent,{centered:true, size: 'md'});
       modalRef.componentInstance.PRODUCT_SELECTED = PRODUCT;
 
-      modalRef.componentInstance.ProductsD.subscribe((prod:any) => {
+      modalRef.componentInstance.ProductsD.subscribe((prod:any) =>
+      {
         const INDEX = this.PRODUCTS.findIndex((prod:any) => prod.id == PRODUCT.id);
-        if(INDEX != -1){
+        if(INDEX != -1)
+        {
           this.PRODUCTS.splice(INDEX,1);
         }
       })
