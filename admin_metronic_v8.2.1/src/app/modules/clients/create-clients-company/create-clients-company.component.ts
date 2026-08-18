@@ -1,19 +1,32 @@
+/* import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrService } from 'ngx-toastr';
 import { UBIGEO_DISTRITOS } from '../../../config/ubigeo_distritos';
 import { UBIGEO_PROVINCIAS } from '../../../config/ubigeo_provincias';
 import { UBIGEO_REGIONES } from '../../../config/ubigeo_regiones';
 import { AuthService } from '../../auth';
+import { ClientsService } from '../service/clients.service'; */
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { ClientsService } from '../service/clients.service';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../auth';
+import { HttpClient } from '@angular/common/http';
+import { FormsModule } from "@angular/forms";
+import { CommonModule } from '@angular/common';
+import { UBIGEO_REGIONES } from '../../../config/ubigeo_regiones';
+import { UBIGEO_PROVINCIAS } from '../../../config/ubigeo_provincias';
+import { UBIGEO_DISTRITOS } from '../../../config/ubigeo_distritos';
+
 
 @Component({
   selector: 'app-create-clients-company',
-  //standalone: true,
-  //imports: [],
+  standalone: true,
+  
   templateUrl: './create-clients-company.component.html',
-  styleUrl: './create-clients-company.component.scss'
+  styleUrl: './create-clients-company.component.scss',
+  imports: [FormsModule, CommonModule]
 })
 export class CreateClientsCompanyComponent {
 @Output() ClientsC = new EventEmitter<any>();

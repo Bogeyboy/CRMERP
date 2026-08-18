@@ -64,7 +64,7 @@ const mockImports = environment.isMockEnabled
           timeOut: 3000,
           progressBar: true,
           closeButton: true,
-          positionClass: 'toast-bottom-right'
+          positionClass: 'toast-top-right'
         }),
         NgbPaginationModule,
         ...mockImports

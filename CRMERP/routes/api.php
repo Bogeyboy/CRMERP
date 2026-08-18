@@ -13,6 +13,7 @@ use App\Http\Controllers\Configuration\WarehouseController;
 use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\ProductWalletController;
 use App\Http\Controllers\Product\ProductWarehouseController;
+use App\Http\Controllers\Proforma\ProformaController;
 use App\Http\Controllers\RolePermissionController;
 use App\Http\Controllers\UserAccessController;
 use Illuminate\Http\Request;
@@ -93,6 +94,19 @@ Route::middleware('auth:api')->group(function () {
 
     Route::delete('/clients/{id}', [ClientController::class, 'destroy'])
         ->middleware('permission:delete_client');
+
+    Route::resource('clients', ClientController::class);
+
+    //RUTAS PARA LAS PROFORMA
+    
+    Route::resource('proformas',ProformaController::class);
+
+    Route::get('/proforma/search-clients', [ProformaController::class, 'search_clients'])
+        ->middleware('permission:list_proformas');
+    
+    Route::get('/proforma/config', [ProformaController::class, 'config'])
+        ->middleware('permission:list_proformas');
+
 
 });
 

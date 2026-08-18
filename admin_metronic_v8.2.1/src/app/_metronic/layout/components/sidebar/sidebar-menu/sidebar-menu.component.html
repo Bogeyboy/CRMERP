@@ -157,8 +157,9 @@
       </a>
     </div>
   }
-  <!-- Customers -->
-  @if (showMenu(['register_user','edit_user'])) {
+  <!-- Clientes -->
+  @if (showMenu(['register_user','edit_user']))
+  {
     <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
       <span class="menu-link">
         <span class="menu-icon">
@@ -237,7 +238,8 @@
   showMenu(['list_proforma']) ||
   showMenu(['cronograma']) ||
   showMenu(['comisiones'])
-  ) {
+  )
+{
   <div class="menu-item">
     <div class="menu-content pt-8 pb-2">
       <span class="menu-section text-muted text-uppercase fs-8 ls-1">Sección Comercial</span>
@@ -245,7 +247,8 @@
   </div>
 }
 <!-- Inicio de gestión de productos -->
-@if (showMenu(['register_product']) || showMenu(['list_product'])) {
+@if (showMenu(['register_product']) || showMenu(['list_product']))
+{
   <div class="menu-item menu-accordion" data-kt-menu-trigger="click" routerLinkActive="here show">
     <span class="menu-link">
       <span class="menu-icon">
@@ -288,7 +291,8 @@
 <!-- Fin de gestión de productos -->
 
 <!-- Inicio de gestión de clientes -->
-@if (showMenu(['register_clientes', 'edit_clientes'])) {
+@if (showMenu(['register_clientes', 'edit_clientes']))
+{
   <div class="menu-item">
     <a class="menu-link without-sub" routerLink="/clientes/list" routerLinkActive="active">
       <span class="menu-icon">
@@ -300,27 +304,15 @@
 }
 <!-- Fin de gestión de clientes -->
 
-<!-- Inicio de gestión de caja -->
-@if (showMenu(['valid_payments', 'reports_caja'])) {
-  <div class="menu-item">
-    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
-      <span class="menu-icon">
-        <app-keenicon name="save-deposit" class="fs-2"></app-keenicon>
-      </span>
-      <span class="menu-title">Caja</span>
-    </a>
-  </div>
-}
-<!-- Fin de gestión de caja -->
-
 <!-- Inicio de sección Proforma -->
-@if (showMenu(['register_proforma']) || showMenu(['list_proforma'])) {
+@if (showMenu(['register_proforma']) || showMenu(['list_proforma']))
+{
   <div class="menu-item menu-accordion"  data-kt-menu-trigger="click" routerLinkActive="here show">
     <span class="menu-link">
       <span class="menu-icon">
         <app-keenicon name="tablet-text-down" class="fs-2"></app-keenicon>
       </span>
-      <span class="menu-title" data-link="/apps">Proforma
+      <span class="menu-title" data-link="/proformas">Proforma
       </span>
       <span class="menu-arrow"></span>
     </span>
@@ -328,7 +320,7 @@
       <!-- Crear Proforma -->
       @if (showMenu(['register_proforma'])) {
         <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/users">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/proformas/crear">
             <span
               class="menu-bullet">
               <span class="bullet bullet-dot"></span>
@@ -341,7 +333,7 @@
       <!-- Listado de proformas -->
       @if (showMenu(['list_proforma'])) {
         <div class="menu-item">
-          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/apps/roles">
+          <a class="menu-link without-sub" routerLinkActive="active" routerLink="/proformas/listado">
             <span
               class="menu-bullet">
               <span class="bullet bullet-dot"></span>
@@ -356,8 +348,23 @@
 }
 <!-- Fin de sección Proforma -->
 
+<!-- Inicio de gestión de caja -->
+@if (showMenu(['valid_payments', 'reports_caja']))
+{
+  <div class="menu-item">
+    <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
+      <span class="menu-icon">
+        <app-keenicon name="save-deposit" class="fs-2"></app-keenicon>
+      </span>
+      <span class="menu-title">Caja</span>
+    </a>
+  </div>
+}
+<!-- Fin de gestión de caja -->
+
 <!-- Inicio cronograma -->
-@if (showMenu(['cronograma'])) {
+@if (showMenu(['cronograma']))
+{
   <div class="menu-item">
     <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
       <span class="menu-icon">
@@ -488,7 +495,8 @@
 </div> -->
 
 <!-- Inicio sección Comisiones -->
-@if (showMenu(['comisiones'])) {
+@if (showMenu(['comisiones']))
+{
   <div class="menu-item">
     <a class="menu-link without-sub" routerLink="/builder" routerLinkActive="active">
       <span class="menu-icon">

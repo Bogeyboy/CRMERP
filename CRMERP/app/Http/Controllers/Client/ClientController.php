@@ -24,7 +24,8 @@ class ClientController extends Controller
      */
     public function config()
     {
-        try {
+        try
+        {
             $client_segment = client_segment::where('state', 1)->get();
             $asesores = User::whereHas('roles', function ($q) {
                 $q->where('name', 'like', '%Asesor%');
@@ -39,7 +40,9 @@ class ClientController extends Controller
                     ];
                 })
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e)
+        {
             return response()->json([
                 'message' => 'Error al obtener configuración',
                 'error' => $e->getMessage()

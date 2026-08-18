@@ -1,0 +1,167 @@
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+  <!--begin::Modal header-->
+  <div class="modal-header d-flex justify-content-between align-items-center" id="kt_modal_add_user_header">
+    <!--begin::Modal title-->
+    <!-- <h2 class="fw-bolder">Clientes encontrados {{ clients.length }}</h2> -->
+    <h2 class="fw-bolder">
+      @if (clients.length === 1)
+      {
+        {{ clients.length }} Cliente encontrado
+      }
+      @else
+      {
+        {{ clients.length }} Clientes encontrados
+      }
+    </h2>
+    <!--end::Modal title-->
+    <!--begin::Close-->
+    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close" (click)="modal.dismiss()">
+      <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+      <span class="svg-icon svg-icon-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+          <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+        </svg>
+      </span>
+      <!--end::Svg Icon-->
+    </div>
+    <!--end::Close-->
+  </div>
+  <!--end::Modal header-->
+  <!--begin::Modal body-->
+  <div class="modal-body scroll-y mx-5 my-7">
+    <!--begin::Form-->
+    <form id="kt_modal_add_user_form" class="form" action="#">
+      <div class="row">
+        <div class="col-12">
+
+          <div class="table-responsive">
+            <!-- INICIO DE LA TABLA DE RESULTADOS -->
+            <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+              <!-- INICIO DE CABECERA DE LA TABLA -->
+              <thead>
+                <tr class="fw-bold text-muted">
+                  <th class="min-w-150px">Nombre/Razón Social</th>
+                  <th class="min-w-120px">Nº documento</th>
+                  <th class="min-w-140px">Tipo</th>
+                  <th class="min-w-120px">Teléfono</th>
+                  <th class="min-w-120px">Segmento</th>
+                  <th class="min-w-100px text-end">Actions</th>
+                </tr>
+              </thead>
+              <!-- FIN DE CABECERA DE LA TABLA -->
+              <!-- INICIO DE CUERPO DE LA TABLA -->
+              <tbody>
+                @for (client of clients; track $index)
+                {
+                  <tr>
+                    <!-- INICIO DE NOMBRE COMPLETO -->
+                    <td>
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;"
+                        (click)="selectClient(client); $event.preventDefault()">
+                          {{ client.full_name }}
+                      </a>
+                    </td>
+                    <!-- FIN DE NOMBRE COMPLETO -->
+                    <!-- INICIO DE DOCUMENTO -->
+                    <td>
+                      <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">
+                        {{ client.n_document }}
+                      </span> -->
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;"
+                        (click)="selectClient(client); $event.preventDefault()">
+                          {{ client.n_document }}
+                      </a>
+                    </td>
+                    <!-- FIN DE DOCUMENTO -->
+                    <!-- INICIO DE TIPO DE CLIENTE -->
+                    <td>
+                      <!-- @if (client.type === 1)
+                      {
+                        <span class="badge badge-light-primary">Persona</span>
+                      }
+                      @if (client.type === 2)
+                      {
+                        <span class="badge badge-light-warning">Empresa</span>
+                      } -->
+
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;"
+                        (click)="selectClient(client); $event.preventDefault()">
+                          @if (client.type === 1)
+                          {
+                            <span class="badge badge-light-primary">Persona</span>
+                          }
+                          @if (client.type === 2)
+                          {
+                            <span class="badge badge-light-warning">Empresa</span>
+                          }
+                      </a>
+                    </td>
+                    <!-- FIN DE TIPO DE CLIENTE -->
+                    <!-- INICIO DE TELÉFONO -->
+                    <td>
+                      <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">
+                        {{ client.phone }}
+                      </span> -->
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;"
+                        (click)="selectClient(client); $event.preventDefault()">
+                          {{ client.phone }}
+                      </a>
+                    </td>
+                    <!-- FIN DE TELÉFONO -->
+                    <!-- INICIO DE SEGMENTO DE CLIENTE -->
+                    <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                      <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">
+                        {{ client.client_segment.name }}
+                      </span> -->
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;"
+                        (click)="selectClient(client); $event.preventDefault()">
+                          {{ client.client_segment.name }}
+                      </a>
+                    </td>
+                    <!-- FIN DE SEGMENTO DE CLIENTE -->
+                    <!-- INICIO DE BOTÓN DE SELECCIÓN -->
+                    <td class="text-end">
+                      <a href="#"
+                        class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                        onclick="return false;"
+                        (click)="selectClient(client); $event.preventDefault()">
+                          <i class="ki-duotone ki-switch fs-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                          </i>
+                      </a>
+                    </td>
+                    <!-- FIN DE BOTÓN DE SELECCIÓN -->
+                  </tr>
+                }
+              </tbody>
+              <!-- FIN DE CUERPO DE LA TABLA -->
+            </table>
+            <!-- FIN DE LA TABLA DE RESULTADOS -->
+          </div>
+
+        </div>
+      </div>
+      <!--begin::Actions-->
+      <div class="text-center pt-15">
+        <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()">Cerrar</button>
+      </div>
+      <!--end::Actions-->
+    </form>
+    <!--end::Form-->
+  </div>
+  <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

@@ -1,0 +1,646 @@
+<div class="d-flex flex-column flex-column-fluid" data-select2-id="select2-data-131-dzps">
+  <!--begin::Content-->
+  <div id="kt_app_content" class="app-content  flex-column-fluid " data-select2-id="select2-data-kt_app_content">
+    <!--begin::Content container-->
+    <div id="kt_app_content_container" class="app-container  container-xxl " data-select2-id="select2-data-kt_app_content_container">
+      <!--begin::Form-->
+      <form id="kt_ecommerce_edit_order_form"
+        class="form d-flex flex-column flex-lg-row fv-plugins-bootstrap5 fv-plugins-framework"
+        data-kt-redirect="/metronic8/demo1/apps/ecommerce/sales/listing.html"
+        data-select2-id="select2-data-kt_ecommerce_edit_order_form"
+        (ngSubmit)="searchClients()">
+        <!--begin::Aside column-->
+        <div class="w-100 flex-lg-row-auto w-lg-300px mb-7 me-7 me-lg-10"
+          data-select2-id="select2-data-130-y9wa">
+          <!--begin::Order details-->
+          <div class="card card-flush py-4" data-select2-id="select2-data-129-w2zd">
+            <!-- COMIENZO DE TÍTULO -->
+            <div class="card-header">
+                <div class="card-title">
+                    <h2>Proforma</h2>
+                </div>
+            </div>
+            <!-- FIN DE TÍTULO -->
+            <!-- COMIENZO DETALLE DE PROFORMA LATERAL -->
+            <div class="card-body pt-0" data-select2-id="select2-data-128-9mmu">
+              <div class="d-flex flex-column gap-10" data-select2-id="select2-data-127-2qsf">
+                <!-- COMIENZO DE FECHA -->
+                <div class="fv-row">
+                  <label class="form-label">Fecha</label>
+                  <div class="fw-bold fs-3">14/08/2026</div>
+                </div>
+                <!-- FIN DE FECHA -->
+                <!-- COMIENZO DE MÉTODO DE PAGO -->
+                <div class="fv-row mt-4">
+                  <label class="form-label">Método de pago</label>
+                  <select
+                    class="form-control form-select-solid fw-bolder"
+                    name="categorie"
+                    placeholder="Selec. método de pago">
+                        <option value="">Selec. método de pago</option>
+                  </select>
+                </div>
+                <!-- FIN DE MÉTODO DE PAGO -->
+                <!-- COMIENZO DE BANCO -->
+                <div class="fv-row">
+                  <label class="form-label">Banco</label>
+                  <select
+                    class="form-control form-select-solid fw-bolder"
+                    name="categorie"
+                    placeholder="Selec. banco">
+                        <option value="">Selec. banco</option>
+                  </select>
+                </div>
+                <!-- FIN DE BANCO -->
+                <!-- COMIENZO DE CANTIDAD A PAGAR -->
+                <div class="fv-row">
+                  <input type="text"
+                      [(ngModel)]="amount_payment"
+                      name="amount_payment"
+                      class="form-control mb-2"
+                      placeholder="Cantidad a pagar"
+                      value="" />
+                  <small>Cantidad a pagar</small>
+                </div>
+                <!-- FIN DE CANTIDAD A PAGAR -->
+                <!-- COMIENZO DE COMPROBANTE -->
+                <div class="fv-row">
+                  <label for="formFile" class="form-label">Comprobante</label>
+                  <input class="form-control"
+                    type="file"
+                    id="formFile"
+                    accept=".jpeg, .bmp, .jpg, .png, .gif, .webp">
+                </div>
+                <!-- FIN DE COMPROBANTE -->
+                <!-- COMIENZO DE BOTÓN DE AGREGAR PAGO -->
+                <div class="fv-row">
+                  <button type="button"
+                    class="btn btn-md btn-primary">
+                    Agregar Pago
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- FIN DETALLE DE PROFORMA LATERAL -->
+          </div>
+          <!--end::Order details-->
+        </div>
+        <!--end::Aside column-->
+        <div class="d-flex flex-column flex-lg-row-fluid gap-7 gap-lg-10">
+          <!-- INICIO CLIENTE DE LA PROFORMA -->
+          <div class="card card-flush py-4">
+            <!-- PRINCIPO DE CABECERA DE CLIENTE DE LA PROFORMA-->
+            <div class="card-header" style="display: block;">
+              <div class="row justify-content-between align-items-center">
+                <!-- INICIO ETIQUEDA CLIENTE -->
+                <div class="col-6 d-flex align-items-center">
+                  <h2 class="d-flex align-items-center">
+                    <i class="ki-duotone ki-user fs-2tx">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                    Cliente: 
+                  </h2>
+                  <small class="mx-2">{{ CLIENT_SELECTED ? CLIENT_SELECTED.client_segment.name : ' No hay ningún cliente seleccionado.' }}</small>
+                </div>
+                <!-- FIN ETIQUETA CLIENTE -->
+                <!-- COMIENZO DE BOTONES DE BÚSQUEDA Y AGREGACIÓN DE CLIENTES -->
+                <div class="col-4">
+                  <!-- INICIO BOTÓN DE BUSCAR SECCION CLIENTE -->
+                  <button class="btn btn-sm mx-1 btn-primary"
+                    type="button"
+                    placement="top-start"
+                    ngbTooltip="Buscar"
+                    type="submit">
+                    <i class="ki-duotone ki-magnifier fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                  </button>
+                  <!-- FIN BOTÓN DE BUSCAR SECCION CLIENTE -->
+                  <!-- INICIO BOTÓN DE AGREGAR CLIENTE PERSONA -->
+                  <button class="btn btn-sm mx-1 btn-success"
+                    type="button"
+                    placement="top-start"
+                    (click)="createClientPerson()"
+                    ngbTooltip="Crear cliente Persona">
+                    <i class="ki-duotone ki-user fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                  </button>
+                  <!-- FIN BOTÓN DE AGREGAR CLIENTE PERSONA -->
+                  <!-- INICIO BOTÓN DE AGREGAR CLIENTE EMPRESA -->
+                  <button class="btn btn-sm mx-1 btn-info"
+                    type="button"
+                    placement="top-start"
+                    (click)="createClientCompany()"
+                    ngbTooltip="Crear cliente Empresa">
+                    <i class="ki-duotone ki-delivery-time fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                      <span class="path4"></span>
+                      <span class="path5"></span>
+                    </i>
+                  </button>
+                  <!-- FIN BOTÓN DE AGREGAR CLIENTE EMPRESA -->
+                  <!-- INICIO BOTÓN DE ACTUALIZAR CLIENTE -->
+                  <button class="btn btn-sm mx-1 btn-dark"
+                    type="button"
+                    placement="top-start"
+                    (click)="resetClient()"
+                    ngbTooltip="Actualizar Cliente">
+                  <i class="ki-duotone ki-arrows-circle fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                  </i>
+                  </button>
+                  <!-- FIN BOTÓN DE ACTUALIZAR CLIENTE -->
+                </div>
+                <!-- FIN DE BOTONES DE BÚSQUEDA Y AGREGACIÓN DE CLIENTES -->
+              </div>
+            </div>
+            <!-- FIN DE CABECERA DE CLIENTE DE LA PROFORMA-->
+            <!-- INICIO CUERPO DE CLIENTE DE LA PROFORMA-->
+            <div class="card-body pt-0">
+              <div class="row">
+                <!-- INICIO BUSQUEDA POR NUMERO DE DOCUMENTO -->
+                <div class="col-4">
+                  <input type="text"
+                    [(ngModel)]="n_document"
+                    name="n_document"
+                    class="form-control mb-2"
+                    placeholder="Nº de documento"
+                    value="" />
+                </div>
+                <!-- FIN BUSQUEDA POR NUMERO DE DOCUMENTO -->
+                <!-- INICIO DE BÚSQUEDA POR NOMBRE COMPLETO -->
+                <div class="col-4">
+                  <input type="text"
+                    [(ngModel)]="full_name"
+                    name="full_name"
+                    class="form-control mb-2"
+                    placeholder="Nombre completo"
+                    value="" />
+                </div>
+                <!-- FIN DE BÚSQUEDA POR NOMBRE COMPLETO -->
+                <!-- INICIO DE BÚSQUEDA POR NÚMERO DE TELÉFONO -->
+                <div class="col-4">
+                  <input type="text"
+                    [(ngModel)]="phone"
+                    name="phone"
+                    class="form-control mb-2"
+                    placeholder="Nº de teléfono"
+                    value="" />
+                </div>
+                <!-- FIN DE BÚSQUEDA POR NÚMERO DE TELÉFONO -->
+              </div>
+            </div>
+            <!-- FIN CUERPO DE CLIENTE DE LA PROFORMA-->
+          </div>
+          <!-- FIN CLIENTE DE LA PROFORMA-->
+          <!-- INICIO DETALLE DE LA PROFORMA 2-->
+          <div class="card card-flush py-4">
+            <!-- PRINCIPO DE CABECERA DE LA PROFORMA 2, SECCION PRODUCTOS-->
+            <div class="card-header" style="display: block;">
+              <div class="row justify-content-between">
+                <!-- INICIO DE ETIQUETA DE PRODUCTO -->
+                <div class="col-3">
+                  <h2 class="d-flex align-items-center">
+                    <i class="ki-duotone ki-delivery-2 fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                      <span class="path4"></span>
+                      <span class="path5"></span>
+                      <span class="path6"></span>
+                      <span class="path7"></span>
+                      <span class="path8"></span>
+                      <span class="path9"></span>
+                    </i>
+                    Productos:
+                  </h2>
+                </div>
+                <!-- FIN DE ETIQUETA DE PRODUCTO -->
+                
+                <div class="col-3">
+                  <!-- INICIO BOTÓN DE BUSCAR SECCION PRODUCTO -->
+                  <!-- INICIO DE BOTÓN DE BUSCAR -->
+                  <button class="btn btn-sm mx-1 btn-primary" placement="top-start" ngbTooltip="Buscar">
+                    <i class="ki-duotone ki-magnifier fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                  </button>
+                  <!-- FIN DE BOTÓN DE BUSCAR -->
+                  <!-- FIN BOTÓN DE BUSCAR SECCION PRODUCTO -->
+                  <!-- INICIO BOTÓN DE ACTUALIZAR PRODUCTO -->
+                  <button class="btn btn-sm mx-1 btn-dark" placement="top-start" ngbTooltip="Actualizar Producto">
+                    <i class="ki-duotone ki-arrows-circle fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                  </button>
+                  <!-- FIN BOTÓN DE ACTUALIZAR PRODUCTO -->
+                  <!-- INICIO BOTÓN DE AGREGAR PRODUCTO -->
+                  <button class="btn btn-sm mx-1 btn-info" placement="top-start" ngbTooltip="Agregar Producto">
+                    <i class="ki-duotone ki-add-folder fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                  </button>
+                  <!-- FIN BOTÓN DE AGREGAR PRODUCTO -->
+                </div>
+              </div>
+            </div>
+            <!-- FIN DE CABECERA DE LA PROFORMA 2, SECCION PRODUCTOS-->
+
+            <!-- INICIO CUERPO DE LA PROFORMA 2, SECCION PRODUCTOS-->
+            <div class="card-body pt-0">
+              <div class="d-flex flex-column gap-10">
+                <div id="kt_ecommerce_edit_order_product_table_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
+                  <!-- COMIENZO DE SECCIÓN PARA BÚSQUEDA Y FILTROS -->
+                  <div id="" class="row">
+                    <!-- INICIO INPUT PARA BÚSQUEDA MANUAL -->
+                    <div class="col-6">
+                      <div class="d-flex align-items-center position-relative mb-n7 ">
+                        <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-4">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                        </i>
+                        <input type="text"
+                          data-kt-ecommerce-edit-order-filter="search"
+                          class="form-control form-control-solid w-100 ps-12"
+                          placeholder="Buscar productos">
+                      </div>
+                    </div>
+                    <!-- FIN INPUT PARA BÚSQUEDA MANUAL -->
+                    <!-- INICIO DE INPUT PARA PRECIO -->
+                    <div class="col-3">
+                      <input type="number"
+                        [(ngModel)]="price"
+                        name="price"
+                        class="form-control mb-2"
+                        placeholder="Precio"
+                        value="" />
+                    </div>
+                    <!-- FIN DE INPUT PARA PRECIO -->
+                    <!-- INICIO DE INPUT PARA CANTIDAD DE PRODUCTO -->
+                    <div class="col-3">
+                      <input type="number"
+                        [(ngModel)]="quantity_product"
+                        name="quantity_product"
+                        class="form-control mb-2"
+                        placeholder="Cantidad"
+                        value="" />
+                    </div>
+                    <!-- FIN DE INPUT PARA CANTIDAD DE PRODUCTO -->
+                    <!-- INICIO DE SELECT PARA UNIDAD DE PRODUCTO -->
+                    <div class="col-3">
+                      <select
+                        class="form-control form-select-solid fw-bolder"
+                        name="categorie "
+                        placeholder="Selec. Unidad">
+                        <option value="">Selecciona unidad</option>
+                      </select>
+                    </div>
+                    <!-- FIN DE SELECT PARA UNIDAD DE PRODUCTO -->
+                    <!-- INICIO DE SELECT PARA SELECCIONAR ALMACÉN DE PRODUCTO -->
+                    <div class="col-3">
+                      <select
+                        class="form-control form-select-solid fw-bolder"
+                        name="warehouse"
+                        placeholder="Selec. Unidad">
+                        <option value="">Selecc. Almacén</option>
+                      </select>
+                    </div>
+                    <!-- FIN DE SELECT PARA SELECCIONAR ALMACÉN DE PRODUCTO -->
+                    <!-- INICIO DE SELECT PARA NOTAS SOBRE LA PROFORMA -->
+                    <div class="col-3">
+                      <textarea
+                        class="form-control form-control-solid"
+                        rows="3"
+                        name="description_product"
+                        [(ngModel)]="description_product"
+                        placeholder="Notas">
+                      </textarea>
+                    </div>
+                    <!-- FIN DE SELECT PARA NOTAS SOBRE LA PROFORMA -->
+                  </div>
+                  <!-- FIN DE SECCIÓN PARA BÚSQUEDA Y FILTROS -->
+                </div>
+                <div class="separator"></div>
+                <div>
+                  <div class="fw-bold fs-4">
+                    Total Cost: $
+                    <span id="kt_ecommerce_edit_order_total_price">
+                      0.00
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- FIN CUERPO DE LA PROFORMA 2, SECCION PRODUCTOS-->
+          </div>
+          <!-- FIN DETALLE DE LA PROFORMA 2, SECCION PRODUCTOS-->
+
+          <!-- INICIO DE LA SECCIÓN DE DETALLADO DE PRODUCTOS -->
+          <div class="card card-flush py-4">
+            <div class="card-header" style="display: block;">
+              <div class="row justify-content-between">
+                <!-- INICIO CABECERA DETALLE DE LA PROFORMA -->
+                <div class="col-4">
+                  <h2 class="d-flex align-items-center">
+                    <i class="ki-duotone ki-questionnaire-tablet text fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                    Detalle de la proforma:
+                  </h2>
+                </div>
+                <!-- FIN CABECERA DETALLE DE LA PROFORMA -->
+                <!-- INICIO BOTONES DE  -->
+                <div class="col-3">
+                  
+                </div>
+                <!-- FIN BOTONES DE  -->
+              </div>
+            </div>
+            <div class="card-body pt-0">
+              <div class="row">
+                <div class="col-12">
+                  <div class="table-responsive">
+                    <!-- COMIENZO DE TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                    <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+                      <!-- INICIO DE CABECERA DE LA TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                      <thead>
+                        <tr class="fw-bold text-muted">
+                          <th class="min-w-150px">Producto</th>
+                          <th class="min-w-140px">Unidad</th>
+                          <th class="min-w-120px">Precio unitario</th>
+                          <th class="min-w-120px">Cantidad</th>
+                          <th class="min-w-120px">Subtotal</th>
+                          <th class="min-w-120px">Total</th>
+                          <th class="min-w-100px text-end">Acciones</th>
+                        </tr>
+                      </thead>
+                      <!-- FIN DE CABECERA DE LA TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                      <!-- INICIO DE CUERPO DE LA TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                      <tbody>
+                        <tr>
+                          <td>
+                            <a href="#" class="text-gray-900 fw-bold text-hover-primary fs-6">
+                              Airbag piloto Changan A500
+                            </a>
+                          </td>
+                          
+                          <td>
+                            <!-- <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">Brasil</a> -->
+                            <span class="text-muted fw-semibold text-muted d-block fs-7">Unidad: Caja</span>
+                          </td>
+
+                          <td>
+                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">120 €</a>
+                            <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Code: Paid</span> -->
+                          </td>
+
+                          <td>
+                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">5</a>
+                            <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Web, UI/UX Design</span> -->
+                          </td>
+
+                          <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">100 €</a>
+                          </td>  
+
+                          <td>
+                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">500 €</a>
+                          </td>             
+                          <!-- COMIENZO DE LAS OPCIONES DE ACCIÓN -->
+                          <td class="text-end">
+                            <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                              <i class="ki-duotone ki-switch fs-2"><span class="path1"></span><span class="path2"></span></i>                                </a> -->
+                            
+                            <!-- INICIO BOTÓN EDITAR -->
+                            <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                              <i class="ki-duotone ki-pencil fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                              </i>
+                            </a>
+                            <!-- FIN BOTÓN EDITAR -->
+                            <!-- INICIO BOTÓN ELIMINAR -->
+                            <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                              <i class="ki-duotone ki-trash fs-2">
+                                <span class="path1"></span>
+                                <span class="path2"></span>
+                                <span class="path3"></span>
+                                <span class="path4"></span>
+                                <span class="path5"></span>
+                              </i>
+                            </a>
+                            <!-- FIN BOTÓN ELIMINAR -->
+                          </td>
+                          <!-- FIN DE LAS OPCIONES DE ACCIÓN -->
+                        </tr>
+                      </tbody>
+                      <!-- FIN DE CUERPO DE LA TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                    </table>
+                    <!-- FIN DE TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- FIN DE LA SECCIÓN DE DETALLADO DE PRODUCTOS -->
+
+          <!-- INICIO DE LA SECCION DE DETALLES DE ENTREGA -->
+          <div class="card card-flush py-4">
+            <div class="card-header" style="display: block;">
+              <div class="row justify-content-between">
+                <!-- INICIO CABECERA LUGAR DE ENTREGA -->
+                <div class="col-4">
+                  <h2 class="d-flex align-items-center">
+                    <i class="ki-duotone ki-delivery-geolocation fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                      <span class="path3"></span>
+                      <span class="path4"></span>
+                      <span class="path5"></span>
+                    </i>
+                    Lugar de entrega
+                  </h2>
+                </div>
+                <!-- FIN CABECERA LUGAR DE ENTREGA -->
+                <!-- INICIO BOTONES DE LA CABECERA DE LUGAR DE ENTREGA -->
+                <div class="col-3">
+                  <!-- INICIO BOTÓN DE BUSCAR SECCION LUGAR DE ENTREGA -->
+                  <button class="btn btn-sm mx-1 btn-primary" placement="top-start" ngbTooltip="Buscar">
+                    <i class="ki-duotone ki-magnifier fs-2">
+                      <span class="path1"></span>
+                      <span class="path2"></span>
+                    </i>
+                  </button>
+                  <!-- FIN BOTÓN DE BUSCAR SECCION LUGAR DE ENTREGA -->
+                  <!-- INICIO BOTÓN DE ACTUALIZAR LUGAR DE ENTREGA -->
+                  <button class="btn btn-sm mx-1 btn-dark" placement="top-start" ngbTooltip="Actualizar Producto">
+                  <i class="ki-duotone ki-arrows-circle fs-2">
+                    <span class="path1"></span>
+                    <span class="path2"></span>
+                  </i>
+                  </button>
+                  <!-- FIN BOTÓN DE ACTUALIZAR LUGAR DE ENTREGA -->
+                </div>
+                <!-- FIN BOTONES DE LA CABECERA DE LUGAR DE ENTREGA -->
+              </div>
+            </div>
+            <!-- COMIENZO SECCIÓN LUGAR DE ENTREGA Y DATOS DE RECOGIDA -->
+            <div class="card-body pt-0">
+              <!-- COMIENZO DIRECCIÓN, LUGAR, FECHA DE ENTREGA Y DATOS DEL ENCARGADO DE RECOGIDA -->
+              <div class="row">
+                <!-- COMIENZO SELECT LUGAR DE ENTREGA -->
+                <div class="col-3">
+                  <select
+                    class="form-control form-select-solid fw-bolder"
+                    name="delivery_place"
+                    placeholder="Selecciona lugar de entrega">
+                    <option value="">Selecciona lugar de entrega</option>
+                  </select>
+                </div>
+                <!-- FIN SELECT LUGAR DE ENTREGA -->
+                <!-- COMIENZO TEXT AREA DIRECCIÓN DE ENTREGA -->
+                <div class="col-5">
+                  <textarea
+                    class="form-control form-control-solid"
+                    rows="3"
+                    name="address"
+                    [(ngModel)]="address"
+                    placeholder="Dirección completa de entrega">
+                  </textarea>
+                </div>
+                <!-- FIN TEXT AREA DIRECCIÓN DE ENTREGA -->
+                <!-- COMIENZO DE FECHA DE ENTREGA -->
+                <div class="col-4">
+                  <input
+                    type="date"
+                    class="form-control form-control-solid"
+                    name="delivery_date"
+                    [(ngModel)]="delivery_date"
+                    placeholder="Fecha de entrega"/>
+                    <small>Fecha de entrega</small>
+                </div>
+                <!-- FIN DE FECHA DE ENTREGA -->
+                <!-- COMIENZO SELECT UBIGEO REGION -->
+                <div class="col-3">
+                  <select
+                    class="form-control form-select-solid fw-bolder"
+                    name="ubigeo_region"
+                    [(ngModel)]="ubigeo_region"
+                    placeholder="Seleccione región"
+                    (change)="changeRegion($event)">
+                    <option value="">Seleccione región</option>
+                    <ng-container *ngFor="let REGION of REGIONES">
+                      <option [value]=" REGION.id " > {{ REGION.name }}</option>
+                    </ng-container>
+                  </select>
+                  <small>Región</small>
+                </div>
+                <!-- FIN SELECT UBIGEO REGION -->
+                <!-- COMIENZO SELECT UBIGEO PROVINCIA -->
+                <div class="col-3">
+                  <select
+                    class="form-control form-select-solid fw-bolder"
+                    name="ubigeo_provincia"
+                    [(ngModel)]="ubigeo_provincia"
+                    placeholder="Seleccione provincia"
+                    (change)="changeProvincia($event)">
+                    <option value="">Seleccione provincia</option>
+                    <ng-container *ngFor="let PROVINCIA of PROVINCIA_SELECTEDS">
+                      <option [value]=" PROVINCIA.id " > {{ PROVINCIA.name }}</option>
+                    </ng-container>
+                  </select>
+                  <small>Provincia</small>
+                </div>
+                <!-- FIN SELECT UBIGEO PROVINCIA -->
+                <!-- COMIENZO SELECT UBIGEO DISTRITO -->
+                <div class="col-3">
+                  <select
+                    class="form-control form-select-solid fw-bolder"
+                    name="ubigeo_distrito"
+                    [(ngModel)]="ubigeo_distrito"
+                    placeholder="Seleccione distrito">
+                    <option value="">Seleccione distrito</option>
+                    <ng-container *ngFor="let DISTRITO of DISTRITOS_SELECTEDS">
+                      <option [value]=" DISTRITO.id " > {{ DISTRITO.name }}</option>
+                    </ng-container>
+                  </select>
+                  <small>Distrito</small>
+                </div>
+                <!-- FIN SELECT UBIGEO DISTRITO -->
+                <!-- COMIENZO INPUT AGENCIA DE TRANSPORTE -->
+                <div class="col-3">
+                  <input type="text"
+                    [(ngModel)]="agencia"
+                    name="agencia"
+                    class="form-control mb-2"
+                    placeholder="Agencia de transporte"
+                  value="" />
+                </div>
+                <!-- FIN INPUT AGENCIA DE TRANSPORTE -->
+                <!-- COMIENZO INPUT NOMBRE DEL ENCARGADO DE RECOGIDA -->
+                <div class="col-3">
+                  <input type="text"
+                    [(ngModel)]="full_name_encargado"
+                    name="full_name_encargado"
+                    class="form-control mb-2"
+                    placeholder="Nombre del encargado de recogida"
+                    value="" />
+                </div>
+                <!-- FIN INPUT NOMBRE DEL ENCARGADO DE RECOGIDA -->
+                <!-- COMIENZO INPUT DOCUMENTO DEL ENCARGADO DE RECOGIDA -->
+                <div class="col-3">
+                  <input type="text"
+                    [(ngModel)]="documento_encargado"
+                    name="documento_encargado"
+                    class="form-control mb-2"
+                    placeholder="Documento del encargado de recogida"
+                    value="" />
+                </div>
+                <!-- FIN INPUT DOCUMENTO DEL ENCARGADO DE RECOGIDA -->
+                <!-- COMIENZO INPUT TELÉFONO DEL ENCARGADO DE RECOGIDA -->
+                <div class="col-3">
+                  <input type="text"
+                    [(ngModel)]="telefono_encargado"
+                    name="telefono_encargado"
+                    class="form-control mb-2"
+                    placeholder="Teléfono del encargado de recogida"
+                    value="" />
+                </div>
+                <!-- FIN INPUT TELÉFONO DEL ENCARGADO DE RECOGIDA -->
+              </div>
+              <!-- FIN DIRECCIÓN, LUGAR, FECHA DE ENTREGA Y DATOS DEL ENCARGADO DE RECOGIDA -->
+            </div>
+            <!-- FINAL SECCIÓN LUGAR DE ENTREGA Y DATOS DE RECOGIDA -->
+          </div>
+          <!-- FIN DE LA SECCIÓN DETALLES DE ENTREGA -->
+          <div class="d-flex justify-content-end">
+            <!--begin::Button-->
+            <button type="submit" id="kt_ecommerce_edit_order_submit" class="btn btn-primary">
+              <span class="indicator-label">
+                Save Changes
+              </span>
+              <span class="indicator-progress">
+                Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+              </span>
+            </button>
+            <!--end::Button-->
+          </div>
+        </div>
+      </form>
+      <!--end::Form-->
+    </div>
+    <!--end::Content container-->
+  </div>
+  <!--end::Content-->
+</div>

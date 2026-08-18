@@ -13,13 +13,13 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
 import { CreateClientsCompanyComponent } from './create-clients-company/create-clients-company.component';
+import { SearchClientsComponent } from '../proformas/components/search-clients/search-clients.component';
 
 
 @NgModule({
   declarations:
   [
     ClientsComponent,
-    CreateClientsCompanyComponent,
     EditClientsPersonComponent,
     EditClientsCompanyComponent,
     DeleteClientsComponent,
@@ -28,6 +28,7 @@ import { CreateClientsCompanyComponent } from './create-clients-company/create-c
   imports:
   [
     CreateClientsPersonComponent,
+    CreateClientsCompanyComponent,
     CommonModule,
     ClientsRoutingModule,
     HttpClientModule,
@@ -36,6 +37,7 @@ import { CreateClientsCompanyComponent } from './create-clients-company/create-c
     ReactiveFormsModule,
     InlineSVGModule,
     NgbModalModule,
+    SearchClientsComponent
   ]
 })
 export class ClientsModule { }
