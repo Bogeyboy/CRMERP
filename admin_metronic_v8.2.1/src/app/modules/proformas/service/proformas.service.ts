@@ -47,6 +47,23 @@ export class ProformasService {
     );
   }
 
+  searchProducts(search_product: string)
+  {
+    let LINK = '';
+    if (search_product)
+    {
+      LINK += `&search=${search_product}`;
+    }
+    
+    this.isLoadingSubject.next(true);
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+
+    const URL = `${this.apiUrl}/proforma/search-products?k=1`+LINK;
+    return this.http.get(URL,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
   configAll()
   {
     this.isLoadingSubject.next(true);

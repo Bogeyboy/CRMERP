@@ -1,5 +1,5 @@
 import { ProformasService } from './../service/proformas.service';
-import { Component, inject, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, ChangeDetectorRef, AfterViewInit, ElementRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
 import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CreateClientsPersonComponent } from '../../clients/create-clients-person/create-clients-person.component';
 import { CreateClientsCompanyComponent } from '../../clients/create-clients-company/create-clients-company.component';
@@ -8,6 +8,8 @@ import { SearchClientsComponent } from '../components/search-clients/search-clie
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { data } from 'jquery';
+import { SearchProductsComponent } from '../components/search-products/search-products.component';
 
 @Component({
   selector: 'app-create-proforma',
@@ -24,10 +26,11 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './create-proforma.component.html',
   styleUrls: ['./create-proforma.component.scss']
 })
-export class CreateProformaComponent {
+export class CreateProformaComponent implements AfterViewInit {
 
   //VARIABLES DE LOS CLIENTES
   CLIENT_SELECTED:any;
+
 
   n_document = '';
   full_name = '';
@@ -35,11 +38,14 @@ export class CreateProformaComponent {
   birthdate: string | null  = null;
   displayBirthdate = '';
   //VARIABLES DE LOS PRODUCTOS
+  PRODUCT_SELECTED:any;
   price = 0;
   quantity_product = 0;
   unit = '';
-  warehouse = '';
+  unidad_product = '';
+  almacen_product = '';
   description_product = '';
+  search_product = '';
 
   //VARIABLES DE DIRECCIÓN
   address = '';
@@ -73,15 +79,17 @@ export class CreateProformaComponent {
 
   isLoading$: any;
 
-  // Use inject() instead of constructor injection to satisfy lint rule
-  /* public modalService = inject(NgbModal);
-  public proformaService = inject(ProformasService); */
+  @ViewChild('clientDocumentInput') clientDocumentInput!: ElementRef;
+  @ViewChild('clientNameInput') clientNameInput!: ElementRef;
+  @ViewChild('clientPhoneInput') clientPhoneInput!: ElementRef;
+  @ViewChild('productSearchInput') productSearchInput!: ElementRef;
 
   constructor(
     private modalService: NgbModal,
     private proformaService: ProformasService,
     public toast : ToastrService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private el: ElementRef
   )
   {
 
@@ -102,6 +110,74 @@ export class CreateProformaComponent {
       this.client_segments = resp.client_segments;
       this.asesores = resp.asesores;
     });
+  }
+
+  ngAfterViewInit()
+  {
+    // Usar setTimeout para asegurar que el DOM está listo
+    setTimeout(() => {
+      // Configurar listeners para clientes usando ViewChild
+      this.setupClientListeners();
+
+      // Configurar listener para producto usando ViewChild
+      this.setupProductListener();
+    }, 100); // Reducir tiempo de espera
+  }
+
+  setupClientListeners() {
+    // Método 1: Usando ViewChild
+    if (this.clientDocumentInput)
+    {
+      // Remover listeners anteriores para evitar duplicados
+      this.clientDocumentInput.nativeElement.removeEventListener('keydown', this.handleClientEnter);
+      this.clientDocumentInput.nativeElement.addEventListener('keydown', this.handleClientEnter);
+      console.log('✅ Listener agregado al input de documento');
+    }
+
+    if (this.clientNameInput)
+    {
+      this.clientNameInput.nativeElement.removeEventListener('keydown', this.handleClientEnter);
+      this.clientNameInput.nativeElement.addEventListener('keydown', this.handleClientEnter);
+      console.log('✅ Listener agregado al input de nombre');
+    }
+
+    if (this.clientPhoneInput)
+    {
+      this.clientPhoneInput.nativeElement.removeEventListener('keydown', this.handleClientEnter);
+      this.clientPhoneInput.nativeElement.addEventListener('keydown', this.handleClientEnter);
+      console.log('✅ Listener agregado al input de teléfono');
+    }
+  }
+
+  setupProductListener()
+  {
+    // Usando ViewChild
+    if (this.productSearchInput) {
+      this.productSearchInput.nativeElement.removeEventListener('keydown', this.handleProductEnter);
+      this.productSearchInput.nativeElement.addEventListener('keydown', this.handleProductEnter);
+      console.log('✅ Listener agregado al input de producto');
+    }
+  }
+
+  // Manejadores de eventos como métodos de clase
+  handleClientEnter = (event: KeyboardEvent) => {
+    if (event.key === 'Enter')
+    {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log('🔍 Enter en cliente (handler)');
+      this.searchClients();
+    }
+  }
+
+  handleProductEnter = (event: KeyboardEvent) => {
+    if (event.key === 'Enter')
+    {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log('🔍 Enter en producto (handler)');
+      this.searchProducts();
+    }
   }
 
   convertToBackendFormat(dateStr: string): string | null
@@ -188,13 +264,27 @@ export class CreateProformaComponent {
     console.log(distritos);
   }
 
-  searchClients()
+  searchClients(event?: Event)
   {
+    if (event)
+    {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    console.log('🔍 Buscando Clientes - Solo clientes');
+    console.log('📝 Datos:', {
+      n_document: this.n_document,
+      full_name: this.full_name,
+      phone: this.phone
+    });
+
     if(!this.n_document && !this.full_name && !this.phone)
     {
-      this.toast.error('Error', 'Se necesita alguno de los campos de búsqueda.');
+      this.toast.error('Error', 'Se necesita alguno de los campos de búsqueda para CLIENTES.');
       return;
     }
+    console.log('Buscando Clientes');
     this.proformaService.searchClients(this.n_document, this.full_name, this.phone).subscribe((resp:any)=>{
       console.log('Respuesta del servicio:', resp);
       if(resp.clients.length > 1)
@@ -217,9 +307,50 @@ export class CreateProformaComponent {
     });
   }
 
+  searchProducts(event?: Event)
+  {
+    if (event)
+    {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    console.log('🔍 Buscando Productos - Solo productos');
+    console.log('📝 Dato:', this.search_product);
+
+    if(!this.search_product)
+    {
+      this.toast.error('Error', 'Se necesita alguno de los campos de búsqueda para PRODUCTOS.');
+      return;
+    }
+    console.log('Buscando productos');
+    this.proformaService.searchProducts(this.search_product).subscribe((resp:any)=>{
+      console.log('Respuesta del servicio:', resp);
+      if(resp.products.data.length > 1)
+      {
+        this.openSelectedProducts(resp.products.data);
+        this.toast.success('Éxito', 'Varias coincidencias encontradas');
+      }
+      else
+      {
+        if (resp.products.data.length == 1)
+        {
+          this.PRODUCT_SELECTED = resp.products.data[0];
+          this.openSelectedProducts(resp.products.data);
+          //this.openSelectedProducts(resp.products.data);
+          //this.toast.success('Éxito', 'Se seleccionó el producto correctamente:');
+        }
+        else
+        {
+          this.toast.error('Validación', 'NO HAY COINCIDENCIAS EN LA BÚSQUEDA');
+        }
+      }
+    });
+  }
+
   openSelectedClients(clients:any = [])
   {
-    const modalRef = this.modalService.open(SearchClientsComponent, { size: 'lg', centered: true });
+    const modalRef = this.modalService.open(SearchClientsComponent, { size: 'xl', centered: true });
     modalRef.componentInstance.clients = clients;
 
     modalRef.componentInstance.ClientSelected.subscribe((client:any)=>
@@ -232,11 +363,33 @@ export class CreateProformaComponent {
     });
   }
 
+  openSelectedProducts(products:any = [])
+  {
+    const modalRef = this.modalService.open(SearchProductsComponent, { size: 'xl', centered: true });
+    modalRef.componentInstance.products = products;
+
+    modalRef.componentInstance.ProductSelected.subscribe((product:any)=>
+    {
+      console.log('Producto seleccionado:', product);
+      this.PRODUCT_SELECTED = product;
+      this.updateProductFields();
+      this.toast.success('Éxito', 'Se seleccionó el producto: ' + this.PRODUCT_SELECTED.title + ' correctamente.');
+      this.cdr.detectChanges();
+    });
+  }
+
   updateClientFields() {
     if (this.CLIENT_SELECTED) {
       this.n_document = this.CLIENT_SELECTED.n_document;
       this.full_name = this.CLIENT_SELECTED.full_name;
       this.phone = this.CLIENT_SELECTED.phone;
+      // Si hay más campos, actualizarlos aquí
+    }
+  }
+
+  updateProductFields() {
+    if (this.PRODUCT_SELECTED) {
+      this.search_product = this.PRODUCT_SELECTED.title;
       // Si hay más campos, actualizarlos aquí
     }
   }
@@ -282,5 +435,10 @@ export class CreateProformaComponent {
     this.full_name = '';
     this.phone = '';
     this.isLoadingProcess();
+  }
+
+  saveChanges()
+  {
+
   }
 }

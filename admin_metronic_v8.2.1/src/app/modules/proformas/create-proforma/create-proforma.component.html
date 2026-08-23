@@ -3,25 +3,24 @@
   <div id="kt_app_content" class="app-content  flex-column-fluid " data-select2-id="select2-data-kt_app_content">
     <!--begin::Content container-->
     <div id="kt_app_content_container" class="app-container  container-xxl " data-select2-id="select2-data-kt_app_content_container">
-      <!--begin::Form-->
+      <!-- INICIO FORMULARIO DE LA PROFORMA -->
       <form id="kt_ecommerce_edit_order_form"
         class="form d-flex flex-column flex-lg-row fv-plugins-bootstrap5 fv-plugins-framework"
+        (ngSubmit)="$event.preventDefault(); $event.stopPropagation();"
         data-kt-redirect="/metronic8/demo1/apps/ecommerce/sales/listing.html"
-        data-select2-id="select2-data-kt_ecommerce_edit_order_form"
-        (ngSubmit)="searchClients()">
-        <!--begin::Aside column-->
+        data-select2-id="select2-data-kt_ecommerce_edit_order_form">
+        <!-- INICIO COLUMNA LATERAL DE LA PROFORMA-->
         <div class="w-100 flex-lg-row-auto w-lg-300px mb-7 me-7 me-lg-10"
           data-select2-id="select2-data-130-y9wa">
-          <!--begin::Order details-->
           <div class="card card-flush py-4" data-select2-id="select2-data-129-w2zd">
-            <!-- COMIENZO DE TÍTULO -->
+            <!-- COMIENZO DE TÍTULO LATERAL -->
             <div class="card-header">
                 <div class="card-title">
                     <h2>Proforma</h2>
                 </div>
             </div>
-            <!-- FIN DE TÍTULO -->
-            <!-- COMIENZO DETALLE DE PROFORMA LATERAL -->
+            <!-- FIN DE TÍTULO LATERAL -->
+            <!-- COMIENZO DETALLE LATERAL DE LA PROFORMA  -->
             <div class="card-body pt-0" data-select2-id="select2-data-128-9mmu">
               <div class="d-flex flex-column gap-10" data-select2-id="select2-data-127-2qsf">
                 <!-- COMIENZO DE FECHA -->
@@ -81,11 +80,11 @@
                 </div>
               </div>
             </div>
-            <!-- FIN DETALLE DE PROFORMA LATERAL -->
+            <!-- FIN DETALLE LATERAL DE LA PROFORMA  -->
           </div>
-          <!--end::Order details-->
         </div>
-        <!--end::Aside column-->
+        <!-- FIN COLUMNA LATERAL DE LA PROFORMA-->
+        <!-- INICIO PARTE CENTRAL DE LA PROFORMA -->
         <div class="d-flex flex-column flex-lg-row-fluid gap-7 gap-lg-10">
           <!-- INICIO CLIENTE DE LA PROFORMA -->
           <div class="card card-flush py-4">
@@ -99,7 +98,7 @@
                       <span class="path1"></span>
                       <span class="path2"></span>
                     </i>
-                    Cliente: 
+                    Cliente:
                   </h2>
                   <small class="mx-2">{{ CLIENT_SELECTED ? CLIENT_SELECTED.client_segment.name : ' No hay ningún cliente seleccionado.' }}</small>
                 </div>
@@ -110,8 +109,8 @@
                   <button class="btn btn-sm mx-1 btn-primary"
                     type="button"
                     placement="top-start"
-                    ngbTooltip="Buscar"
-                    type="submit">
+                    (click)="searchClients()"
+                    ngbTooltip="Buscar">
                     <i class="ki-duotone ki-magnifier fs-2">
                       <span class="path1"></span>
                       <span class="path2"></span>
@@ -168,6 +167,7 @@
                 <!-- INICIO BUSQUEDA POR NUMERO DE DOCUMENTO -->
                 <div class="col-4">
                   <input type="text"
+                    #clientDocumentInput
                     [(ngModel)]="n_document"
                     name="n_document"
                     class="form-control mb-2"
@@ -178,6 +178,7 @@
                 <!-- INICIO DE BÚSQUEDA POR NOMBRE COMPLETO -->
                 <div class="col-4">
                   <input type="text"
+                    #clientNameInput
                     [(ngModel)]="full_name"
                     name="full_name"
                     class="form-control mb-2"
@@ -188,6 +189,7 @@
                 <!-- INICIO DE BÚSQUEDA POR NÚMERO DE TELÉFONO -->
                 <div class="col-4">
                   <input type="text"
+                    #clientPhoneInput
                     [(ngModel)]="phone"
                     name="phone"
                     class="form-control mb-2"
@@ -200,13 +202,13 @@
             <!-- FIN CUERPO DE CLIENTE DE LA PROFORMA-->
           </div>
           <!-- FIN CLIENTE DE LA PROFORMA-->
-          <!-- INICIO DETALLE DE LA PROFORMA 2-->
+          <!-- INICIO SECCIÓN AÑADIR PRODUCTOS A LA PROFORMA-->
           <div class="card card-flush py-4">
             <!-- PRINCIPO DE CABECERA DE LA PROFORMA 2, SECCION PRODUCTOS-->
             <div class="card-header" style="display: block;">
               <div class="row justify-content-between">
                 <!-- INICIO DE ETIQUETA DE PRODUCTO -->
-                <div class="col-3">
+                <div class="col-6 d-flex align-items-center">
                   <h2 class="d-flex align-items-center">
                     <i class="ki-duotone ki-delivery-2 fs-2">
                       <span class="path1"></span>
@@ -221,13 +223,19 @@
                     </i>
                     Productos:
                   </h2>
+                  <small class="mx-2">
+                    {{ PRODUCT_SELECTED ? PRODUCT_SELECTED.product_categorie.name : 'No hay producto seleccionado.' }}
+                  </small>
                 </div>
                 <!-- FIN DE ETIQUETA DE PRODUCTO -->
-                
                 <div class="col-3">
                   <!-- INICIO BOTÓN DE BUSCAR SECCION PRODUCTO -->
                   <!-- INICIO DE BOTÓN DE BUSCAR -->
-                  <button class="btn btn-sm mx-1 btn-primary" placement="top-start" ngbTooltip="Buscar">
+                  <button class="btn btn-sm mx-1 btn-primary"
+                    name="search_product"
+                    (click)="searchProducts()"
+                    placement="top-start"
+                    ngbTooltip="Buscar">
                     <i class="ki-duotone ki-magnifier fs-2">
                       <span class="path1"></span>
                       <span class="path2"></span>
@@ -236,7 +244,9 @@
                   <!-- FIN DE BOTÓN DE BUSCAR -->
                   <!-- FIN BOTÓN DE BUSCAR SECCION PRODUCTO -->
                   <!-- INICIO BOTÓN DE ACTUALIZAR PRODUCTO -->
-                  <button class="btn btn-sm mx-1 btn-dark" placement="top-start" ngbTooltip="Actualizar Producto">
+                  <button class="btn btn-sm mx-1 btn-dark"
+                    placement="top-start"
+                    ngbTooltip="Actualizar Producto">
                     <i class="ki-duotone ki-arrows-circle fs-2">
                       <span class="path1"></span>
                       <span class="path2"></span>
@@ -262,7 +272,7 @@
                 <div id="kt_ecommerce_edit_order_product_table_wrapper" class="dt-container dt-bootstrap5 dt-empty-footer">
                   <!-- COMIENZO DE SECCIÓN PARA BÚSQUEDA Y FILTROS -->
                   <div id="" class="row">
-                    <!-- INICIO INPUT PARA BÚSQUEDA MANUAL -->
+                    <!-- INICIO INPUT PARA BÚSQUEDA DE PRODUCTO MANUAL -->
                     <div class="col-6">
                       <div class="d-flex align-items-center position-relative mb-n7 ">
                         <i class="ki-duotone ki-magnifier fs-3 position-absolute ms-4">
@@ -272,10 +282,13 @@
                         <input type="text"
                           data-kt-ecommerce-edit-order-filter="search"
                           class="form-control form-control-solid w-100 ps-12"
-                          placeholder="Buscar productos">
+                          name="search_product"
+                          placeholder="Buscar productos"
+                          #productSearchInput
+                          [(ngModel)]="search_product">
                       </div>
                     </div>
-                    <!-- FIN INPUT PARA BÚSQUEDA MANUAL -->
+                    <!-- FIN INPUT PARA BÚSQUEDA DE PRODUCTO MANUAL -->
                     <!-- INICIO DE INPUT PARA PRECIO -->
                     <div class="col-3">
                       <input type="number"
@@ -289,9 +302,9 @@
                     <!-- INICIO DE INPUT PARA CANTIDAD DE PRODUCTO -->
                     <div class="col-3">
                       <input type="number"
-                        [(ngModel)]="quantity_product"
-                        name="quantity_product"
                         class="form-control mb-2"
+                        name="quantity_product"
+                        [(ngModel)]="quantity_product"
                         placeholder="Cantidad"
                         value="" />
                     </div>
@@ -300,7 +313,8 @@
                     <div class="col-3">
                       <select
                         class="form-control form-select-solid fw-bolder"
-                        name="categorie "
+                        name="unidad_product"
+                        [(ngModel)]="unidad_product"
                         placeholder="Selec. Unidad">
                         <option value="">Selecciona unidad</option>
                       </select>
@@ -310,7 +324,8 @@
                     <div class="col-3">
                       <select
                         class="form-control form-select-solid fw-bolder"
-                        name="warehouse"
+                        name="almacen_product"
+                        [(ngModel)]="almacen_product"
                         placeholder="Selec. Unidad">
                         <option value="">Selecc. Almacén</option>
                       </select>
@@ -320,9 +335,9 @@
                     <div class="col-3">
                       <textarea
                         class="form-control form-control-solid"
-                        rows="3"
                         name="description_product"
                         [(ngModel)]="description_product"
+                        rows="3"
                         placeholder="Notas">
                       </textarea>
                     </div>
@@ -343,9 +358,9 @@
             </div>
             <!-- FIN CUERPO DE LA PROFORMA 2, SECCION PRODUCTOS-->
           </div>
-          <!-- FIN DETALLE DE LA PROFORMA 2, SECCION PRODUCTOS-->
+          <!-- FIN SECCION AÑADIR PRODUCTOS A LA PROFORMA-->
 
-          <!-- INICIO DE LA SECCIÓN DE DETALLADO DE PRODUCTOS -->
+          <!-- INICIO DE LA SECCIÓN DE DETALLADO DE PRODUCTOS DE LA PROFORMA -->
           <div class="card card-flush py-4">
             <div class="card-header" style="display: block;">
               <div class="row justify-content-between">
@@ -362,7 +377,7 @@
                 <!-- FIN CABECERA DETALLE DE LA PROFORMA -->
                 <!-- INICIO BOTONES DE  -->
                 <div class="col-3">
-                  
+
                 </div>
                 <!-- FIN BOTONES DE  -->
               </div>
@@ -371,9 +386,9 @@
               <div class="row">
                 <div class="col-12">
                   <div class="table-responsive">
-                    <!-- COMIENZO DE TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                    <!-- COMIENZO DE TABLA DE DETALLE DE LA PROFORMA -->
                     <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
-                      <!-- INICIO DE CABECERA DE LA TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                      <!-- INICIO DE CABECERA DE LA TABLA DE DETALLE DE LA PROFORMA -->
                       <thead>
                         <tr class="fw-bold text-muted">
                           <th class="min-w-150px">Producto</th>
@@ -385,8 +400,8 @@
                           <th class="min-w-100px text-end">Acciones</th>
                         </tr>
                       </thead>
-                      <!-- FIN DE CABECERA DE LA TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
-                      <!-- INICIO DE CUERPO DE LA TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                      <!-- FIN DE CABECERA DE LA TABLA DE DETALLE DE LA PROFORMA -->
+                      <!-- INICIO DE CUERPO DE LA TABLA DE DETALLE DE LA PROFORMA -->
                       <tbody>
                         <tr>
                           <td>
@@ -394,7 +409,7 @@
                               Airbag piloto Changan A500
                             </a>
                           </td>
-                          
+
                           <td>
                             <!-- <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">Brasil</a> -->
                             <span class="text-muted fw-semibold text-muted d-block fs-7">Unidad: Caja</span>
@@ -412,16 +427,16 @@
 
                           <td class="text-gray-900 fw-bold text-hover-primary fs-6">
                             <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">100 €</a>
-                          </td>  
+                          </td>
 
                           <td>
                             <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">500 €</a>
-                          </td>             
+                          </td>
                           <!-- COMIENZO DE LAS OPCIONES DE ACCIÓN -->
                           <td class="text-end">
                             <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                               <i class="ki-duotone ki-switch fs-2"><span class="path1"></span><span class="path2"></span></i>                                </a> -->
-                            
+
                             <!-- INICIO BOTÓN EDITAR -->
                             <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                               <i class="ki-duotone ki-pencil fs-2">
@@ -445,15 +460,15 @@
                           <!-- FIN DE LAS OPCIONES DE ACCIÓN -->
                         </tr>
                       </tbody>
-                      <!-- FIN DE CUERPO DE LA TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                      <!-- FIN DE CUERPO DE LA TABLA DE DETALLE DE LA PROFORMA -->
                     </table>
-                    <!-- FIN DE TABLA DE LISTADO DE PRODUCTOS DE LA PROFORMA -->
+                    <!-- FIN DE TABLA DE DETALLE DE LA PROFORMA -->
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <!-- FIN DE LA SECCIÓN DE DETALLADO DE PRODUCTOS -->
+          <!-- FIN DE LA SECCIÓN DE DETALLADO DE PRODUCTOS DE LA PROFORMA -->
 
           <!-- INICIO DE LA SECCION DE DETALLES DE ENTREGA -->
           <div class="card card-flush py-4">
@@ -625,20 +640,24 @@
           </div>
           <!-- FIN DE LA SECCIÓN DETALLES DE ENTREGA -->
           <div class="d-flex justify-content-end">
-            <!--begin::Button-->
-            <button type="submit" id="kt_ecommerce_edit_order_submit" class="btn btn-primary">
-              <span class="indicator-label">
-                Save Changes
-              </span>
-              <span class="indicator-progress">
-                Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-              </span>
+            <!-- INICIO DE BOTÓN DE SALVAR CAMBIOS -->
+            <button type="button"
+              id="kt_ecommerce_edit_order_submit"
+              class="btn btn-primary"
+              (click)="saveChanges()">
+                <span class="indicator-label">
+                  Salvar cambios
+                </span>
+                <span class="indicator-progress">
+                  Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                </span>
             </button>
-            <!--end::Button-->
+            <!-- FIN DE BOTÓN DE SALVAR CAMBIOS -->
           </div>
         </div>
+        <!-- FIN PARTE CENTRAL DE LA PROFORMA -->
       </form>
-      <!--end::Form-->
+      <!-- FIN DE FORMULARIO DE LA PROFORMA -->
     </div>
     <!--end::Content container-->
   </div>

@@ -1,1 +1,156 @@
-<p>search-products works!</p>
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+  <!--begin::Modal header-->
+  <div class="modal-header d-flex justify-content-between align-items-center" id="kt_modal_add_user_header">
+    <!--begin::Modal title-->
+    <!-- <h2 class="fw-bolder">Clientes encontrados {{ clients.length }}</h2> -->
+    <h2 class="fw-bolder">
+      @if (products.length === 1)
+      {
+        {{ products.length }} Producto encontrado
+      }
+      @else
+      {
+        {{ products.length }} Productos encontrados
+      }
+    </h2>
+    <!--end::Modal title-->
+    <!--begin::Close-->
+    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close" (click)="modal.dismiss()">
+      <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+      <span class="svg-icon svg-icon-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+          <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+        </svg>
+      </span>
+      <!--end::Svg Icon-->
+    </div>
+    <!--end::Close-->
+  </div>
+  <!--end::Modal header-->
+  <!--begin::Modal body-->
+  <div class="modal-body scroll-y mx-5 my-7">
+    <!--begin::Form-->
+    <form id="kt_modal_add_user_form" class="form" action="#">
+      <div class="row">
+        <div class="col-12">
+
+          <div class="table-responsive">
+            <!-- INICIO DE LA TABLA DE RESULTADOS -->
+            <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+              <!-- INICIO DE CABECERA DE LA TABLA -->
+              <thead>
+                <tr class="fw-bold text-muted">
+                  <th class="min-w-150px">Producto</th>
+                  <th class="min-w-120px">Categoria</th>
+                  <th class="min-w-140px">Precio General</th>
+                  <th class="min-w-120px">Disponibilidad</th>
+                  <th class="min-w-120px">SKU</th>
+                  <th class="min-w-120px">Tipo de impuesto</th>
+                  <th class="min-w-100px text-end">Actions</th>
+                  
+                </tr>
+              </thead>
+              <!-- FIN DE CABECERA DE LA TABLA -->
+              <!-- INICIO DE CUERPO DE LA TABLA -->
+              <tbody>
+                @for (PRODUCT of products; track $index)
+                {
+                  <tr>
+                    <!-- COMIENZO DE IMAGEN Y NOMBRE DEL PRODUCTO Y PESO DE PRODUCTO -->
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <!-- COMIENZO DE IMAGEN DEL PRODUCTO -->
+                        <div class="symbol symbol-50px me-5">
+                          <img [src]="PRODUCT.imagen" class="" alt="">
+                        </div>
+                        <!-- FIN DE IMAGEN DEL PRODUCTO -->
+                        <!-- COMIENZO DE NOMBRE Y PESO DEL PRODUCTO -->
+                        <div class="d-flex justify-content-start flex-column">
+                          <!-- COMIENZO DE NOMBRE DEL PRODUCTO -->
+                          <a href="#" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6">
+                            {{ PRODUCT.title }}
+                          </a>
+                          <!-- FIN DE NOMBRE DEL PRODUCTO -->
+                          <!-- COMIENZO DE PESO DEL PRODUCTO -->
+                          <span class="text-muted fw-semibold text-muted d-block fs-7">
+                            Peso: {{ PRODUCT.weight }}
+                          </span>
+                          <!-- STATE_STOCK -->
+                          @if (PRODUCT.state_stock === 1)
+                          {
+                            <span class="badge badge-light-primary">Disponible</span>
+                          }
+                          @if (PRODUCT.state_stock === 2)
+                          {
+                            <span class="badge badge-light-warning">Casi agotado</span>
+                          }
+                          @if (PRODUCT.state_stock === 3)
+                          {
+                            <span class="badge badge-light-danger">Agotado</span>
+                          }
+                          <!-- FIN DE PESO DEL PRODUCTO -->
+                        </div>
+                        <!-- FIN DE NOMBRE Y PESO DEL PRODUCTO -->
+                      </div>
+                    </td>
+                    <!-- COMIENZO DE IMAGEN Y NOMBRE DEL PRODUCTO Y PESO DE PRODUCTO -->
+                    <!-- COMIENZO DE CATEGORÍA DEL PRODUCTO -->
+                    <td>
+                      {{ PRODUCT.product_categorie.name }}
+                    </td>
+                    <!-- PRECIO GENERAL DEL PRODUCTO -->
+                    <td>
+                      {{ PRODUCT.price_general }}
+                    </td>
+                    <!-- DISPONIBILIDAD DEL PRODUCTO -->
+                    <td >
+                      {{ getDisponibilidad(PRODUCT.disponibilidad) }}
+                    </td>
+                    <!-- CÓDIGO SKU DEL PRODUCTO -->
+                    <td>
+                      {{ PRODUCT.sku }}
+                    </td>
+                    <!-- TIPO DE IMPUESTO DEL PRODUCTO -->
+                    <td>
+                      {{ getTaxSelected(PRODUCT.tax_selected) }}
+                    </td>
+                    <!-- INICIO DE BOTÓN DE SELECCIÓN -->
+                    <td class="text-end">
+                      <a href="#"
+                        class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                        onclick="return false;"
+                        (click)="selectProduct(PRODUCT); $event.preventDefault()">
+                          <i class="ki-duotone ki-switch fs-2">
+                            <span class="path1"></span>
+                            <span class="path2"></span>
+                          </i>
+                      </a>
+                    </td>
+                    <!-- FIN DE BOTÓN DE SELECCIÓN -->
+                  </tr>
+                }
+              </tbody>
+              <!-- FIN DE CUERPO DE LA TABLA -->
+            </table>
+            <!-- FIN DE LA TABLA DE RESULTADOS -->
+          </div>
+
+        </div>
+      </div>
+      <!--begin::Actions-->
+      <div class="text-center pt-15">
+        <button type="reset"
+          class="btn btn-light me-3"
+          (click)="modal.dismiss()">
+          Cerrar
+        </button>
+      </div>
+      <!--end::Actions-->
+    </form>
+    <!--end::Form-->
+  </div>
+  <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Proforma;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Product\ProductCollection;
 use App\Models\Client\Client;
 use App\Models\Configuration\client_segment;
+use App\Models\Product\Product;
 use App\Models\Proforma\Proforma;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use NunoMaduro\Collision\Adapters\Phpunit\State;
 
 class ProformaController extends Controller
@@ -81,6 +84,19 @@ class ProformaController extends Controller
                     'is_parcial' => $client->is_parcial,
                 ];
             }),
+        ]);
+    }
+
+    //FUNCIÓN PARA BUSCAR PRODUCTOS PARA AÑADIR A LA PROFORMA
+    public function search_products(Request $request)
+    {
+        $search = $request->get('search');
+        $products = Product::where(DB::raw("CONCAT(products.title,' ',products.sku)"),"like","%".$search."%")
+                    ->orderBy('id','desc')
+                    ->get();
+        
+        return response()->json([
+            'products' => ProductCollection::make($products),
         ]);
     }
 

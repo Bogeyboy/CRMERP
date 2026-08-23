@@ -98,6 +98,7 @@ Route::middleware('auth:api')->group(function () {
     Route::resource('clients', ClientController::class);
 
     //RUTAS PARA LAS PROFORMA
+    //CLIENTES
     
     Route::resource('proformas',ProformaController::class);
 
@@ -107,6 +108,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/proforma/config', [ProformaController::class, 'config'])
         ->middleware('permission:list_proformas');
 
+    //PRODUCTOS
+    Route::get('/proforma/search-products', [ProformaController::class, 'search_products'])
+        ->middleware('permission:list_products');
 
 });
 

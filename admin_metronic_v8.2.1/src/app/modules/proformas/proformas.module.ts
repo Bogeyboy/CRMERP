@@ -23,7 +23,6 @@ import { SearchClientsComponent } from './components/search-clients/search-clien
     EditProformaComponent,
     DeleteProformaComponent,
     ListProformaComponent,
-    SearchProductsComponent,
     AddPaymentsComponent,
   ],
   imports: [
@@ -36,6 +35,7 @@ import { SearchClientsComponent } from './components/search-clients/search-clien
     InlineSVGModule,
     NgbModalModule,
     CreateProformaComponent,
+    SearchProductsComponent,
     SearchClientsComponent
   ]
 })
