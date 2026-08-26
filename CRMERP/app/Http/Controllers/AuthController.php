@@ -165,6 +165,7 @@ class AuthController extends \Illuminate\Routing\Controller
                 'permissions' => $permissions,
                 // Campos adicionales para compatibilidad
                 'rol_name' => $isSuper ? 'Super-Admin' : (count($roles) > 0 ? $roles[0] : ''),
+                'sucursale_id' => $user->sucursale_id
             ]
         ]);
     }

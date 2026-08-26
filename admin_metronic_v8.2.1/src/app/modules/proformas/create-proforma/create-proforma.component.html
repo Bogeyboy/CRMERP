@@ -246,6 +246,7 @@
                   <!-- INICIO BOTÓN DE ACTUALIZAR PRODUCTO -->
                   <button class="btn btn-sm mx-1 btn-dark"
                     placement="top-start"
+                    (click)="resetProduct()"
                     ngbTooltip="Actualizar Producto">
                     <i class="ki-duotone ki-arrows-circle fs-2">
                       <span class="path1"></span>
@@ -254,7 +255,11 @@
                   </button>
                   <!-- FIN BOTÓN DE ACTUALIZAR PRODUCTO -->
                   <!-- INICIO BOTÓN DE AGREGAR PRODUCTO -->
-                  <button class="btn btn-sm mx-1 btn-info" placement="top-start" ngbTooltip="Agregar Producto">
+                  <button
+                    class="btn btn-sm mx-1 btn-info"
+                    placement="top-start"
+                    (click)="addProduct()"
+                    ngbTooltip="Agregar Producto">
                     <i class="ki-duotone ki-add-folder fs-2">
                       <span class="path1"></span>
                       <span class="path2"></span>
@@ -295,8 +300,10 @@
                         [(ngModel)]="price"
                         name="price"
                         class="form-control mb-2"
+                        disabled
                         placeholder="Precio"
                         value="" />
+                        <small>Precio del producto</small>
                     </div>
                     <!-- FIN DE INPUT PARA PRECIO -->
                     <!-- INICIO DE INPUT PARA CANTIDAD DE PRODUCTO -->
@@ -305,19 +312,49 @@
                         class="form-control mb-2"
                         name="quantity_product"
                         [(ngModel)]="quantity_product"
+                        (change)="verifiedDiscount()"
                         placeholder="Cantidad"
                         value="" />
+                        <small>Cantidad de producto</small>
                     </div>
                     <!-- FIN DE INPUT PARA CANTIDAD DE PRODUCTO -->
                     <!-- INICIO DE SELECT PARA UNIDAD DE PRODUCTO -->
                     <div class="col-3">
-                      <select
-                        class="form-control form-select-solid fw-bolder"
-                        name="unidad_product"
-                        [(ngModel)]="unidad_product"
-                        placeholder="Selec. Unidad">
-                        <option value="">Selecciona unidad</option>
-                      </select>
+                      @if (!loadUnidad)
+                      {
+                        <select
+                          class="form-control form-select-solid fw-bolder"
+                          name="unidad_product"
+                          [(ngModel)]="unidad_product"
+                          placeholder="Selec. Unidad"
+                          (change)="changeUnitProduct($event)"
+                          [disabled]="isUnitSelectDisabled">
+                          <option value="">Selecciona unidad</option>
+                          @if (PRODUCT_SELECTED)
+                          {
+                            @for (unit of PRODUCT_SELECTED.units; track unit.id)
+                            {
+                              <option [value]="unit.id">{{ unit.name }}</option>
+                            }
+                          }
+                        </select>
+                      }
+                      <!-- Mostrar mensaje de advertencia si está deshabilitado -->
+                      @if (isUnitSelectDisabled)
+                      {
+                        <small class="text-warning">{{ unitSelectDisabledMessage }}</small><br>
+                      }
+                      @if (PRODUCT_SELECTED)
+                      {
+                        <small>Unidades disponibles:
+                          @for (unit of PRODUCT_SELECTED.units; track unit.id)
+                          {
+                            <span>
+                              ID: {{ unit.id }} - {{ unit.name }}
+                            </span>
+                          }
+                        </small>
+                      }
                     </div>
                     <!-- FIN DE SELECT PARA UNIDAD DE PRODUCTO -->
                     <!-- INICIO DE SELECT PARA SELECCIONAR ALMACÉN DE PRODUCTO -->
@@ -328,11 +365,15 @@
                         [(ngModel)]="almacen_product"
                         placeholder="Selec. Unidad">
                         <option value="">Selecc. Almacén</option>
+                        @for (almacen of warehouses_product; track $index)
+                        {
+                          <option [value]="almacen.id">{{ almacen.warehouse.name }} ( {{almacen.quantity}} )</option>
+                        }
                       </select>
                     </div>
                     <!-- FIN DE SELECT PARA SELECCIONAR ALMACÉN DE PRODUCTO -->
-                    <!-- INICIO DE SELECT PARA NOTAS SOBRE LA PROFORMA -->
-                    <div class="col-3">
+                    <!-- INICIO NOTAS SOBRE LA PROFORMA -->
+                    <div class="col-4">
                       <textarea
                         class="form-control form-control-solid"
                         name="description_product"
@@ -341,17 +382,140 @@
                         placeholder="Notas">
                       </textarea>
                     </div>
-                    <!-- FIN DE SELECT PARA NOTAS SOBRE LA PROFORMA -->
+                    <!-- FIN NOTAS SOBRE LA PROFORMA -->
+                    <!-- INICIO DE CÁLCULO DE PRECIOS DE PRODUCTO EN PROFORMA -->
+                    <div class="col-6">
+                      @if (unidad_product && warehouses_product.length === 0)
+                      {
+                        <span class="text-danger">
+                          No hay unidades disponibles de esa unidad en ninguna sucursal.
+                        </span><br>
+                      }
+                      @if (unidad_product && warehouses_product.length > 0  && exists_warehouse.length === 0)
+                      {
+                        <span class="text-danger">
+                          No hay unidades disponibles de esa unidad en nuestra sucursal.
+                        </span>
+                      }
+                    </div>
+                    <!-- FIN DE CÁLCULO DE PRECIOS DE PRODUCTO EN LA PROFORMA -->
+                    <!-- INICIO DE POSIBLE DESCUENTO DE PRODUCTO -->
+                    <!-- @if (PRODUCT_SELECTED)
+                    { -->
+                    @if (PRODUCT_SELECTED && PRODUCT_SELECTED.is_discount === 2)
+                    {
+                      <!-- <div class="col-4 mt-1">
+                        <input type="number"
+                        class="form-control mb-2"
+                        name="amount_discount"
+                        [(ngModel)]="amount_discount"
+                        (change) = "verifiedDiscount()"
+                        (keyup)="verifiedDiscount()"
+                        placeholder="Descuento"
+                        value="" />
+                        <small>Descuento del producto en euros.</small>
+                      </div> -->
+
+                      <div class="col-4 mt-1">
+                        <div class="form-group">
+                          <div class="d-flex justify-content-between">
+                            <span>Descuento: </span>
+                            <span>{{ getDiscount().toFixed(2) }} €</span>
+                          </div>
+
+                          <!-- Progress Bar -->
+                          <div class="progress mb-2" style="height: 25px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                              role="progressbar"
+                              [style.width.%]="getDiscountPercentage()"
+                              [ngClass]="getProgressBarClass()"
+                              [attr.aria-valuenow]=" amount_discount || 0 "
+                              [attr.aria-valuemin]="PRODUCT_SELECTED.min_discount | number:'1.0-0'"
+                              [attr.aria-valuemax]="PRODUCT_SELECTED.max_discount | number:'1.0-0'">
+                              <span class="justify-content-center d-flex align-items-center h-100">
+                                {{ amount_discount || 0 }} / {{ getMaxDiscount() | number:'1.0-0' }} %
+                              </span>
+                            </div>
+                          </div>
+
+                          <!-- Input oculto o visible según prefieras -->
+                          <div class="input-group">
+                            <span class="input-group-text">%</span>
+                            <input type="number"
+                              class="form-control"
+                              name="amount_discount"
+                              [(ngModel)]="amount_discount"
+                              (input)="onDiscountChange()"
+                              (change)="verifiedDiscount()"
+                              placeholder="Descuento"
+                              [min]="getMinDiscount()"
+                              [max]="getMaxDiscount()"
+                              step="1" />
+                          </div>
+
+                          <div class="d-flex justify-content-between mt-1">
+                            <!-- <small class="text-muted">Mín: {{ getMinDiscount() | number:'1.0-0' }} €</small>
+                            <small class="text-muted">Máx: {{ getMaxDiscount() | number:'1.0-0' }} €</small> -->
+
+                            <small class="text-muted">Mín: {{ getMinDiscount().toFixed(2)  }} %</small>
+                            <small class="text-muted">Máx: {{ getMaxDiscount().toFixed(2)  }} %</small>
+                          </div>
+                          <!-- <small>Descuento del producto en euros.</small> -->
+                        </div>
+                      </div>
+
+                    }
+                    <!-- FIN DE POSIBLE DESCUENTO DE PRODUCTO -->
                   </div>
                   <!-- FIN DE SECCIÓN PARA BÚSQUEDA Y FILTROS -->
                 </div>
                 <div class="separator"></div>
                 <div>
                   <div class="fw-bold fs-4">
-                    Total Cost: $
-                    <span id="kt_ecommerce_edit_order_total_price">
-                      0.00
-                    </span>
+                    @if (PRODUCT_SELECTED)
+                    {
+                      <span>
+                        Descuento por unidad: {{ getDiscount() }} €.
+                      </span>
+                      <br>
+                      <span>
+                        Precio unitario después de descuento: {{ price-getDiscount() }} €.
+                      </span>
+                      <br>
+                      <span>
+                        Impuestos: {{ PRODUCT_SELECTED.importe_iva }} %
+                      </span>
+                      <br>
+                      <span>
+                        Precio unitario en euros después de impuestos: {{ ((price - getDiscount()) + ((price - getDiscount()) * (getIvaPercentage()))) }} €
+                      </span>
+                      <br>
+                      <span id="kt_ecommerce_edit_order_total_price">
+                        Coste total: {{ ( ((price - getDiscount()) + ( (price - getDiscount()) * (getIvaPercentage()) ) ) * quantity_product ).toFixed(2) }} €
+                      </span>
+                    }
+                    @else
+                    {
+                      <span>
+                        Descuento por unidad: 0 €.
+                      </span>
+                      <br>
+                      <span>
+                        Precio unitario después de descuento: 0 €.
+                      </span>
+                      <br>
+                      <span>
+                        Impuestos: 0 %
+                      </span>
+                      <br>
+                      <span>
+                        Precio unitario en euros después de impuestos: 0 €
+                      </span>
+                      <br>
+                      <span id="kt_ecommerce_edit_order_total_price">
+                        Coste total: 0 €
+                      </span>
+                    }
                   </div>
                 </div>
               </div>
@@ -499,7 +663,10 @@
                   </button>
                   <!-- FIN BOTÓN DE BUSCAR SECCION LUGAR DE ENTREGA -->
                   <!-- INICIO BOTÓN DE ACTUALIZAR LUGAR DE ENTREGA -->
-                  <button class="btn btn-sm mx-1 btn-dark" placement="top-start" ngbTooltip="Actualizar Producto">
+                  <button
+                    class="btn btn-sm mx-1 btn-dark"
+                    placement="top-start"
+                    ngbTooltip="Actualizar Lugar de entrega">
                   <i class="ki-duotone ki-arrows-circle fs-2">
                     <span class="path1"></span>
                     <span class="path2"></span>
