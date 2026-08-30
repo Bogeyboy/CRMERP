@@ -1,0 +1,229 @@
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+  <!--begin::Modal header-->
+  <div class="modal-header d-flex justify-content-between align-items-center" id="kt_modal_add_user_header">
+    <!--begin::Modal title-->
+    <h2 class="fw-bolder">Editar detalle del producto: {{ DETAIL_PRODUCT.product.title }}</h2>
+
+    <!--end::Modal title-->
+    <!--begin::Close-->
+    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close" (click)="modal.dismiss()">
+      <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+      <span class="svg-icon svg-icon-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+          <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+        </svg>
+      </span>
+      <!--end::Svg Icon-->
+    </div>
+    <!--end::Close-->
+  </div>
+  <!--end::Modal header-->
+  <!--begin::Modal body-->
+  <div class="modal-body scroll-y mx-5 my-7">
+    <!--begin::Form-->
+    <form id="kt_modal_add_user_form" class="form" action="#">
+      <!--begin::Scroll-->
+      <div class="d-flex flex-column scroll-y me-n7 pe-7" id="kt_modal_add_user_scroll" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_modal_add_user_header" data-kt-scroll-wrappers="#kt_modal_add_user_scroll" data-kt-scroll-offset="300px">
+        <!-- INICIO DE PRECIO, CANTIDAD, UNIDAD Y ALMACÉN -->
+        <div class="fv-row row mb-7 align-items-center">
+          <!-- INICIO DE INPUT PARA PRECIO -->
+          <div class="col-2">
+            <input type="number"
+              [(ngModel)]="price"
+              name="price"
+              class="form-control mb-2"
+              disabled
+              placeholder="Precio"
+              value="" />
+            <small>Precio del producto</small>
+          </div>
+          <!-- FIN DE INPUT PARA PRECIO -->
+          <!-- INICIO DE INPUT PARA CANTIDAD DE PRODUCTO -->
+          <div class="col-2">
+            <input type="number"
+              class="form-control mb-2"
+              name="quantity_product"
+              [(ngModel)]="quantity_product"
+              (change)="verifiedDiscount()"
+              placeholder="Cantidad"
+              value="" />
+            <small>Cantidad de producto</small>
+          </div>
+          <!-- FIN DE INPUT PARA CANTIDAD DE PRODUCTO -->
+          <!-- INICIO DE SELECT PARA UNIDAD DE PRODUCTO -->
+          <div class="col-4">
+            @if (!loadUnidad)
+            {
+              <select
+                class="form-control form-select-solid fw-bolder"
+                name="unidad_product"
+                [(ngModel)]="unidad_product"
+                placeholder="Selec. Unidad"
+                (change)="changeUnitProduct($event)"
+                [disabled]="isUnitSelectDisabled">
+                <option value="">Selecciona unidad</option>
+                @if (PRODUCT_SELECTED)
+                {
+                  @for (unit of PRODUCT_SELECTED.units; track unit.id)
+                  {
+                    <option [value]="unit.id">{{ unit.name }}</option>
+                  }
+                }
+              </select>
+              <small>Unidades disponibles:</small>
+            }
+            <!-- Mostrar mensaje de advertencia si está deshabilitado -->
+            @if (isUnitSelectDisabled)
+            {
+              <small class="text-warning">
+                {{ unitSelectDisabledMessage }}
+              </small>
+              <br>
+            }
+          </div>
+          <!-- FIN DE SELECT PARA UNIDAD DE PRODUCTO -->
+          <!-- INICIO DE SELECT PARA SELECCIONAR ALMACÉN DE PRODUCTO -->
+          <div class="col-4">
+            <select
+              class="form-control form-select-solid fw-bolder"
+              name="almacen_product"
+              [(ngModel)]="almacen_product"
+              placeholder="Selec. Unidad">
+              <option value="">Selecc. Almacén</option>
+              @for (almacen of warehouses_product; track $index)
+              {
+                <option [value]="almacen.id" [selected]="almacen.id === almacen_product">
+                  {{ almacen.warehouse.name }} ( {{almacen.quantity}} )
+                </option>
+              }
+            </select>
+            <small>
+              Almacén de producto
+            </small>
+          </div>
+          <!-- FIN DE SELECT PARA SELECCIONAR ALMACÉN DE PRODUCTO -->
+        </div>
+        <!-- FIN DE PRECIO, CANTIDAD, UNIDAD Y ALMACÉN -->
+        <!-- INICIO DE DESCUENTO, NOTAS, PRECIO Y TOTAL DE ARTÍCULO -->
+        <div class="fv-row row mb-7 align-items-center">
+          <!-- INICIO DE POSIBLE DESCUENTO DE PRODUCTO -->
+          @if (PRODUCT_SELECTED && PRODUCT_SELECTED.is_discount === 2)
+          {
+            <div class="col-4 mt-1">
+              <div class="form-group">
+                <div class="d-flex justify-content-between">
+                  <span>Descuento: </span>
+                  <span>{{ getDiscount().toFixed(2) }} €</span>
+                </div>
+                <!-- INICIO BARRA DE PROGRESO -->
+                <div class="progress mb-2" style="height: 25px;">
+                  <div class="progress-bar progress-bar-striped progress-bar-animated"
+                    role="progressbar"
+                    [style.width.%]="getDiscountPercentage()"
+                    [ngClass]="getProgressBarClass()"
+                    [attr.aria-valuenow]=" amount_discount || 0 "
+                    [attr.aria-valuemin]="PRODUCT_SELECTED.min_discount | number:'1.0-0'"
+                    [attr.aria-valuemax]="PRODUCT_SELECTED.max_discount | number:'1.0-0'">
+                    <span class="justify-content-center d-flex align-items-center h-100">
+                      {{ amount_discount || 0 }} / {{ getMaxDiscount() | number:'1.0-0' }} %
+                    </span>
+                  </div>
+                </div>
+                <!-- FIN BARRA DE PROGRESO -->
+                <!-- INICIO INPUT DE DESCUENTO -->
+                <div class="input-group">
+                  <span class="input-group-text">%</span>
+                  <input type="number"
+                    class="form-control"
+                    name="amount_discount"
+                    [(ngModel)]="amount_discount"
+                    (ngModelChange)="onDiscountModelChange()"
+                    (change)="verifiedDiscount()"
+                    (blur)="onDiscountBlur()"
+                    (keydown)="onDiscountKeydown($event)"
+                    placeholder="Descuento"
+                    [min]="getMinDiscount()"
+                    [max]="getMaxDiscount()"
+                    step="1" />
+                </div>
+                <!-- FIN DE INPUT DE DESCUENTO -->
+                <div class="d-flex justify-content-between mt-1">
+                  <small class="text-muted">Mín: {{ getMinDiscount().toFixed(2)  }} %</small>
+                  <small class="text-muted">Máx: {{ getMaxDiscount().toFixed(2)  }} %</small>
+                </div>
+              </div>
+            </div>
+          }
+          <!-- FIN DE POSIBLE DESCUENTO DE PRODUCTO -->
+          <!-- INICIO NOTAS SOBRE LA PROFORMA -->
+          <div class="col-3">
+            <small>
+              Notas sobre el producto
+            </small>
+            <textarea
+              class="form-control form-control-solid"
+              name="description_product"
+              [(ngModel)]="description_product"
+              rows="3"
+              placeholder="Notas">
+            </textarea>
+          </div>
+          <!-- FIN NOTAS SOBRE LA PROFORMA -->
+          <!-- INICIO DE CÁLCULO DE PRECIOS DE PRODUCTO EN PROFORMA -->
+          <div class="col-2">
+            @if (unidad_product && warehouses_product.length === 0)
+            {
+              <span class="text-danger">
+                No hay unidades disponibles de esa unidad en ninguna sucursal.
+              </span><br>
+            }
+            @if (unidad_product && warehouses_product.length > 0  && exists_warehouse.length === 0)
+            {
+              <span class="text-danger">
+                No hay unidades disponibles de esa unidad en nuestra sucursal.
+              </span>
+            }
+          </div>
+          <!-- FIN DE CÁLCULO DE PRECIOS DE PRODUCTO EN LA PROFORMA -->
+          <!-- INICIO DE PRECIO TOTAL DE PRODUCTO -->
+          <div class="col-3">
+            <span class="d-block p-2 bg-primary text-white"> <!-- Se sustituye ((price - getDiscount()) -->
+              Coste total del producto: 
+            </span>
+            <span class="d-block p-2 bg-dark text-white">
+              {{ ( (getUnitPrice() + ((getUnitPrice() * (getIvaPercentage()))) ) * quantity_product).toFixed(2) }} €
+            </span>
+          </div>
+          <!-- FIN DE PRECIO TOTAL DE PRODUCTO -->
+        </div>
+        <!-- FIN DE DESCUENTO, NOTAS, PRECIO Y TOTAL DE ARTÍCULO -->
+      </div>
+      <!-- COMIENZO DE BOTONES DE ACCIÓN -->
+      <div class="text-center pt-15">
+        <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()">Cerrar</button>
+        <button type="button" 
+                (click)="edit()" 
+                class="btn btn-primary" 
+                [disabled]="isLoading">
+          @if (!isLoading)
+          {
+            <span class="indicator-label">Editar</span>
+          }
+          @else
+          {
+            <span class="indicator-progress">
+              Actualizando... 
+              <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+            </span>
+          }
+        </button>
+      </div>
+      <!-- FIN DE BOTONES DE ACCIÓN -->
+    </form>
+    <!--end::Form-->
+  </div>
+  <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

@@ -13,5 +13,11 @@
         "postcss": "^8.4.47",
         "tailwindcss": "^3.4.13",
         "vite": "^5.0"
+    },
+    "dependencies": {
+        "ngx-mask": "^22.1.0"
+    },
+    "allowScripts": {
+        "esbuild@0.21.5": true
     }
 }

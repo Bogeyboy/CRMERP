@@ -347,12 +347,12 @@
                       @if (PRODUCT_SELECTED)
                       {
                         <small>Unidades disponibles:
-                          @for (unit of PRODUCT_SELECTED.units; track unit.id)
+                          <!-- @for (unit of PRODUCT_SELECTED.units; track unit.id)
                           {
                             <span>
                               ID: {{ unit.id }} - {{ unit.name }}
                             </span>
-                          }
+                          } -->
                         </small>
                       }
                     </div>
@@ -400,30 +400,15 @@
                     </div>
                     <!-- FIN DE CÁLCULO DE PRECIOS DE PRODUCTO EN LA PROFORMA -->
                     <!-- INICIO DE POSIBLE DESCUENTO DE PRODUCTO -->
-                    <!-- @if (PRODUCT_SELECTED)
-                    { -->
                     @if (PRODUCT_SELECTED && PRODUCT_SELECTED.is_discount === 2)
                     {
-                      <!-- <div class="col-4 mt-1">
-                        <input type="number"
-                        class="form-control mb-2"
-                        name="amount_discount"
-                        [(ngModel)]="amount_discount"
-                        (change) = "verifiedDiscount()"
-                        (keyup)="verifiedDiscount()"
-                        placeholder="Descuento"
-                        value="" />
-                        <small>Descuento del producto en euros.</small>
-                      </div> -->
-
                       <div class="col-4 mt-1">
                         <div class="form-group">
                           <div class="d-flex justify-content-between">
                             <span>Descuento: </span>
                             <span>{{ getDiscount().toFixed(2) }} €</span>
                           </div>
-
-                          <!-- Progress Bar -->
+                          <!-- INICIO BARRA DE PROGRESO -->
                           <div class="progress mb-2" style="height: 25px;">
                             <div class="progress-bar progress-bar-striped progress-bar-animated"
                               role="progressbar"
@@ -437,49 +422,48 @@
                               </span>
                             </div>
                           </div>
-
-                          <!-- Input oculto o visible según prefieras -->
+                          <!-- FIN BARRA DE PROGRESO -->
+                          <!-- INICIO INPUT DE DESCUENTO -->
                           <div class="input-group">
                             <span class="input-group-text">%</span>
                             <input type="number"
                               class="form-control"
                               name="amount_discount"
                               [(ngModel)]="amount_discount"
-                              (input)="onDiscountChange()"
+                              (ngModelChange)="onDiscountModelChange()"
                               (change)="verifiedDiscount()"
+                              (blur)="onDiscountBlur()"
+                              (keydown)="onDiscountKeydown($event)"  
                               placeholder="Descuento"
                               [min]="getMinDiscount()"
                               [max]="getMaxDiscount()"
                               step="1" />
                           </div>
-
+                          <!-- FIN DE INPUT DE DESCUENTO -->
                           <div class="d-flex justify-content-between mt-1">
-                            <!-- <small class="text-muted">Mín: {{ getMinDiscount() | number:'1.0-0' }} €</small>
-                            <small class="text-muted">Máx: {{ getMaxDiscount() | number:'1.0-0' }} €</small> -->
-
                             <small class="text-muted">Mín: {{ getMinDiscount().toFixed(2)  }} %</small>
                             <small class="text-muted">Máx: {{ getMaxDiscount().toFixed(2)  }} %</small>
                           </div>
-                          <!-- <small>Descuento del producto en euros.</small> -->
+                          <small>Descuento del producto.</small>
                         </div>
                       </div>
-
                     }
                     <!-- FIN DE POSIBLE DESCUENTO DE PRODUCTO -->
                   </div>
                   <!-- FIN DE SECCIÓN PARA BÚSQUEDA Y FILTROS -->
                 </div>
                 <div class="separator"></div>
+                <!-- INICIO DETALLADO DE PRECIOS E IMPUESTOS DE PRODUCTOS PARA AÑADIR A LA PROFORMA -->
                 <div>
                   <div class="fw-bold fs-4">
                     @if (PRODUCT_SELECTED)
                     {
                       <span>
-                        Descuento por unidad: {{ getDiscount() }} €.
+                        Descuento por unidad: {{ getDiscount() | formatNumber:2 }} €.
                       </span>
                       <br>
                       <span>
-                        Precio unitario después de descuento: {{ price-getDiscount() }} €.
+                        Precio unitario después de descuento: {{ getUnitPrice() | formatNumber:2 }} €. <!-- Se sustituye price - getDiscount() -->
                       </span>
                       <br>
                       <span>
@@ -487,11 +471,16 @@
                       </span>
                       <br>
                       <span>
-                        Precio unitario en euros después de impuestos: {{ ((price - getDiscount()) + ((price - getDiscount()) * (getIvaPercentage()))) }} €
+                        Cantidad de impuestos: {{ (getUnitPrice() * getIvaPercentage()) | formatNumber:2 }} €. <!-- Se sustituye ((price - getDiscount()) -->
                       </span>
                       <br>
-                      <span id="kt_ecommerce_edit_order_total_price">
-                        Coste total: {{ ( ((price - getDiscount()) + ( (price - getDiscount()) * (getIvaPercentage()) ) ) * quantity_product ).toFixed(2) }} €
+                      <span> <!-- Se sustituye ((price - getDiscount()) -->
+                        <!-- Precio unitario en euros después de impuestos: {{ ((price - getDiscount()) + ((price - getDiscount()) * (getIvaPercentage()))) }} € -->
+                        Precio unitario en euros después de impuestos: {{ (getUnitPrice() + (getUnitPrice() * (getIvaPercentage()))) | formatNumber:2 }} €
+                      </span>
+                      <br>
+                      <span id="kt_ecommerce_edit_order_total_price"> <!-- Se sustituye ((price - getDiscount()) -->
+                        Coste total del producto: {{ ( (getUnitPrice() + ((getUnitPrice() * (getIvaPercentage()))) ) * quantity_product) | formatNumber:2 }} €
                       </span>
                     }
                     @else
@@ -509,15 +498,20 @@
                       </span>
                       <br>
                       <span>
+                        Cantidad de impuestos: 0 €.
+                      </span>
+                      <br>
+                      <span>
                         Precio unitario en euros después de impuestos: 0 €
                       </span>
                       <br>
                       <span id="kt_ecommerce_edit_order_total_price">
-                        Coste total: 0 €
+                        Coste total del producto: 0 €
                       </span>
                     }
                   </div>
                 </div>
+                <!-- FIN DETALLADO DE PRECIOS E IMPUESTOS DE PRODUCTOS PARA AÑADIR A LA PROFORMA -->
               </div>
             </div>
             <!-- FIN CUERPO DE LA PROFORMA 2, SECCION PRODUCTOS-->
@@ -567,66 +561,121 @@
                       <!-- FIN DE CABECERA DE LA TABLA DE DETALLE DE LA PROFORMA -->
                       <!-- INICIO DE CUERPO DE LA TABLA DE DETALLE DE LA PROFORMA -->
                       <tbody>
-                        <tr>
-                          <td>
-                            <a href="#" class="text-gray-900 fw-bold text-hover-primary fs-6">
-                              Airbag piloto Changan A500
-                            </a>
-                          </td>
-
-                          <td>
-                            <!-- <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">Brasil</a> -->
-                            <span class="text-muted fw-semibold text-muted d-block fs-7">Unidad: Caja</span>
-                          </td>
-
-                          <td>
-                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">120 €</a>
-                            <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Code: Paid</span> -->
-                          </td>
-
-                          <td>
-                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">5</a>
-                            <!-- <span class="text-muted fw-semibold text-muted d-block fs-7">Web, UI/UX Design</span> -->
-                          </td>
-
-                          <td class="text-gray-900 fw-bold text-hover-primary fs-6">
-                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">100 €</a>
-                          </td>
-
-                          <td>
-                            <a href="#" class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">500 €</a>
-                          </td>
-                          <!-- COMIENZO DE LAS OPCIONES DE ACCIÓN -->
-                          <td class="text-end">
-                            <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                              <i class="ki-duotone ki-switch fs-2"><span class="path1"></span><span class="path2"></span></i>                                </a> -->
-
-                            <!-- INICIO BOTÓN EDITAR -->
-                            <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
-                              <i class="ki-duotone ki-pencil fs-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                              </i>
-                            </a>
-                            <!-- FIN BOTÓN EDITAR -->
-                            <!-- INICIO BOTÓN ELIMINAR -->
-                            <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
-                              <i class="ki-duotone ki-trash fs-2">
-                                <span class="path1"></span>
-                                <span class="path2"></span>
-                                <span class="path3"></span>
-                                <span class="path4"></span>
-                                <span class="path5"></span>
-                              </i>
-                            </a>
-                            <!-- FIN BOTÓN ELIMINAR -->
-                          </td>
-                          <!-- FIN DE LAS OPCIONES DE ACCIÓN -->
-                        </tr>
+                        @for (DETAIL_PROFOR of DETAIL_PROFORMAS; track $index)
+                        {
+                          <tr>
+                            <!-- INICIO DE NOMBRE DEL PRODUCTO EN DETALLADO DE PROFORMA -->
+                            <td>
+                              <a href="#"
+                                onclick="return false;"
+                                class="text-gray-900 fw-bold text-hover-primary fs-6">
+                                  {{ DETAIL_PROFOR.product.title }}
+                              </a>
+                            </td>
+                            <!-- FIN DE NOMBRE DE PRODUCTO EN DETALLADO DE PROFORMA -->
+                            <!-- INICIO DE UNIDAD DE PRODUCTO EN DETALLADO DE PROFORMA -->
+                            <td>
+                              <span class="text-muted fw-semibold text-muted d-block fs-7">
+                                {{ DETAIL_PROFOR.unit.name }}
+                              </span>
+                            </td>
+                            <!-- FIN DE UNIDAD DE PRODUCTO EN DETALLADO DE PROFORMA -->
+                            <!-- INICIO DE PRECIO UNITARIO DE PRODUCTO EN DETALLADO DE PROFORMA -->
+                            <td>
+                              <a href="#"
+                                onclick="return false;"
+                                class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">
+                                  {{ DETAIL_PROFOR.price_unit | formatNumber:2 }} €
+                                </a>
+                            </td>
+                            <!-- FIN DE PRECIO UNITARIO DE PRODUCTO EN DETALLADO DE PROFORMA -->
+                            <!-- INICIO DE CANTIDAD DE PRODUCTO EN DETALLADO DE LA PROFORMA -->
+                            <td>
+                              <a href="#"
+                                onclick="return false;"
+                                class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">
+                                  {{ DETAIL_PROFOR.quantity }}
+                              </a>
+                            </td>
+                            <!-- FIN DE CANTIDAD DE PRODUCTO EN DETALLADO DE LA PROFORMA -->
+                            <!-- INICIO DE SUBTOTAL DE PRODUCTO EN DETALLADO DE LA PROFORMA -->
+                            <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                              <a href="#"
+                                onclick="return false;"
+                                class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">
+                                  {{ DETAIL_PROFOR.subtotal | formatNumber:2 }} €
+                              </a>
+                            </td>
+                            <!-- FIN DE SUBTOTAL DE PRODUCTO EN DETALLADO DE LA PROFORMA -->
+                            <!-- INICIO DE TOTAL DE PRODUCTO EN DETALLADO DE LA PROFORMA -->
+                            <td>
+                              <a href="#"
+                                onclick="return false;"
+                                class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6">
+                                  {{ DETAIL_PROFOR.total | formatNumber:2 }} €
+                              </a>
+                            </td>
+                            <!-- FIN DE TOTAL DE PRODUCTO EN DETALLADO DE LA PROFORMA -->
+                            <!-- COMIENZO DE LOS BOTONES DE ACCIÓN -->
+                            <td class="text-end">
+                              <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                <i class="ki-duotone ki-switch fs-2"><span class="path1"></span><span class="path2"></span></i>                                </a> -->
+  
+                              <!-- INICIO BOTÓN EDITAR -->
+                              <a href="#"
+                                onclick="return false;"
+                                (click)="editProduct(DETAIL_PROFOR,$index)"
+                                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
+                                <i class="ki-duotone ki-pencil fs-2">
+                                  <span class="path1"></span>
+                                  <span class="path2"></span>
+                                </i>
+                              </a>
+                              <!-- FIN BOTÓN EDITAR -->
+                              <!-- INICIO BOTÓN ELIMINAR -->
+                              <a href="#"
+                                onclick="return false;"
+                                (click)="deleteProduct(DETAIL_PROFOR,$index)"
+                                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm">
+                                <i class="ki-duotone ki-trash fs-2">
+                                  <span class="path1"></span>
+                                  <span class="path2"></span>
+                                  <span class="path3"></span>
+                                  <span class="path4"></span>
+                                  <span class="path5"></span>
+                                </i>
+                              </a>
+                              <!-- FIN BOTÓN ELIMINAR -->
+                            </td>
+                            <!-- FIN DE LOS BOTONES DE ACCIÓN -->
+                          </tr>
+                        }
                       </tbody>
                       <!-- FIN DE CUERPO DE LA TABLA DE DETALLE DE LA PROFORMA -->
                     </table>
                     <!-- FIN DE TABLA DE DETALLE DE LA PROFORMA -->
+                    <div class="separator"></div>
+                    <!-- COMIENZO DE RESÚMEN DEL COSTE TOTAL DE LA PROFORMA -->
+                    <div>
+                      <div class="fw-bold fs-4">
+                        <span>
+                          Impuestos: {{ TOTAL_IMPUESTO_PROFORMA | formatNumber:2  }} €
+                        </span>
+                        <br>
+                        <span>
+                          Cantidad pendiente: {{ DEBT_PROFORMA | formatNumber:2  }} €
+                        </span>
+                        <br>
+                        <span>
+                          Ya pagado: {{ PAID_OUT_PROFORMA | formatNumber:2  }} €
+                        </span>
+                        <br>
+                        <span id="kt_ecommerce_edit_order_total_price"> 
+                          Coste total de la proforma: {{ TOTAL_PROFORMA | formatNumber:2  }} €
+                        </span>
+                      </div>
+                    </div>
+                    <!-- FIN DE RESÚMEN DEL COSTE TOTAL DE LA PROFORMA -->
                   </div>
                 </div>
               </div>

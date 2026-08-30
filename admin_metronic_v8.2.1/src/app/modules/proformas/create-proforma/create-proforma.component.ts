@@ -1,6 +1,8 @@
+import { FormatNumberPipe } from './../../../pipes/format-number.pipe';
+import { EditProductDetailProformaComponent } from './../components/edit-product-detail-proforma/edit-product-detail-proforma.component';
 import { ProformasService } from './../service/proformas.service';
 import { Component, inject, ChangeDetectorRef, AfterViewInit, ElementRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
-import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CreateClientsPersonComponent } from '../../clients/create-clients-person/create-clients-person.component';
 import { CreateClientsCompanyComponent } from '../../clients/create-clients-company/create-clients-company.component';
 import { ThisReceiver } from '@angular/compiler';
@@ -11,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { data } from 'jquery';
 import { SearchProductsComponent } from '../components/search-products/search-products.component';
 import { filter } from 'rxjs/operators';
-
+import { DeleteProductDetailProformaComponent } from '../components/delete-product-detail-proforma/delete-product-detail-proforma.component';
 @Component({
   selector: 'app-create-proforma',
   standalone: true,
@@ -22,16 +24,16 @@ import { filter } from 'rxjs/operators';
     SearchClientsComponent, // ✅ Importa el componente standalone
     CreateClientsPersonComponent,
     CreateClientsCompanyComponent,
-
+    FormatNumberPipe,
   ],
   templateUrl: './create-proforma.component.html',
   styleUrls: ['./create-proforma.component.scss']
 })
-export class CreateProformaComponent implements AfterViewInit {
 
+export class CreateProformaComponent implements AfterViewInit
+{
   //VARIABLES DE LOS CLIENTES
   CLIENT_SELECTED:any;
-
 
   n_document = '';
   full_name = '';
@@ -52,6 +54,12 @@ export class CreateProformaComponent implements AfterViewInit {
   exists_warehouse:any = [];
   amount_discount = 0;
 
+  //VARIABLES DETALLADO DE LA PROFORMA
+  DETAIL_PROFORMAS:any = [];
+  TOTAL_IMPUESTO_PROFORMA = 0;
+  TOTAL_PROFORMA = 0;
+  DEBT_PROFORMA = 0;
+  PAID_OUT_PROFORMA = 0;
 
   //VARIABLES DE DIRECCIÓN
   address = '';
@@ -182,7 +190,8 @@ export class CreateProformaComponent implements AfterViewInit {
     }
   }
 
-  handleProductEnter = (event: KeyboardEvent) => {
+  handleProductEnter = (event: KeyboardEvent) =>
+  {
     if (event.key === 'Enter')
     {
       event.preventDefault();
@@ -437,7 +446,6 @@ export class CreateProformaComponent implements AfterViewInit {
 
     modalRef.componentInstance.ProductSelected.subscribe((product:any)=>
     {
-      console.log('Producto seleccionado:', product);
       this.PRODUCT_SELECTED = product;
       this.updateProductFields();
       this.toast.success('Éxito', 'Se seleccionó el producto: ' + this.PRODUCT_SELECTED.title + ' correctamente.');
@@ -450,15 +458,18 @@ export class CreateProformaComponent implements AfterViewInit {
     if (this.PRODUCT_SELECTED)
     {
       this.search_product = this.PRODUCT_SELECTED.title;
-      this.amount_discount = this.PRODUCT_SELECTED.min_discount;
-      console.log('📦 Unidades del producto seleccionado:', this.PRODUCT_SELECTED.units);
-      console.log('💳 Wallets del producto seleccionado:', this.PRODUCT_SELECTED.wallets);
+      
+      // ✅ Establecer el descuento mínimo cuando se selecciona el producto
+      this.amount_discount = this.PRODUCT_SELECTED.min_discount || 0;
 
       // Si hay unidades, seleccionar la primera por defecto
       if (this.PRODUCT_SELECTED.units && this.PRODUCT_SELECTED.units.length > 0)
       {
           // No seleccionar automáticamente para que el usuario elija
       }
+      
+      // ✅ Forzar detección de cambios
+      this.cdr.detectChanges();
     }
   }
 
@@ -485,7 +496,6 @@ export class CreateProformaComponent implements AfterViewInit {
 
   changeUnitProduct($event: any)
   {
-    console.log('📦 Cambiando unidad de producto');
 
     // Validaciones iniciales
     // Validación rápida - si no hay cliente, no hacer nada
@@ -512,38 +522,27 @@ export class CreateProformaComponent implements AfterViewInit {
     this.warehouses_product = this.PRODUCT_SELECTED.warehouses.filter((wareh:any) => wareh.unit.id == UNIT_SELECTED);
     this.exists_warehouse = this.warehouses_product.filter((wareh:any) => wareh.warehouse.sucursale_id == this.sucursale_asesor);
 
-    console.log('UNIT_SELECTED (número):', UNIT_SELECTED);
-
     if (!UNIT_SELECTED || isNaN(UNIT_SELECTED))
     {
       this.price = this.PRODUCT_SELECTED.price_general || 0;
-      console.log('⚠️ No se seleccionó unidad válida, usando precio base:', this.price);
       return;
     }
 
     // Obtener wallets del producto
     const WALLETS = this.PRODUCT_SELECTED.wallets || [];
-    console.log('Wallets completos:', WALLETS);
-    console.log('Buscando unidad:', UNIT_SELECTED);
-    console.log('Sucursal asesor:', this.sucursale_asesor);
-    console.log('Segmento cliente ID:', this.CLIENT_SELECTED.client_segment?.id);
 
     // Verificar si es Super Admin (rol_id = 1)
     const isSuperAdmin = this.user?.rol_id === 1;
-    console.log('👑 Es Super Admin?', isSuperAdmin);
 
     let priceFound = null;
     let priceFoundDetails = '';
 
     // 1. Búsqueda por UNIDAD + SUCURSAL + SEGMENTO (Mayor prioridad)
-    console.log('🔍 Buscando regla 1: UNIDAD + SUCURSAL + SEGMENTO');
     priceFound = WALLETS.find((wallet: any) => {
       const unitId = Number(wallet.unit?.id);
       const sucursalId = Number(wallet.sucursale?.id);
       const segmentId = Number(wallet.client_segment?.id);
       const clientSegmentId = Number(this.CLIENT_SELECTED.client_segment?.id);
-
-      console.log(`Comparando: unit=${unitId} === ${UNIT_SELECTED}, sucursal=${sucursalId} === ${this.sucursale_asesor}, segment=${segmentId} === ${clientSegmentId}`);
 
       return unitId === UNIT_SELECTED &&
         sucursalId === this.sucursale_asesor &&
@@ -554,20 +553,16 @@ export class CreateProformaComponent implements AfterViewInit {
     {
       this.price = priceFound.price_general;
       priceFoundDetails = 'UNIDAD + SUCURSAL + SEGMENTO';
-      console.log(`✅ Precio encontrado por ${priceFoundDetails}:`, this.price);
       return;
     }
 
     // 2. Búsqueda por UNIDAD + SUCURSAL (sin segmento)
-    console.log('🔍 Buscando regla 2: UNIDAD + SUCURSAL (sin segmento)');
     priceFound = WALLETS.find((wallet: any) => {
       const unitId = Number(wallet.unit?.id);
       const sucursalId = Number(wallet.sucursale?.id);
       const hasSegment = wallet.client_segment !== null &&
                         wallet.client_segment !== undefined &&
                         wallet.client_segment?.id !== null;
-
-      console.log(`Comparando: unit=${unitId} === ${UNIT_SELECTED}, sucursal=${sucursalId} === ${this.sucursale_asesor}, hasSegment=${hasSegment}`);
 
       return unitId === UNIT_SELECTED &&
         sucursalId === this.sucursale_asesor &&
@@ -578,12 +573,10 @@ export class CreateProformaComponent implements AfterViewInit {
     {
       this.price = priceFound.price_general;
       priceFoundDetails = 'UNIDAD + SUCURSAL (sin segmento)';
-      console.log(`✅ Precio encontrado por ${priceFoundDetails}:`, this.price);
       return;
     }
 
     // 3. Búsqueda por UNIDAD + SEGMENTO (sin sucursal)
-    console.log('🔍 Buscando regla 3: UNIDAD + SEGMENTO (sin sucursal)');
     priceFound = WALLETS.find((wallet: any) => {
       const unitId = Number(wallet.unit?.id);
       const hasSucursal = wallet.sucursale !== null &&
@@ -591,8 +584,6 @@ export class CreateProformaComponent implements AfterViewInit {
                           wallet.sucursale?.id !== null;
       const segmentId = Number(wallet.client_segment?.id);
       const clientSegmentId = Number(this.CLIENT_SELECTED.client_segment?.id);
-
-      console.log(`Comparando: unit=${unitId} === ${UNIT_SELECTED}, hasSucursal=${hasSucursal}, segment=${segmentId} === ${clientSegmentId}`);
 
       return unitId === UNIT_SELECTED &&
         !hasSucursal &&
@@ -603,13 +594,11 @@ export class CreateProformaComponent implements AfterViewInit {
     {
       this.price = priceFound.price_general;
       priceFoundDetails = 'UNIDAD + SEGMENTO (sin sucursal)';
-      console.log(`✅ Precio encontrado por ${priceFoundDetails}:`, this.price);
       this.verifiedDiscount();
       return;
     }
 
     // 4. Búsqueda por UNIDAD (sin sucursal ni segmento)
-    console.log('🔍 Buscando regla 4: UNIDAD (sin sucursal ni segmento)');
     priceFound = WALLETS.find((wallet: any) => {
       const unitId = Number(wallet.unit?.id);
       const hasSucursal = wallet.sucursale !== null &&
@@ -618,8 +607,6 @@ export class CreateProformaComponent implements AfterViewInit {
       const hasSegment = wallet.client_segment !== null &&
                         wallet.client_segment !== undefined &&
                         wallet.client_segment?.id !== null;
-
-      console.log(`Comparando: unit=${unitId} === ${UNIT_SELECTED}, hasSucursal=${hasSucursal}, hasSegment=${hasSegment}`);
 
       return unitId === UNIT_SELECTED &&
       !hasSucursal &&
@@ -630,21 +617,18 @@ export class CreateProformaComponent implements AfterViewInit {
     {
       this.price = priceFound.price_general;
       priceFoundDetails = 'UNIDAD (sin sucursal ni segmento)';
-      console.log(`✅ Precio encontrado por ${priceFoundDetails}:`, this.price);
       this.verifiedDiscount();
       return;
     }
 
     // 5. Precio base del producto (Última opción)
     this.price = this.PRODUCT_SELECTED.price_general || 0;
-    console.log(`⚠️ No se encontró precio específico, usando precio base:`, this.price);
     this.verifiedDiscount();
   }
 
   // Método para obtener el descuento mínimo
   getMinDiscount(): number
   {
-    //return (this.PRODUCT_SELECTED.min_discount * 0.01) * this.price;
     return this.PRODUCT_SELECTED.min_discount;
   }
 
@@ -664,18 +648,26 @@ export class CreateProformaComponent implements AfterViewInit {
     return Math.min(percentage, 100); // No superar el 100%
   }
 
+  //FUNCIÓN PARA OBTENER EL PRECIO UNITARIO
+  getUnitPrice(): number
+  {
+    let precio = this.price - this.getDiscount();
+    return precio;
+  }
+  
+  //FUNCIÓN PARA OBTENER EL DESCUENTO POR UNIDAD
   getDiscount(): number
   {
     let discount = this.price*(this.amount_discount/100);
-    console.log(discount);
     return discount;
   }
 
   getIvaPercentage(): number
   {
+    //DEVUELVE EL IMPUESTO DEL PRODUCTO
     let iva = this.PRODUCT_SELECTED.importe_iva;
     let percentage = iva * 0.01;
-    //console.log('Este es el iva del producto: ' + iva + ' cuya cantidad total es de: ' + percentage);
+    
     return percentage;
   }
 
@@ -689,41 +681,278 @@ export class CreateProformaComponent implements AfterViewInit {
     if (percentage <= 90) return 'bg-primary';
     return 'bg-success'; // Más del 90% es peligroso
   }
-
+  
   // Manejar cambios en tiempo real
   onDiscountChange(): void
   {
-    //this.verifiedDiscount();
+    // Obtener los valores mínimo y máximo
+    const minDiscount = this.getMinDiscount();
     const maxDiscount = this.getMaxDiscount();
-    if (this.amount_discount > maxDiscount)
-    {
+    
+    // ✅ IMPORTANTE: Asegurar que amount_discount sea un número
+    if (this.amount_discount === null || this.amount_discount === undefined || isNaN(this.amount_discount)) {
+      this.amount_discount = minDiscount;
+      return;
+    }
+
+    // ✅ Validación del mínimo
+    if (this.amount_discount < minDiscount) {
+      this.amount_discount = minDiscount;
+      this.toast.warning('Advertencia', `El descuento mínimo permitido es ${minDiscount}%`);
+    }
+    
+    // ✅ Validación del máximo
+    if (this.amount_discount > maxDiscount) {
       this.amount_discount = maxDiscount;
-      this.toast.warning('Advertencia', 'Se ha ajustado al máximo permitido');
+      this.toast.warning('Advertencia', `El descuento máximo permitido es ${maxDiscount}%`);
+    }
+  }
+
+  // Método mejorado para manejar cambios en el modelo
+  onDiscountModelChange(): void
+  {
+    const minDiscount = this.getMinDiscount();
+    const maxDiscount = this.getMaxDiscount();
+    
+    console.log('🔄 Valor actual del descuento:', this.amount_discount);
+    console.log('📊 Mínimo:', minDiscount, 'Máximo:', maxDiscount);
+    
+    // Validar que sea un número válido
+    if (this.amount_discount === null || 
+        this.amount_discount === undefined || 
+        isNaN(this.amount_discount)) {
+      this.amount_discount = minDiscount;
+      this.toast.warning('Advertencia', `El descuento mínimo permitido es ${minDiscount}%`);
+      this.cdr.detectChanges();
+      return;
+    }
+
+    // ✅ Validación del mínimo
+    if (this.amount_discount < minDiscount) {
+      this.amount_discount = minDiscount;
+      this.toast.warning('Advertencia', `El descuento mínimo permitido es ${minDiscount}%`);
+      // ✅ FORZAR ACTUALIZACIÓN VISUAL
+      this.cdr.detectChanges();
+      return;
+    }
+    
+    // ✅ Validación del máximo
+    if (this.amount_discount > maxDiscount) {
+      this.amount_discount = maxDiscount;
+      this.toast.warning('Advertencia', `El descuento máximo permitido es ${maxDiscount}%`);
+      this.cdr.detectChanges();
+      return;
+    }
+  }
+
+  // Método para manejar cuando el input queda vacío
+  onDiscountInput(event: any): void
+  {
+    const value = event.target.value;
+    
+    // Si el usuario borra todo el contenido, restaurar al mínimo
+    if (value === '' || value === null || value === undefined) {
+      this.amount_discount = this.getMinDiscount();
+      this.cdr.detectChanges();
+      return;
+    }
+    
+    // Si el valor no es un número válido, restaurar al mínimo
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) {
+      this.amount_discount = this.getMinDiscount();
+      this.cdr.detectChanges();
+      return;
+    }
+    
+    // Si el valor es válido, aplicar las validaciones normales
+    this.onDiscountChange();
+  }
+
+  onDiscountBlur(): void
+  {
+    const minDiscount = this.getMinDiscount();
+    const maxDiscount = this.getMaxDiscount();
+    
+    console.log('👀 Blur - Validando descuento...');
+    console.log('Valor actual:', this.amount_discount);
+    
+    if (this.amount_discount === null || 
+        this.amount_discount === undefined || 
+        isNaN(this.amount_discount)) {
+      this.amount_discount = minDiscount;
+      this.toast.warning('Validación', `El descuento se ha ajustado al mínimo permitido (${minDiscount}%)`);
+      this.cdr.detectChanges();
+      return;
+    }
+    
+    if (this.amount_discount < minDiscount) {
+      this.amount_discount = minDiscount;
+      this.toast.warning('Validación', `El descuento se ha ajustado al mínimo permitido (${minDiscount}%)`);
+      this.cdr.detectChanges();
+      return;
+    }
+    
+    if (this.amount_discount > maxDiscount) {
+      this.amount_discount = maxDiscount;
+      this.toast.warning('Validación', `El descuento se ha ajustado al máximo permitido (${maxDiscount}%)`);
+      this.cdr.detectChanges();
+      return;
+    }
+    
+    // Forzar actualización de la vista
+    this.cdr.detectChanges();
+  }
+
+  forceDiscountUpdate(): void
+  {
+    // Pequeño truco: cambiar y restaurar el valor para forzar la actualización
+    const currentValue = this.amount_discount;
+    this.amount_discount = currentValue + 0.1;
+    this.cdr.detectChanges();
+    
+    setTimeout(() => {
+      this.amount_discount = currentValue;
+      this.cdr.detectChanges();
+    }, 10);
+  }
+
+  onDiscountKeydown(event: KeyboardEvent): void
+  {
+    // Obtener el valor actual del input
+    const input = event.target as HTMLInputElement;
+    const currentValue = parseFloat(input.value);
+    const minDiscount = this.getMinDiscount();
+    
+    // Si el usuario intenta escribir un número menor al mínimo, mostrar advertencia
+    if (event.key === 'Enter' || event.key === 'Tab')
+    {
+      // Validar al presionar Enter o Tab
+      setTimeout(() => {
+        if (this.amount_discount < minDiscount)
+        {
+          this.amount_discount = minDiscount;
+          this.toast.warning('Validación', `Se ha ajustado al descuento mínimo que es del  ${minDiscount}%`);
+          this.cdr.detectChanges();
+        }
+      }, 10);
     }
   }
 
   // Método verificado mejorado
   verifiedDiscount(): void
   {
-    console.log('Descuento de: ' + this.price*(this.amount_discount/100) + ' €');
-    //console.log('Coste total de: ' + ((this.price - this.getDiscount()) * this.quantity_product).toFixed(2));
-
     const MIN_DISCOUNT_REAL = this.getMinDiscount();
     const MAX_DISCOUNT_REAL = this.getMaxDiscount();
 
-    // Permitir descuento 0
-    if (this.amount_discount < 0)
+    console.log('🔍 Verificando descuento...');
+    console.log('Valor actual:', this.amount_discount);
+    console.log('Mínimo:', MIN_DISCOUNT_REAL, 'Máximo:', MAX_DISCOUNT_REAL);
+
+    // ✅ Validación del mínimo (PRIMERO)
+    if (this.amount_discount < MIN_DISCOUNT_REAL)
     {
-      this.amount_discount = 0;
-      this.toast.error('Validación', 'El descuento no puede ser negativo');
+      this.amount_discount = MIN_DISCOUNT_REAL;
+      this.toast.error('Validación', `El descuento no puede ser menor al mínimo permitido (${MIN_DISCOUNT_REAL}%)`);
+      // ✅ FORZAR ACTUALIZACIÓN VISUAL
+      this.cdr.detectChanges();
       return;
     }
 
+    // ✅ Validación del máximo (SEGUNDO)
     if (this.amount_discount > MAX_DISCOUNT_REAL)
     {
-      this.toast.error('Validación', 'El descuento realizado es mayor de lo permitido.');
-      this.amount_discount = MIN_DISCOUNT_REAL;
+      this.amount_discount = MAX_DISCOUNT_REAL;
+      this.toast.error('Validación', `El descuento no puede ser mayor al máximo permitido (${MAX_DISCOUNT_REAL}%)`);
+      this.cdr.detectChanges();
+      return;
     }
+
+    // ✅ Si el valor es válido, no hacer nada
+    this.cdr.detectChanges();
+  }
+
+  addProduct()
+  {
+    if(!this.PRODUCT_SELECTED)
+    {
+      this.toast.error('Validación', 'No hay seleccionado ningún producto.');
+      return;
+    }
+    if(this.price == 0)
+    {
+      this.toast.error('Validación', 'No hay precio seleccionado para el producto.');
+      return;
+    }
+    
+    if(this.quantity_product == 0)
+    {
+      this.toast.error('Validación', 'No hay cantidad seleccionada para el producto.');
+      return;
+    }
+
+    if(!this.unidad_product)
+    {
+      this.toast.error('Validación', 'No hay unidad seleccionada para el producto.');
+      return;
+    }
+
+    //AQUÍ VERIFICO SI HAY EXISTENCIAS DE LAS UNIDADES SELECCIONADAS EN EL ALMACÉN INDICADO
+    if(this.PRODUCT_SELECTED && this.PRODUCT_SELECTED.disponibilidad)
+    {
+      if( (this.unidad_product && this.warehouses_product.length == 0) ||
+        (this.unidad_product && this.warehouses_product.length > 0 && this.exists_warehouse.length == 0) )
+      {
+        this.toast.error('Perfecto', 'No hay existencias disponibles para agregar el producto.');
+        return
+      }
+    }
+    
+    //let SUBTOTAL = this.price - this.getDiscount();
+    let CANIMPUESTO = this.getUnitPrice() * this.getIvaPercentage(); //ES LO QUE SE LE AÑADE A CADA PRODUCTO DE IMPUESTOS
+    let SUBTOTAL = this.getUnitPrice() + (CANIMPUESTO);
+    let UNIDAD = this.PRODUCT_SELECTED.units.find((item:any)=> item.id == this.unidad_product);
+    let TOTAL = ((this.getUnitPrice() + ((this.getUnitPrice() * (this.getIvaPercentage())))) * this.quantity_product);
+    let IMPUESTO = this.getIvaPercentage(); //ES EL IMPUESTO EN PORCENTAJE
+
+    // ✅ Encontrar el almacén seleccionado
+    let ALMACEN_SELECTED = null;
+    if (this.almacen_product)
+    {
+      ALMACEN_SELECTED = this.warehouses_product.find((item:any) => item.id == this.almacen_product);
+    }
+
+    //SE AÑADEN LOS PRODUCTOS AL DETALLADO DE LA PROFORMA
+    this.DETAIL_PROFORMAS.push({
+      product: this.PRODUCT_SELECTED,
+      description: this.description_product,
+      unidad_product: this.unidad_product,
+      unit: UNIDAD,
+      quantity: this.quantity_product,
+      price_unit: this.price,
+      discount: this.amount_discount, // ← Cambiar: guardar el porcentaje en lugar del valor en euros
+      discount_amount: this.getDiscount(), // ← Opcional: guardar el valor en euros si lo necesitas
+      almacen_product: this.almacen_product, // ✅ ID del almacén seleccionado
+      warehouse: ALMACEN_SELECTED, // ✅ Objeto completo del almacén (opcional)
+      subtotal: SUBTOTAL,
+      impuesto: IMPUESTO, // EN PORCENTAJE
+      canimpuesto: CANIMPUESTO, // EN MONEDA
+      total: TOTAL,
+    });
+    this.resetProduct();
+    this.sumTotalDetail(); // SE CALCULA CADA VEZ QUE SE AÑADE UN PRODUCTO AL DETALLADO
+  }
+
+  sumTotalDetail()
+  {
+    //LA FUNCIÓN reduce NOS PERMITE SUMARN EN BASE A UN CAMPO QUE TENGA EL ARRAY DE OBJETOS
+      //SE LE PASAN DOS PARÁMETROS, LA SUMA Y EL OBJETO ITERADOR
+    this.TOTAL_PROFORMA = Math.round(this.DETAIL_PROFORMAS.reduce((sum:number, current:any) => sum+current.total,0));
+    this.TOTAL_IMPUESTO_PROFORMA = Math.round(this.DETAIL_PROFORMAS.reduce((sum:number, current:any) => sum+current.canimpuesto,0));
+    this.DEBT_PROFORMA = this.TOTAL_PROFORMA - this.PAID_OUT_PROFORMA;
+    //PAID_OUT_PROFORMA
+
+    this.isLoadingProcess();
   }
 
   resetProduct()
@@ -754,44 +983,78 @@ export class CreateProformaComponent implements AfterViewInit {
     this.toast.success('Éxito', 'Producto reseteado correctamente');
   }
 
-  addProduct()
+  editProduct(DETAIL_PROFOR:any, INDEX:number)
   {
-    if(!this.PRODUCT_SELECTED)
-    {
-      this.toast.error('Validación', 'No hay seleccionado ningún producto.');
-      return;
-    }
+    const modalRef = this.modalService.open(EditProductDetailProformaComponent,{size:'xl',centered:true});
 
-    if(this.price == 0)
-    {
-      this.toast.error('Validación', 'No hay precio seleccionado para el producto.');
-      return;
-    }
-    if(this.quantity_product == 0)
-    {
-      this.toast.error('Validación', 'No hay cantidad seleccionada para el producto.');
-      return;
-    }
-    if(!this.unidad_product)
-    {
-      this.toast.error('Validación', 'No hay unidad seleccionada para el producto.');
-      return;
-    }
+    //modalRef.componentInstance.DETAIL_PRODUCT = DETAIL_PROFOR;
+    
+    modalRef.componentInstance.DETAIL_PRODUCT = {...DETAIL_PROFOR};
+    modalRef.componentInstance.sucursale_asesor = this.sucursale_asesor;
+    modalRef.componentInstance.CLIENT_SELECTED = this.CLIENT_SELECTED;
+    modalRef.componentInstance.user = this.proformaService.authservice.user;
 
-    if(this.PRODUCT_SELECTED && this.PRODUCT_SELECTED.disponibilidad)
-    {
-      if( (this.unidad_product && this.warehouses_product.length == 0) ||
-        (this.unidad_product && this.warehouses_product.length > 0 && this.exists_warehouse.length == 0) )
-      {
-        this.toast.error('Perfecto', 'No hay existencias disponibles para agregar el producto.');
-        return
-      }
-    }
+    modalRef.componentInstance.EditProductProforma.subscribe((product_edit:any) => {
+      
+      console.log('🔄 Producto editado recibido:', product_edit);
+      
+      this.DETAIL_PROFORMAS[INDEX] = product_edit;
+
+      // Forzar la detección de cambios
+      this.cdr.detectChanges();
+      // Mostrar mensaje de éxito
+      this.toast.success('Éxito', 'Producto actualizado correctamente');
+      // Pequeño retraso para asegurar que la vista se actualice
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      }, 100);
+      
+      this.isLoadingProcess();
+      this.sumTotalDetail();
+    });
+
+    // Manejar el cierre del modal sin cambios
+    modalRef.dismissed.subscribe(() => {
+      console.log('Modal cerrado sin cambios');
+    });
+    
   }
+
+  deleteProduct(DETAIL_PROFOR:any, INDEX:number)
+  {
+    const modalRef = this.modalService.open(DeleteProductDetailProformaComponent,{size:'xl',centered:true});
+
+    //modalRef.componentInstance.DETAIL_PRODUCT = DETAIL_PROFOR;
+    
+    modalRef.componentInstance.DETAIL_PRODUCT = {...DETAIL_PROFOR};
+
+    modalRef.componentInstance.DeleteProductProforma.subscribe((product_edit:any) => {
+      
+      this.DETAIL_PROFORMAS.splice(INDEX, 1) ;
+
+      // Forzar la detección de cambios
+      this.cdr.detectChanges();
+      // Mostrar mensaje de éxito
+      this.toast.success('Éxito', 'Producto eliminado correctamente del detallado de la proforma');
+      // Pequeño retraso para asegurar que la vista se actualice
+      setTimeout(() => {
+        this.cdr.detectChanges();
+      }, 100);
+      
+      this.isLoadingProcess();
+      this.sumTotalDetail();
+    });
+
+    // Manejar el cierre del modal sin cambios
+    modalRef.dismissed.subscribe(() => {
+      console.log('Modal cerrado sin cambios');
+    });
+  }
+  
   //FIN DE FUNCIONES PARA LOS PRODUCTOS
 
   saveChanges()
   {
-
+    console.log('Holaaaaaaa');
   }
 }

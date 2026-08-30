@@ -11,6 +11,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthService } from './modules/auth/services/auth.service';
 import { environment } from 'src/environments/environment';
+//CONFIGURACIÓN DE MONEDA Y HORARIA
+
 
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
@@ -37,51 +39,59 @@ function appInitializer(authService: AuthService) {
 
 const mockImports = environment.isMockEnabled
   ? [
-      HttpClientInMemoryWebApiModule.forRoot(FakeAPIService, {
+      HttpClientInMemoryWebApiModule.forRoot(FakeAPIService,
+      {
         passThruUnknownUrl: true,
         dataEncapsulation: false,
       })
     ]
   : [];
 
-@NgModule({
-    declarations: [AppComponent],
-    bootstrap: [AppComponent],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        RouterModule.forRoot([
+@NgModule(
+{
+  declarations: [AppComponent],
+  bootstrap: [AppComponent],
+  imports:
+  [
+    BrowserModule,
+    BrowserAnimationsModule,
+    RouterModule.forRoot([
 
-        ]),
-        TranslateModule.forRoot(),
-        InlineSVGModule.forRoot(),
-        ClipboardModule,
-        AppRoutingModule,
-        InlineSVGModule.forRoot(),
-        NgbModule,
-        NgApexchartsModule,
-        ToastrModule.forRoot({
-          timeOut: 3000,
-          progressBar: true,
-          closeButton: true,
-          positionClass: 'toast-top-right'
-        }),
-        NgbPaginationModule,
-        ...mockImports
-    ],
-    providers: [
-        {
-            provide: APP_INITIALIZER,
-            useFactory: appInitializer,
-            multi: true,
-            deps: [AuthService],
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: AuthInterceptor,
-            multi: true
-        },
-        provideHttpClient(withInterceptorsFromDi()),
+    ]),
+    TranslateModule.forRoot(),
+    InlineSVGModule.forRoot(),
+    ClipboardModule,
+    AppRoutingModule,
+    InlineSVGModule.forRoot(),
+    NgbModule,
+    NgApexchartsModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      progressBar: true,
+      closeButton: true,
+      positionClass: 'toast-top-right'
+    }),
+    NgbPaginationModule,
+    ...mockImports
+  ],
+  providers:
+  [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInitializer,
+      multi: true,
+      deps: [AuthService],
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    },
+    /* provideNgxMask({
+      thousandSeparator: '.',
+      decimalMarker: ','
+    }), */
+    provideHttpClient(withInterceptorsFromDi()),
     ]
 })
 export class AppModule { }
