@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductCollection;
 use App\Models\Client\Client;
 use App\Models\Configuration\client_segment;
+use App\Models\configuration\MethodPayment;
+use App\Models\Configuration\Sucursal_deliverie;
 use App\Models\Product\Product;
 use App\Models\Proforma\Proforma;
 use App\Models\User;
@@ -15,18 +17,19 @@ use NunoMaduro\Collision\Adapters\Phpunit\State;
 
 class ProformaController extends Controller
 {
-    /**
-     * Aquí mostramos todos los registros de la tabla
-     */
-
     public function config()
     {
+        date_default_timezone_set('Europe/Madrid');
         try
         {
             $client_segment = client_segment::where('state', 1)->get();
             $asesores = User::whereHas('roles', function ($q) {
                 $q->where('name', 'like', '%Asesor%');
             })->get();
+            
+            $sucursal_deliverie = Sucursal_deliverie::where('state',1)->get();
+            $method_payments = MethodPayment::where('state',1)->whereNull('method_payment_id')->get();
+            $today = now()->format('d/m/Y');
 
             return response()->json([
                 'client_segments' => $client_segment,
@@ -35,7 +38,27 @@ class ProformaController extends Controller
                         'id' => $user->id,
                         'full_name' => $user->name . ' ' . $user->surname,
                     ];
-                })
+                }),
+                'sucursal_deliverie' => $sucursal_deliverie->map(function ($sucursale_del){
+                    return [
+                        'id' => $sucursale_del->id,
+                        'name' => $sucursale_del->name,
+                    ];
+                }),
+                'method_payments' => $method_payments->map(function($method_payment) {
+                    return [
+                        'id' => $method_payment->id,
+                        'name' => $method_payment->name,
+                        'bancos' =>$method_payment->method_payments->map(function($children){
+                            return [
+                                'id' => $children->id,
+                                'name' => $children->name,
+                            ];
+                        }),
+                        'state' => $method_payment->state,
+                    ];
+                }),
+                'today' => $today,
             ]);
         }
         catch (\Exception $e)
@@ -109,17 +132,13 @@ class ProformaController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     */
+    //MOSTRAR ELEMENTO ESPECÍFICO
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Actuialización de los registros de la tabla
-     */
+    //ACTUALIZACIÓN DE REGISTROS DE LA PROFORMA
     public function update(Request $request, string $id)
     {
         //DB::enableQueryLog();
@@ -131,9 +150,7 @@ class ProformaController extends Controller
         ]);
     }
 
-    /**
-     * Eliminación de los registros de la tabla
-     */
+    //ELIMINACIÓN DE REGISTROS
     public function destroy(string $id)
     {
         $proforma = Proforma::findOrFail($id);

@@ -162,10 +162,11 @@ class AuthController extends \Illuminate\Routing\Controller
                 // Campos que sidebar necesita
                 'roles' => $roles,
                 'is_super' => $isSuper,
+                'rol_name' => $isSuper ? 'Super-Admin' : (count($roles) > 0 ? $roles[0] : ''),
                 'permissions' => $permissions,
                 // Campos adicionales para compatibilidad
-                'rol_name' => $isSuper ? 'Super-Admin' : (count($roles) > 0 ? $roles[0] : ''),
-                'sucursale_id' => $user->sucursale_id
+                'sucursale_id' => $user->sucursale_id,
+                'sucursale_name' => $user->sucursale->name,
             ]
         ]);
     }

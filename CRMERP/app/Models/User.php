@@ -4,6 +4,7 @@ namespace App\Models;
 
 //use Laravel\Sanctum\HasApiTokens;
 //use Spatie\Permission\Models\Role;
+use App\Models\Configuration\Sucursale;
 use Spatie\Permission\Traits\HasRoles;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -70,6 +71,10 @@ class User extends Authenticatable implements JWTSubject
     /* public function rol(){
         return $this->belongsTo(Role::class);
     } */
+
+    public function sucursale(){
+        return $this->belongsTo(Sucursale::class);
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

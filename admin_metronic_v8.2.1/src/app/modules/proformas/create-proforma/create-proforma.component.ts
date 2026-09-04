@@ -1,3 +1,6 @@
+import { UBIGEO_DISTRITOS } from './../../../config/ubigeo_distritos';
+import { UBIGEO_PROVINCIAS } from './../../../config/ubigeo_provincias';
+import { UBIGEO_REGIONES } from './../../../config/ubigeo_regiones';
 import { FormatNumberPipe } from './../../../pipes/format-number.pipe';
 import { EditProductDetailProformaComponent } from './../components/edit-product-detail-proforma/edit-product-detail-proforma.component';
 import { ProformasService } from './../service/proformas.service';
@@ -32,6 +35,10 @@ import { DeleteProductDetailProformaComponent } from '../components/delete-produ
 
 export class CreateProformaComponent implements AfterViewInit
 {
+
+  //VARIABLES DE LOS COMPROBANTES
+  payment_file: any;
+  imagenprevisualiza:any = 'assets/media/svg/files/blank-image.svg';
   //VARIABLES DE LOS CLIENTES
   CLIENT_SELECTED:any;
 
@@ -40,6 +47,8 @@ export class CreateProformaComponent implements AfterViewInit
   phone = '';
   birthdate: string | null  = null;
   displayBirthdate = '';
+  TODAY = 'D/M/YYYY'; // Variable para almacenar la fecha actual
+
   //VARIABLES DE LOS PRODUCTOS
   PRODUCT_SELECTED:any;
   loadUnidad = false;
@@ -63,18 +72,22 @@ export class CreateProformaComponent implements AfterViewInit
 
   //VARIABLES DE DIRECCIÓN
   address = '';
-  delivery_date = '';
-
-  delivery_place = '';
-
+  delivery_date:any = null;
+  //delivery_place = '';
   ubigeo_region = '';
   ubigeo_provincia = '';
   ubigeo_distrito = '';
   region = '';
   provincia = '';
-  REGIONES: any = [];
-  PROVINCIAS: any = [];
-  DISTRITOS: any = [];
+  distrito = '';
+  REGIONES:any = UBIGEO_REGIONES;
+  PROVINCIAS:any = UBIGEO_PROVINCIAS;
+  DISTRITOS:any = UBIGEO_DISTRITOS;
+
+  sucursal_deliverie_id = 0;
+  sucursal_deliverie:any = [];//PARA LA LISTA DE SITIOS DE ENTREGA
+
+
   PROVINCIA_SELECTEDS: any = [];
   DISTRITOS_SELECTEDS: any = [];
 
@@ -86,6 +99,10 @@ export class CreateProformaComponent implements AfterViewInit
 
   //VARIABLES DEL PAGO
   amount_payment = 0;
+  method_payments: any = [];
+  method_payment_id = 0;
+  METHOD_PAYMENT_SELECTED: any;
+  banco_id = 0;
 
   //VARIABLES VARIAS
   client_segments: any = [];
@@ -111,6 +128,18 @@ export class CreateProformaComponent implements AfterViewInit
   {
 
   }
+  processFile($event:any){
+    if($event.target.files[0].type.indexOf("image") < 0){
+      this.toast.warning("WARN","El archivo no es una imagen");
+      return;
+    }
+    this.payment_file = $event.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(this.payment_file);
+    reader.onloadend = () => this.imagenprevisualiza = reader.result;
+    this.isLoadingProcess();
+  }
+
   isLoadingProcess(){
     this.proformaService.isLoadingSubject.next(true);
     setTimeout(() => {
@@ -128,6 +157,10 @@ export class CreateProformaComponent implements AfterViewInit
       console.log(resp);
       this.client_segments = resp.client_segments;
       this.asesores = resp.asesores;
+      this.sucursal_deliverie = resp.sucursal_deliverie;
+      this.method_payments = resp.method_payments;
+      this.TODAY = resp.today;
+      this.isLoadingProcess();
     });
   }
 
@@ -214,7 +247,7 @@ export class CreateProformaComponent implements AfterViewInit
     const [day, month, year] = dateStr.split('-');
     return `${year}-${month}-${day}`;
   }
-
+  
   updateBirthdate(event: any)
   {
     const value = event.target.value;
@@ -254,36 +287,13 @@ export class CreateProformaComponent implements AfterViewInit
     }
   }
 
-  changeRegion($event: any)
+  //INICIO DE FUNCIONES PARA LOS MÉTODOS DE PAGO
+  changeMethod_payment()
   {
-    console.log($event.target.value);
-    let REGION_ID = $event.target.value;
-    //let REGION_SELECTED = this.REGIONES.find((region:any)=>region.id = REGION_ID);
-    let REGION_SELECTED = this.REGIONES.find((region:any)=>region.id === REGION_ID);
-    if(REGION_SELECTED)
-    {
-      this.region = REGION_SELECTED.name;
-    }
-
-    let provincias = this.PROVINCIAS.filter((provincia:any) => provincia.department_id == REGION_ID);
-    this.PROVINCIA_SELECTEDS = provincias;
-    console.log(provincias);
+    this.METHOD_PAYMENT_SELECTED = this.method_payments.find((item:any) => item.id == this.method_payment_id);
+    this.isLoadingProcess();
   }
-
-  changeProvincia($event: any)
-  {
-    console.log($event.target.value);
-    let PROVINCIA_ID = $event.target.value;
-    //let PROVINCIA_SELECTED = this.PROVINCIAS.find((prov:any)=>prov.id = PROVINCIA_ID);
-    let PROVINCIA_SELECTED = this.PROVINCIAS.find((prov:any)=>prov.id === PROVINCIA_ID);
-    if(PROVINCIA_SELECTED)
-    {
-      this.provincia = PROVINCIA_SELECTED.name;
-    }
-    let distritos = this.DISTRITOS.filter((distrito:any) => distrito.province_id == PROVINCIA_ID);
-    this.DISTRITOS_SELECTEDS = distritos;
-    console.log(distritos);
-  }
+  //FIN DE FUNCIONES PARA LOS MÉTODOS DE PAGO
 
   //INICIO DE FUNCIONES PARA LOS CLIENTES
   searchClients(event?: Event)
@@ -1050,8 +1060,74 @@ export class CreateProformaComponent implements AfterViewInit
       console.log('Modal cerrado sin cambios');
     });
   }
-  
   //FIN DE FUNCIONES PARA LOS PRODUCTOS
+
+  //INICIO FUNCIONES PARA LOS LUGARES DE ENTREGA
+  changeRegion($event: any)
+  {
+    console.log($event.target.value);
+    let REGION_ID = $event.target.value;
+    //let REGION_SELECTED = this.REGIONES.find((region:any)=>region.id = REGION_ID);
+    let REGION_SELECTED = this.REGIONES.find((region:any)=>region.id === REGION_ID);
+    if(REGION_SELECTED)
+    {
+      this.region = REGION_SELECTED.name;
+    }
+
+    let provincias = this.PROVINCIAS.filter((provincia:any) => provincia.department_id == REGION_ID);
+    this.PROVINCIA_SELECTEDS = provincias;
+    console.log(provincias);
+  }
+
+  changeProvincia($event: any)
+  {
+    console.log($event.target.value);
+    let PROVINCIA_ID = $event.target.value;
+    //let PROVINCIA_SELECTED = this.PROVINCIAS.find((prov:any)=>prov.id = PROVINCIA_ID);
+    let PROVINCIA_SELECTED = this.PROVINCIAS.find((prov:any)=>prov.id === PROVINCIA_ID);
+    if(PROVINCIA_SELECTED)
+    {
+      this.provincia = PROVINCIA_SELECTED.name;
+    }
+    let distritos = this.DISTRITOS.filter((distrito:any) => distrito.province_id == PROVINCIA_ID);
+    this.DISTRITOS_SELECTEDS = distritos;
+    console.log(distritos);
+  }
+
+  validacionDeliverie()
+  {
+    if(this.sucursal_deliverie_id)
+    {
+      let DELIVERY_SELECTED = this.sucursal_deliverie.find((deliv:any) => deliv.id == this.sucursal_deliverie_id);
+      if(DELIVERY_SELECTED)
+      {
+        if(DELIVERY_SELECTED.name.indexOf(this.user.sucursale_name) != -1)
+        {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  resetSucursalDelivery()
+  {
+    this.agencia = '';
+    this.full_name_encargado = '';
+    this.documento_encargado = '';    
+    this.telefono_encargado = '';
+    this.region = '';
+    this.distrito = '';
+    this.provincia = '';
+    this.ubigeo_region = '';
+    this.ubigeo_provincia = '';
+    this.ubigeo_distrito = '';
+    this.sucursal_deliverie_id = 0;
+    this.address = '';
+    this.delivery_date = null;
+  }
+
+  //FIN DE FUNCIONES PARA LOS LUGARES DE ENTREGA
 
   saveChanges()
   {
