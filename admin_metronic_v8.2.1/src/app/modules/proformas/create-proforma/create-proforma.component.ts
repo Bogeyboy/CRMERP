@@ -4,7 +4,7 @@ import { UBIGEO_REGIONES } from './../../../config/ubigeo_regiones';
 import { FormatNumberPipe } from './../../../pipes/format-number.pipe';
 import { EditProductDetailProformaComponent } from './../components/edit-product-detail-proforma/edit-product-detail-proforma.component';
 import { ProformasService } from './../service/proformas.service';
-import { Component, inject, ChangeDetectorRef, AfterViewInit, ElementRef, ViewChildren, QueryList, ViewChild } from '@angular/core';
+import { Component, inject, ChangeDetectorRef, AfterViewInit, ElementRef, ViewChildren, QueryList, ViewChild, OnInit } from '@angular/core';
 import { NgbModal, NgbModule, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { CreateClientsPersonComponent } from '../../clients/create-clients-person/create-clients-person.component';
 import { CreateClientsCompanyComponent } from '../../clients/create-clients-company/create-clients-company.component';
@@ -17,6 +17,7 @@ import { data } from 'jquery';
 import { SearchProductsComponent } from '../components/search-products/search-products.component';
 import { filter } from 'rxjs/operators';
 import { DeleteProductDetailProformaComponent } from '../components/delete-product-detail-proforma/delete-product-detail-proforma.component';
+import { isInNotificationPhase } from '@angular/core/primitives/signals';
 @Component({
   selector: 'app-create-proforma',
   standalone: true,
@@ -33,7 +34,7 @@ import { DeleteProductDetailProformaComponent } from '../components/delete-produ
   styleUrls: ['./create-proforma.component.scss']
 })
 
-export class CreateProformaComponent implements AfterViewInit
+export class CreateProformaComponent  implements OnInit, AfterViewInit
 {
 
   //VARIABLES DE LOS COMPROBANTES
@@ -47,7 +48,8 @@ export class CreateProformaComponent implements AfterViewInit
   phone = '';
   birthdate: string | null  = null;
   displayBirthdate = '';
-  TODAY = 'D/M/YYYY'; // Variable para almacenar la fecha actual
+  TODAY : Date ; // Variable para almacenar la fecha actual
+  proformaDate = ''; // Variable para el input de fecha
 
   //VARIABLES DE LOS PRODUCTOS
   PRODUCT_SELECTED:any;
@@ -69,6 +71,7 @@ export class CreateProformaComponent implements AfterViewInit
   TOTAL_PROFORMA = 0;
   DEBT_PROFORMA = 0;
   PAID_OUT_PROFORMA = 0;
+  DESCRIPCION_PROFORMA = '';
 
   //VARIABLES DE DIRECCIÓN
   address = '';
@@ -113,10 +116,15 @@ export class CreateProformaComponent implements AfterViewInit
 
   isLoading$: any;
 
-  @ViewChild('clientDocumentInput') clientDocumentInput!: ElementRef;
+  /* @ViewChild('clientDocumentInput') clientDocumentInput!: ElementRef;
   @ViewChild('clientNameInput') clientNameInput!: ElementRef;
   @ViewChild('clientPhoneInput') clientPhoneInput!: ElementRef;
-  @ViewChild('productSearchInput') productSearchInput!: ElementRef;
+  @ViewChild('productSearchInput') productSearchInput!: ElementRef; */
+  // ✅ CAMBIO: Usar ViewChildren en lugar de ViewChild para mayor flexibilidad
+  @ViewChildren('clientDocumentInput') clientDocumentInputs!: QueryList<ElementRef>;
+  @ViewChildren('clientNameInput') clientNameInputs!: QueryList<ElementRef>;
+  @ViewChildren('clientPhoneInput') clientPhoneInputs!: QueryList<ElementRef>;
+  @ViewChildren('productSearchInput') productSearchInputs!: QueryList<ElementRef>;
 
   constructor(
     private modalService: NgbModal,
@@ -137,6 +145,7 @@ export class CreateProformaComponent implements AfterViewInit
     const reader = new FileReader();
     reader.readAsDataURL(this.payment_file);
     reader.onloadend = () => this.imagenprevisualiza = reader.result;
+    this.cdr.detectChanges();
     this.isLoadingProcess();
   }
 
@@ -153,19 +162,35 @@ export class CreateProformaComponent implements AfterViewInit
     this. isLoading$ = this.proformaService.isLoading$;
     this.user = this.proformaService.authservice.user;
     this.sucursale_asesor = Number(this.user.sucursale_id);
+
+    // ✅ ESTABLECER FECHA ACTUAL PARA EL INPUT
+    this.setProformaDate();
+
     this.proformaService.configAll().subscribe((resp:any) => {
       console.log(resp);
       this.client_segments = resp.client_segments;
       this.asesores = resp.asesores;
       this.sucursal_deliverie = resp.sucursal_deliverie;
       this.method_payments = resp.method_payments;
-      this.TODAY = resp.today;
+
+      /* if (resp.today)
+      {
+        this.TODAY = resp.today;
+        this.proformaDate = this.convertToInputFormat(resp.today);
+      } */
+      this.TODAY = new Date();
+      console.log('📅 Fecha actual establecida:', this.TODAY);
+      this.proformaDate = this.TODAY.toISOString().split('T')[0]; // Formato YYYY-MM-DD para el input
+
+      this.cdr.detectChanges();
+
       this.isLoadingProcess();
     });
   }
 
   ngAfterViewInit()
   {
+    console.log('🔄 ngAfterViewInit - Iniciando...');
     // Usar setTimeout para asegurar que el DOM está listo
     setTimeout(() => {
       // Configurar listeners para clientes usando ViewChild
@@ -173,46 +198,171 @@ export class CreateProformaComponent implements AfterViewInit
 
       // Configurar listener para producto usando ViewChild
       this.setupProductListener();
-    }, 100); // Reducir tiempo de espera
+    }, 200); // Reducir tiempo de espera
+  }
+
+  setProformaDate(): void
+  {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    this.proformaDate = `${year}-${month}-${day}`;
+    console.log('📅 Fecha de proforma establecida:', this.proformaDate);
+  }
+
+  onProformaDateChange(event: any): void
+  {
+    const newDate = event.target.value;
+    if (newDate)
+    {
+      this.proformaDate = newDate;
+      // Opcional: actualizar también la variable TODAY si quieres mantenerla sincronizada
+      // this.TODAY = this.convertToBackendFormat(newDate);
+      console.log('📅 Fecha de proforma actualizada:', this.proformaDate);
+    }
+  }
+
+  convertToBackendFormat(dateStr: string): string | null
+  {
+    if (!dateStr) return null;
+    const [year, month, day] = dateStr.split('-');
+    return `${day}-${month}-${year}`;
+  }
+
+  convertToInputFormat(dateStr: string): string | null
+  {
+    if (!dateStr) return null;
+    const [day, month, year] = dateStr.split('-');
+    return `${year}-${month}-${day}`;
+  }
+
+  // ✅ NUEVO MÉTODO: Configurar todos los listeners de una vez
+  setupAllListeners()
+  {
+    console.log('🎯 Configurando todos los listeners...');
+
+    // Configurar listeners para clientes
+    this.setupClientListeners();
+
+    // Configurar listener para producto
+    this.setupProductListener();
+
+    // ✅ Forzar detección de cambios después de configurar listeners
+    this.cdr.detectChanges();
   }
 
   setupClientListeners()
   {
-    // Método 1: Usando ViewChild
-    if (this.clientDocumentInput)
+    console.log('📋 Configurando listeners de clientes...');
+
+    // Usar ViewChildren para obtener todos los elementos
+    const docInputs = this.clientDocumentInputs?.toArray();
+    const nameInputs = this.clientNameInputs?.toArray();
+    const phoneInputs = this.clientPhoneInputs?.toArray();
+
+    // ✅ Método mejorado para configurar listeners
+    if (docInputs && docInputs.length > 0)
     {
-      // Remover listeners anteriores para evitar duplicados
-      this.clientDocumentInput.nativeElement.removeEventListener('keydown', this.handleClientEnter);
-      this.clientDocumentInput.nativeElement.addEventListener('keydown', this.handleClientEnter);
-      console.log('✅ Listener agregado al input de documento');
+      docInputs.forEach((input, index) => {
+        const nativeElement = input.nativeElement;
+        if (nativeElement)
+        {
+          // Remover listeners anteriores
+          nativeElement.removeEventListener('keydown', this.handleClientEnter);
+          // Agregar nuevo listener
+          nativeElement.addEventListener('keydown', this.handleClientEnter);
+          console.log(`✅ Listener agregado al input de documento ${index + 1}`);
+        }
+      });
+    }
+    else
+    {
+      console.warn('⚠️ No se encontraron inputs de documento');
     }
 
-    if (this.clientNameInput)
+    if (nameInputs && nameInputs.length > 0)
     {
-      this.clientNameInput.nativeElement.removeEventListener('keydown', this.handleClientEnter);
-      this.clientNameInput.nativeElement.addEventListener('keydown', this.handleClientEnter);
-      console.log('✅ Listener agregado al input de nombre');
+      nameInputs.forEach((input, index) => {
+        const nativeElement = input.nativeElement;
+        if (nativeElement)
+        {
+          nativeElement.removeEventListener('keydown', this.handleClientEnter);
+          nativeElement.addEventListener('keydown', this.handleClientEnter);
+          console.log(`✅ Listener agregado al input de nombre ${index + 1}`);
+        }
+      });
+    }
+    else
+    {
+      console.warn('⚠️ No se encontraron inputs de nombre');
     }
 
-    if (this.clientPhoneInput)
+    if (phoneInputs && phoneInputs.length > 0)
     {
-      this.clientPhoneInput.nativeElement.removeEventListener('keydown', this.handleClientEnter);
-      this.clientPhoneInput.nativeElement.addEventListener('keydown', this.handleClientEnter);
-      console.log('✅ Listener agregado al input de teléfono');
+      phoneInputs.forEach((input, index) => {
+        const nativeElement = input.nativeElement;
+        if (nativeElement)
+        {
+          nativeElement.removeEventListener('keydown', this.handleClientEnter);
+          nativeElement.addEventListener('keydown', this.handleClientEnter);
+          console.log(`✅ Listener agregado al input de teléfono ${index + 1}`);
+        }
+      });
+    }
+    else
+    {
+      console.warn('⚠️ No se encontraron inputs de teléfono');
     }
   }
 
   setupProductListener()
   {
-    // Usando ViewChild
-    if (this.productSearchInput) {
-      this.productSearchInput.nativeElement.removeEventListener('keydown', this.handleProductEnter);
-      this.productSearchInput.nativeElement.addEventListener('keydown', this.handleProductEnter);
-      console.log('✅ Listener agregado al input de producto');
+    console.log('📦 Configurando listener de productos...');
+
+    const productInputs = this.productSearchInputs?.toArray();
+
+    if (productInputs && productInputs.length > 0)
+    {
+      productInputs.forEach((input, index) => {
+        const nativeElement = input.nativeElement;
+        if (nativeElement)
+        {
+          nativeElement.removeEventListener('keydown', this.handleProductEnter);
+          nativeElement.addEventListener('keydown', this.handleProductEnter);
+          console.log(`✅ Listener agregado al input de producto ${index + 1}`);
+        }
+      });
+    }
+    else
+    {
+      console.warn('⚠️ No se encontraron inputs de producto');
     }
   }
 
-  // Manejadores de eventos como métodos de clase
+  // Este método se puede llamar directamente desde el HTML si los listeners fallan
+  onClientEnter(event: KeyboardEvent)
+  {
+    if (event.key === 'Enter')
+    {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log('🔍 Enter en cliente (directo)');
+      this.searchClients();
+    }
+  }
+
+  onProductEnter(event: KeyboardEvent)
+  {
+    if (event.key === 'Enter')
+    {
+      event.preventDefault();
+      event.stopPropagation();
+      console.log('🔍 Enter en producto (directo)');
+      this.searchProducts();
+    }
+  }
+
   handleClientEnter = (event: KeyboardEvent) => {
     if (event.key === 'Enter')
     {
@@ -234,20 +384,6 @@ export class CreateProformaComponent implements AfterViewInit
     }
   }
 
-  convertToBackendFormat(dateStr: string): string | null
-  {
-    if (!dateStr) return null;
-    const [year, month, day] = dateStr.split('-');
-    return `${day}-${month}-${year}`;
-  }
-
-  convertToInputFormat(dateStr: string): string | null
-  {
-    if (!dateStr) return null;
-    const [day, month, year] = dateStr.split('-');
-    return `${year}-${month}-${day}`;
-  }
-  
   updateBirthdate(event: any)
   {
     const value = event.target.value;
@@ -291,6 +427,8 @@ export class CreateProformaComponent implements AfterViewInit
   changeMethod_payment()
   {
     this.METHOD_PAYMENT_SELECTED = this.method_payments.find((item:any) => item.id == this.method_payment_id);
+    this.banco_id = 0;
+
     this.isLoadingProcess();
   }
   //FIN DE FUNCIONES PARA LOS MÉTODOS DE PAGO
@@ -468,7 +606,7 @@ export class CreateProformaComponent implements AfterViewInit
     if (this.PRODUCT_SELECTED)
     {
       this.search_product = this.PRODUCT_SELECTED.title;
-      
+
       // ✅ Establecer el descuento mínimo cuando se selecciona el producto
       this.amount_discount = this.PRODUCT_SELECTED.min_discount || 0;
 
@@ -477,7 +615,7 @@ export class CreateProformaComponent implements AfterViewInit
       {
           // No seleccionar automáticamente para que el usuario elija
       }
-      
+
       // ✅ Forzar detección de cambios
       this.cdr.detectChanges();
     }
@@ -664,7 +802,7 @@ export class CreateProformaComponent implements AfterViewInit
     let precio = this.price - this.getDiscount();
     return precio;
   }
-  
+
   //FUNCIÓN PARA OBTENER EL DESCUENTO POR UNIDAD
   getDiscount(): number
   {
@@ -677,7 +815,7 @@ export class CreateProformaComponent implements AfterViewInit
     //DEVUELVE EL IMPUESTO DEL PRODUCTO
     let iva = this.PRODUCT_SELECTED.importe_iva;
     let percentage = iva * 0.01;
-    
+
     return percentage;
   }
 
@@ -691,14 +829,14 @@ export class CreateProformaComponent implements AfterViewInit
     if (percentage <= 90) return 'bg-primary';
     return 'bg-success'; // Más del 90% es peligroso
   }
-  
+
   // Manejar cambios en tiempo real
   onDiscountChange(): void
   {
     // Obtener los valores mínimo y máximo
     const minDiscount = this.getMinDiscount();
     const maxDiscount = this.getMaxDiscount();
-    
+
     // ✅ IMPORTANTE: Asegurar que amount_discount sea un número
     if (this.amount_discount === null || this.amount_discount === undefined || isNaN(this.amount_discount)) {
       this.amount_discount = minDiscount;
@@ -710,7 +848,7 @@ export class CreateProformaComponent implements AfterViewInit
       this.amount_discount = minDiscount;
       this.toast.warning('Advertencia', `El descuento mínimo permitido es ${minDiscount}%`);
     }
-    
+
     // ✅ Validación del máximo
     if (this.amount_discount > maxDiscount) {
       this.amount_discount = maxDiscount;
@@ -723,13 +861,13 @@ export class CreateProformaComponent implements AfterViewInit
   {
     const minDiscount = this.getMinDiscount();
     const maxDiscount = this.getMaxDiscount();
-    
+
     console.log('🔄 Valor actual del descuento:', this.amount_discount);
     console.log('📊 Mínimo:', minDiscount, 'Máximo:', maxDiscount);
-    
+
     // Validar que sea un número válido
-    if (this.amount_discount === null || 
-        this.amount_discount === undefined || 
+    if (this.amount_discount === null ||
+        this.amount_discount === undefined ||
         isNaN(this.amount_discount)) {
       this.amount_discount = minDiscount;
       this.toast.warning('Advertencia', `El descuento mínimo permitido es ${minDiscount}%`);
@@ -745,7 +883,7 @@ export class CreateProformaComponent implements AfterViewInit
       this.cdr.detectChanges();
       return;
     }
-    
+
     // ✅ Validación del máximo
     if (this.amount_discount > maxDiscount) {
       this.amount_discount = maxDiscount;
@@ -759,14 +897,14 @@ export class CreateProformaComponent implements AfterViewInit
   onDiscountInput(event: any): void
   {
     const value = event.target.value;
-    
+
     // Si el usuario borra todo el contenido, restaurar al mínimo
     if (value === '' || value === null || value === undefined) {
       this.amount_discount = this.getMinDiscount();
       this.cdr.detectChanges();
       return;
     }
-    
+
     // Si el valor no es un número válido, restaurar al mínimo
     const numValue = parseFloat(value);
     if (isNaN(numValue)) {
@@ -774,7 +912,7 @@ export class CreateProformaComponent implements AfterViewInit
       this.cdr.detectChanges();
       return;
     }
-    
+
     // Si el valor es válido, aplicar las validaciones normales
     this.onDiscountChange();
   }
@@ -783,33 +921,33 @@ export class CreateProformaComponent implements AfterViewInit
   {
     const minDiscount = this.getMinDiscount();
     const maxDiscount = this.getMaxDiscount();
-    
+
     console.log('👀 Blur - Validando descuento...');
     console.log('Valor actual:', this.amount_discount);
-    
-    if (this.amount_discount === null || 
-        this.amount_discount === undefined || 
+
+    if (this.amount_discount === null ||
+        this.amount_discount === undefined ||
         isNaN(this.amount_discount)) {
       this.amount_discount = minDiscount;
       this.toast.warning('Validación', `El descuento se ha ajustado al mínimo permitido (${minDiscount}%)`);
       this.cdr.detectChanges();
       return;
     }
-    
+
     if (this.amount_discount < minDiscount) {
       this.amount_discount = minDiscount;
       this.toast.warning('Validación', `El descuento se ha ajustado al mínimo permitido (${minDiscount}%)`);
       this.cdr.detectChanges();
       return;
     }
-    
+
     if (this.amount_discount > maxDiscount) {
       this.amount_discount = maxDiscount;
       this.toast.warning('Validación', `El descuento se ha ajustado al máximo permitido (${maxDiscount}%)`);
       this.cdr.detectChanges();
       return;
     }
-    
+
     // Forzar actualización de la vista
     this.cdr.detectChanges();
   }
@@ -820,7 +958,7 @@ export class CreateProformaComponent implements AfterViewInit
     const currentValue = this.amount_discount;
     this.amount_discount = currentValue + 0.1;
     this.cdr.detectChanges();
-    
+
     setTimeout(() => {
       this.amount_discount = currentValue;
       this.cdr.detectChanges();
@@ -833,7 +971,7 @@ export class CreateProformaComponent implements AfterViewInit
     const input = event.target as HTMLInputElement;
     const currentValue = parseFloat(input.value);
     const minDiscount = this.getMinDiscount();
-    
+
     // Si el usuario intenta escribir un número menor al mínimo, mostrar advertencia
     if (event.key === 'Enter' || event.key === 'Tab')
     {
@@ -894,7 +1032,7 @@ export class CreateProformaComponent implements AfterViewInit
       this.toast.error('Validación', 'No hay precio seleccionado para el producto.');
       return;
     }
-    
+
     if(this.quantity_product == 0)
     {
       this.toast.error('Validación', 'No hay cantidad seleccionada para el producto.');
@@ -917,7 +1055,7 @@ export class CreateProformaComponent implements AfterViewInit
         return
       }
     }
-    
+
     //let SUBTOTAL = this.price - this.getDiscount();
     let CANIMPUESTO = this.getUnitPrice() * this.getIvaPercentage(); //ES LO QUE SE LE AÑADE A CADA PRODUCTO DE IMPUESTOS
     let SUBTOTAL = this.getUnitPrice() + (CANIMPUESTO);
@@ -998,16 +1136,16 @@ export class CreateProformaComponent implements AfterViewInit
     const modalRef = this.modalService.open(EditProductDetailProformaComponent,{size:'xl',centered:true});
 
     //modalRef.componentInstance.DETAIL_PRODUCT = DETAIL_PROFOR;
-    
+
     modalRef.componentInstance.DETAIL_PRODUCT = {...DETAIL_PROFOR};
     modalRef.componentInstance.sucursale_asesor = this.sucursale_asesor;
     modalRef.componentInstance.CLIENT_SELECTED = this.CLIENT_SELECTED;
     modalRef.componentInstance.user = this.proformaService.authservice.user;
 
     modalRef.componentInstance.EditProductProforma.subscribe((product_edit:any) => {
-      
+
       console.log('🔄 Producto editado recibido:', product_edit);
-      
+
       this.DETAIL_PROFORMAS[INDEX] = product_edit;
 
       // Forzar la detección de cambios
@@ -1018,7 +1156,7 @@ export class CreateProformaComponent implements AfterViewInit
       setTimeout(() => {
         this.cdr.detectChanges();
       }, 100);
-      
+
       this.isLoadingProcess();
       this.sumTotalDetail();
     });
@@ -1027,7 +1165,7 @@ export class CreateProformaComponent implements AfterViewInit
     modalRef.dismissed.subscribe(() => {
       console.log('Modal cerrado sin cambios');
     });
-    
+
   }
 
   deleteProduct(DETAIL_PROFOR:any, INDEX:number)
@@ -1035,11 +1173,11 @@ export class CreateProformaComponent implements AfterViewInit
     const modalRef = this.modalService.open(DeleteProductDetailProformaComponent,{size:'xl',centered:true});
 
     //modalRef.componentInstance.DETAIL_PRODUCT = DETAIL_PROFOR;
-    
+
     modalRef.componentInstance.DETAIL_PRODUCT = {...DETAIL_PROFOR};
 
     modalRef.componentInstance.DeleteProductProforma.subscribe((product_edit:any) => {
-      
+
       this.DETAIL_PROFORMAS.splice(INDEX, 1) ;
 
       // Forzar la detección de cambios
@@ -1050,7 +1188,7 @@ export class CreateProformaComponent implements AfterViewInit
       setTimeout(() => {
         this.cdr.detectChanges();
       }, 100);
-      
+
       this.isLoadingProcess();
       this.sumTotalDetail();
     });
@@ -1094,7 +1232,7 @@ export class CreateProformaComponent implements AfterViewInit
     console.log(distritos);
   }
 
-  validacionDeliverie()
+  validationDeliverie()
   {
     if(this.sucursal_deliverie_id)
     {
@@ -1114,7 +1252,7 @@ export class CreateProformaComponent implements AfterViewInit
   {
     this.agencia = '';
     this.full_name_encargado = '';
-    this.documento_encargado = '';    
+    this.documento_encargado = '';
     this.telefono_encargado = '';
     this.region = '';
     this.distrito = '';
@@ -1131,6 +1269,170 @@ export class CreateProformaComponent implements AfterViewInit
 
   saveChanges()
   {
-    console.log('Holaaaaaaa');
+    //Validación para el cliente seleccionado
+    if(!this.CLIENT_SELECTED)
+    {
+      this.toast.error('Error', 'Se necesita tener un cliente seleccionado para crear la proforma.');
+      return;
+    }
+    //
+    if(this.DETAIL_PROFORMAS.length == 0)
+    {
+      this.toast.error('Error', 'Se necesita tener al menos un producto en la proforma.');
+      return;
+    }
+    //Validación para la sucursal de entrega
+    if(!this.sucursal_deliverie_id)
+    {
+      this.toast.error('Error', 'Se necesita tener una sucursal de entrega seleccionada para crear la proforma.');
+      return;
+    }
+    //Validación para la fecha de entrega
+    if(!this.delivery_date)
+    {
+      this.toast.error('Error', 'Se necesita tener una fecha de entrega seleccionada para crear la proforma.');
+      return;
+    }
+    //Validación para los datos del encargado de recogida
+    if(this.validationDeliverie())
+    {
+      if(!this.agencia)
+      {
+        this.toast.error('Error', 'Se necesita tener una agencia de transporte seleccionada para crear la proforma.');
+        return;
+      }
+      if(!this.full_name_encargado)
+      {
+        this.toast.error('Error', 'Se necesita tener un nombre de encargado de recogida seleccionado para crear la proforma.');
+        return;
+      }
+      if(!this.documento_encargado)
+      {
+        this.toast.error('Error', 'Se necesita tener un documento de encargado de recogida seleccionado para crear la proforma.');
+        return;
+      }
+      if(!this.telefono_encargado)
+      {
+        this.toast.error('Error', 'Se necesita tener un teléfono de encargado de recogida seleccionado para crear la proforma.');
+        return;
+      }
+    }
+    if(this.sucursal_deliverie_id == 6)
+    {
+      if(!this.ubigeo_region)
+      {
+        this.toast.error('Error', 'Se necesita una región a la que poder hacer el envío.');
+        return;
+      }
+      if(!this.ubigeo_provincia)
+      {
+        this.toast.error('Error', 'Se necesita una provincia a la que poder hacer el envío.');
+        return;
+      }
+      if(!this.ubigeo_distrito)
+      {
+        this.toast.error('Error', 'Se necesita el distrito para hacer el envío.');
+        return;
+      }
+    }
+    //Validación para el método de pago, banco, monto de pago y comprobante de pago si el cliente no es del segmento 1
+    if(this.CLIENT_SELECTED.client_segment.id != 1)
+    {
+      //Validación para el método de pago y banco
+      if(!this.method_payment_id)
+      {
+        this.toast.error('Error', 'Se necesita tener un método de pago seleccionado para crear la proforma.');
+        return;
+      }
+
+      //Validación para el banco si el método de pago tiene bancos asociados
+      if(this.METHOD_PAYMENT_SELECTED.bancos.length > 0 )
+      {
+        if(!this.banco_id)
+        {
+          this.toast.error('Error', 'Se necesita tener un banco seleccionado para crear la proforma.');
+          return;
+        }
+      }
+      else
+      {
+        this.banco_id = null;
+        console.log('Id de banco seleccionado: ' + this.banco_id);
+      }
+      //Validación para el monto de pago
+      if(!this.amount_payment || this.amount_payment == 0)
+      {
+        this.toast.error('Error', 'Se necesita una cantidad de pago seleccionada para crear la proforma.');
+        return;
+      }
+      //Validación para la imagen del comprobante de pago
+      if(!this.payment_file)
+      {
+        this.toast.error('Error', 'Se necesita tener una imagen del comprobante de pago seleccionada para crear la proforma.');
+        return;
+      }
+    }
+    let formData = new FormData();
+
+    formData.append('client_id', this.CLIENT_SELECTED.id);
+    formData.append('client_segment_id', this.CLIENT_SELECTED.client_segment.id);
+    formData.append('subtotal', this.TOTAL_PROFORMA.toString());
+    formData.append('total', this.TOTAL_PROFORMA.toString());
+    formData.append('iva', this.TOTAL_IMPUESTO_PROFORMA.toString());
+    formData.append('subtotal', this.TOTAL_PROFORMA.toString());
+
+    formData.append('debt', (this.DEBT_PROFORMA - (this.amount_payment ? this.amount_payment : 0)).toString());
+    formData.append('paid_out', (this.PAID_OUT_PROFORMA + (this.amount_payment ? this.amount_payment : 0)).toString());
+    formData.append('description', this.PAID_OUT_PROFORMA.toString());
+    
+    formData.append('DETAIL_PROFORMAS', JSON.stringify(this.DETAIL_PROFORMAS));
+    
+    formData.append('sucursal_deliverie_id', this.sucursal_deliverie_id.toString());
+    formData.append('delivery_date', this.delivery_date);
+    
+    if(this.address)
+    {
+      formData.append('address', this.address);
+    }
+
+    if(this.validationDeliverie())
+    {
+      formData.append('agencia', this.agencia);
+      formData.append('full_name_encargado', this.full_name_encargado);
+      formData.append('documento_encargado', this.documento_encargado);
+      formData.append('telefono_encargado', this.telefono_encargado);
+    }
+
+    if(this.sucursal_deliverie_id == 6)
+    {
+      formData.append('ubigeo_region', this.ubigeo_region);
+      formData.append('ubigeo_provincia', this.ubigeo_provincia);
+      formData.append('ubigeo_distrito', this.ubigeo_distrito);
+      formData.append('region', this.region);
+      formData.append('provincia', this.provincia);
+      formData.append('distrito', this.distrito);
+    }
+
+    if(this.CLIENT_SELECTED.client_segment.id != 1)
+    {
+      formData.append('method_payment_id', this.method_payment_id.toString());
+      if(this.banco_id)
+      {
+        formData.append('banco_id', this.banco_id.toString());
+      }
+      formData.append('amount_payment', this.amount_payment.toString());
+      formData.append('amount_payment', this.amount_payment.toString());
+      formData.append('payment_file', this.payment_file);
+
+    }
+
+    this.proformaService.createProforma(formData).subscribe((resp:any)=>{
+      console.log(resp);
+    },
+    (error:any)=>
+    {
+      console.error('Error al crear la proforma:', error);
+      this.toast.error('Error', 'Ocurrió un error al crear la proforma. Por favor, inténtalo de nuevo.');
+    });
   }
 }

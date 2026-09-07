@@ -49,7 +49,7 @@
                   <th class="min-w-120px">SKU</th>
                   <th class="min-w-120px">Tipo de impuesto</th>
                   <th class="min-w-100px text-end">Actions</th>
-                  
+
                 </tr>
               </thead>
               <!-- FIN DE CABECERA DE LA TABLA -->
@@ -98,23 +98,48 @@
                     <!-- COMIENZO DE IMAGEN Y NOMBRE DEL PRODUCTO Y PESO DE PRODUCTO -->
                     <!-- COMIENZO DE CATEGORÍA DEL PRODUCTO -->
                     <td>
-                      {{ PRODUCT.product_categorie.name }}
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
+                        onclick="return false;"
+                        (click)="selectProduct(PRODUCT); $event.preventDefault()">
+                        {{ PRODUCT.product_categorie.name }}
+                      </a>
                     </td>
                     <!-- PRECIO GENERAL DEL PRODUCTO -->
                     <td>
-                      {{ PRODUCT.price_general }}
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
+                        onclick="return false;"
+                        (click)="selectProduct(PRODUCT); $event.preventDefault()">
+                        {{ PRODUCT.price_general }}
+                      </a>
                     </td>
                     <!-- DISPONIBILIDAD DEL PRODUCTO -->
                     <td >
-                      {{ getDisponibilidad(PRODUCT.disponibilidad) }}
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
+                        onclick="return false;"
+                        (click)="selectProduct(PRODUCT); $event.preventDefault()">
+                        {{ getDisponibilidad(PRODUCT.disponibilidad) }}
+                      </a>
                     </td>
                     <!-- CÓDIGO SKU DEL PRODUCTO -->
                     <td>
-                      {{ PRODUCT.sku }}
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
+                        onclick="return false;"
+                        (click)="selectProduct(PRODUCT); $event.preventDefault()">
+                        {{ PRODUCT.sku }}
+                      </a>
                     </td>
                     <!-- TIPO DE IMPUESTO DEL PRODUCTO -->
                     <td>
-                      {{ getTaxSelected(PRODUCT.tax_selected) }}
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
+                        onclick="return false;"
+                        (click)="selectProduct(PRODUCT); $event.preventDefault()">
+                        {{ getTaxSelected(PRODUCT.tax_selected) }}
+                      </a>
                     </td>
                     <!-- INICIO DE BOTÓN DE SELECCIÓN -->
                     <td class="text-end">

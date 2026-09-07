@@ -3,11 +3,13 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, finalize } from 'rxjs';
 import { AuthService } from '../../auth';
 import { environment } from '../../../../environments/environment';
+import { data } from 'jquery';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProformasService {
+export class ProformasService 
+{
 
   isLoading$: Observable<boolean>;
   isLoadingSubject: BehaviorSubject<boolean>;
@@ -16,7 +18,8 @@ export class ProformasService {
   constructor(
     private http: HttpClient,
     public authservice: AuthService,
-  ) {
+  )
+  {
     this.isLoadingSubject = new BehaviorSubject<boolean>(false);
     this.isLoading$ = this.isLoadingSubject.asObservable();
     this.apiUrl = environment.URL_SERVICIOS; // 'http://127.0.0.1:8000/api'
@@ -24,6 +27,7 @@ export class ProformasService {
   
   searchClients(n_document: string, full_name: string, phone: string)
   {
+    this.isLoadingSubject.next(true);
     let LINK = '';
     if (n_document)
     {
@@ -49,6 +53,7 @@ export class ProformasService {
 
   searchProducts(search_product: string)
   {
+    this.isLoadingSubject.next(true);
     let LINK = '';
     if (search_product)
     {
@@ -71,6 +76,17 @@ export class ProformasService {
 
     const URL = `${this.apiUrl}/proforma/config`;
     return this.http.get(URL,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
+
+  createProforma(data:any)
+  {
+    this.isLoadingSubject.next(true);
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+
+    const URL = `${this.apiUrl}/proformas`;
+    return this.http.post(URL,data,{headers: headers}).pipe(
       finalize(() => this.isLoadingSubject.next(false))
     );
   }

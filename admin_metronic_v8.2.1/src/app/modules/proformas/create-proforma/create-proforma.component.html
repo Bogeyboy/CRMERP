@@ -25,13 +25,21 @@
               <div class="d-flex flex-column gap-10" data-select2-id="select2-data-127-2qsf">
                 <!-- COMIENZO DE FECHA -->
                 <div class="fv-row">
-                  <label class="form-label">Fecha</label>
-                  <div class="fw-bold fs-3">{{ TODAY }}</div>
+                  <span class="form-label">Fecha de la proforma</span>
+                  <!-- <div class="fw-bold fs-3">
+                    {{ TODAY }}
+                  </div> -->
+                  <input
+                    type="date"
+                    class="form-control form-control-solid"
+                    [(ngModel)]="proformaDate"
+                    name="proformaDate" />
+                  <small class="text-muted">Fecha actual: {{ TODAY }}</small>
                 </div>
                 <!-- FIN DE FECHA -->
                 <!-- COMIENZO DE MÉTODO DE PAGO -->
                 <div class="fv-row mt-4">
-                  <label class="form-label">Método de pago</label>
+                  <span class="form-label">Método de pago</span>
                   <select
                     class="form-control form-select-solid fw-bolder"
                     name="method_payment_id"
@@ -47,27 +55,27 @@
                 </div>
                 <!-- FIN DE MÉTODO DE PAGO -->
                 <!-- COMIENZO DE BANCO -->
-                <div class="fv-row">
-                  <label class="form-label">Banco</label>
-                  <select
-                    class="form-control form-select-solid fw-bolder"
-                    name="banco_id"
-                    [(ngModel)]="banco_id"
-                    placeholder="Selec. banco">
-                      <option value="">Selec. banco</option>
-                      @if (METHOD_PAYMENT_SELECTED)
-                      {
-                        @for (BANCO of METHOD_PAYMENT_SELECTED.bancos; track $index)
-                        {
-                          <option [value]="BANCO.id">{{ BANCO.name }}</option>
-                        }
-                      }
-                  </select>
-                </div>
+                @if (METHOD_PAYMENT_SELECTED && METHOD_PAYMENT_SELECTED.bancos.length > 0)
+                {
+                  <div class="fv-row">
+                    <span class="form-label">Banco</span>
+                    <select
+                      class="form-control form-select-solid fw-bolder"
+                      name="banco_id"
+                      [(ngModel)]="banco_id"
+                      placeholder="Selec. banco">
+                        <option value="">Selec. banco</option>
+                          @for (BANCO of METHOD_PAYMENT_SELECTED.bancos; track $index)
+                          {
+                            <option [value]="BANCO.id">{{ BANCO.name }}</option>
+                          }
+                    </select>
+                  </div>
+                }
                 <!-- FIN DE BANCO -->
                 <!-- COMIENZO DE CANTIDAD A PAGAR -->
                 <div class="fv-row">
-                  <input type="text"
+                  <input type="number"
                       [(ngModel)]="amount_payment"
                       name="amount_payment"
                       class="form-control mb-2"
@@ -77,10 +85,18 @@
                 </div>
                 <!-- FIN DE CANTIDAD A PAGAR -->
                 <!-- COMIENZO DE COMPROBANTE -->
-                <div class="fv-row">
+                <!-- <div class="fv-row">
                   <label for="formFile" class="form-label">Comprobante</label>
                   <input class="form-control"
                     [ngStyle]="{'background-image': 'url('+'imagenprevisualiza'+')'}"
+                    type="file"
+                    id="formFile"
+                    accept=".jpeg, .bmp, .jpg, .png, .gif, .webp"
+                    (change)="processFile($event)">
+                </div> -->
+                <div class="fv-row">
+                  <span for="formFile" class="form-label">Comprobante</span>
+                  <input class="form-control"
                     type="file"
                     id="formFile"
                     accept=".jpeg, .bmp, .jpg, .png, .gif, .webp"
@@ -256,7 +272,6 @@
                 <!-- FIN DE ETIQUETA DE PRODUCTO -->
                 <div class="col-3">
                   <!-- INICIO BOTÓN DE BUSCAR SECCION PRODUCTO -->
-                  <!-- INICIO DE BOTÓN DE BUSCAR -->
                   <button class="btn btn-sm mx-1 btn-primary"
                     name="search_product"
                     (click)="searchProducts()"
@@ -267,7 +282,6 @@
                       <span class="path2"></span>
                     </i>
                   </button>
-                  <!-- FIN DE BOTÓN DE BUSCAR -->
                   <!-- FIN BOTÓN DE BUSCAR SECCION PRODUCTO -->
                   <!-- INICIO BOTÓN DE ACTUALIZAR PRODUCTO -->
                   <button class="btn btn-sm mx-1 btn-dark"
@@ -311,11 +325,11 @@
                           <span class="path2"></span>
                         </i>
                         <input type="text"
+                          #productSearchInput
                           data-kt-ecommerce-edit-order-filter="search"
                           class="form-control form-control-solid w-100 ps-12"
                           name="search_product"
                           placeholder="Buscar productos"
-                          #productSearchInput
                           [(ngModel)]="search_product">
                       </div>
                     </div>
@@ -459,7 +473,7 @@
                               (ngModelChange)="onDiscountModelChange()"
                               (change)="verifiedDiscount()"
                               (blur)="onDiscountBlur()"
-                              (keydown)="onDiscountKeydown($event)"  
+                              (keydown)="onDiscountKeydown($event)"
                               placeholder="Descuento"
                               [min]="getMinDiscount()"
                               [max]="getMaxDiscount()"
@@ -646,7 +660,7 @@
                             <td class="text-end">
                               <!-- <a href="#" class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1">
                                 <i class="ki-duotone ki-switch fs-2"><span class="path1"></span><span class="path2"></span></i>                                </a> -->
-  
+
                               <!-- INICIO BOTÓN EDITAR -->
                               <a href="#"
                                 onclick="return false;"
@@ -689,14 +703,14 @@
                         </span>
                         <br>
                         <span>
-                          Cantidad pendiente: {{ DEBT_PROFORMA | formatNumber:2  }} €
+                          Cantidad pendiente: {{ (DEBT_PROFORMA - (amount_payment ? amount_payment : 0)) | formatNumber:2  }} €
                         </span>
                         <br>
                         <span>
-                          Ya pagado: {{ PAID_OUT_PROFORMA | formatNumber:2  }} €
+                          Ya pagado: {{ (PAID_OUT_PROFORMA + (amount_payment ? amount_payment : 0)) | formatNumber:2  }} €
                         </span>
                         <br>
-                        <span id="kt_ecommerce_edit_order_total_price"> 
+                        <span id="kt_ecommerce_edit_order_total_price">
                           Coste total de la proforma: {{ TOTAL_PROFORMA | formatNumber:2  }} €
                         </span>
                       </div>
@@ -771,8 +785,8 @@
                     {
                       <option [value]="sd.id">{{ sd.name }}</option>
                     }
-
                   </select>
+                  <small>Tipo de entrega</small>
                 </div>
                 <!-- FIN SELECT LUGAR DE ENTREGA -->
                 <!-- COMIENZO TEXT AREA DIRECCIÓN DE ENTREGA -->
@@ -786,6 +800,7 @@
                       [(ngModel)]="address"
                       placeholder="Dirección completa de entrega">
                     </textarea>
+                    <small>Dirección completa de entrega</small>
                   </div>
                 }
                 <!-- FIN TEXT AREA DIRECCIÓN DE ENTREGA -->
@@ -858,7 +873,7 @@
                   }
                   <!-- FIN SELECT UBIGEO DISTRITO -->
                   <!-- COMIENZO INPUT AGENCIA DE TRANSPORTE -->
-                  @if ( sucursal_deliverie_id !=5 && validacionDeliverie() )
+                  @if ( sucursal_deliverie_id !=5 && validationDeliverie() )
                   {
                     <div class="col-3">
                       <input type="text"
@@ -872,7 +887,7 @@
                   }
                   <!-- FIN INPUT AGENCIA DE TRANSPORTE -->
                   <!-- COMIENZO INPUT NOMBRE DEL ENCARGADO DE RECOGIDA -->
-                  @if ( sucursal_deliverie_id !=5 && validacionDeliverie())
+                  @if ( sucursal_deliverie_id !=5 && validationDeliverie())
                   {
                     <div class="col-3">
                       <input type="text"
@@ -886,7 +901,7 @@
                   }
                   <!-- FIN INPUT NOMBRE DEL ENCARGADO DE RECOGIDA -->
                   <!-- COMIENZO INPUT DOCUMENTO DEL ENCARGADO DE RECOGIDA -->
-                  @if ( sucursal_deliverie_id !=5 && validacionDeliverie())
+                  @if ( sucursal_deliverie_id !=5 && validationDeliverie())
                   {
                     <div class="col-3">
                       <input type="text"
@@ -900,7 +915,7 @@
                   }
                   <!-- FIN INPUT DOCUMENTO DEL ENCARGADO DE RECOGIDA -->
                   <!-- COMIENZO INPUT TELÉFONO DEL ENCARGADO DE RECOGIDA -->
-                  @if ( sucursal_deliverie_id !=5 && validacionDeliverie())
+                  @if ( sucursal_deliverie_id !=5 && validationDeliverie())
                   {
                     <div class="col-3">
                       <input type="text"
@@ -922,15 +937,14 @@
           <div class="d-flex justify-content-end">
             <!-- INICIO DE BOTÓN DE SALVAR CAMBIOS -->
             <button type="button"
-              id="kt_ecommerce_edit_order_submit"
               class="btn btn-primary"
               (click)="saveChanges()">
                 <span class="indicator-label">
-                  Salvar cambios
+                  Crear proforma
                 </span>
-                <span class="indicator-progress">
+                <!-- <span class="indicator-progress">
                   Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                </span>
+                </span> -->
             </button>
             <!-- FIN DE BOTÓN DE SALVAR CAMBIOS -->
           </div>
