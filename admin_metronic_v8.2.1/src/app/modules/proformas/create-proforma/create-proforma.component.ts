@@ -18,6 +18,7 @@ import { SearchProductsComponent } from '../components/search-products/search-pr
 import { filter } from 'rxjs/operators';
 import { DeleteProductDetailProformaComponent } from '../components/delete-product-detail-proforma/delete-product-detail-proforma.component';
 import { isInNotificationPhase } from '@angular/core/primitives/signals';
+//import { get } from 'http';
 @Component({
   selector: 'app-create-proforma',
   standalone: true,
@@ -50,6 +51,8 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
   displayBirthdate = '';
   TODAY : Date ; // Variable para almacenar la fecha actual
   proformaDate = ''; // Variable para el input de fecha
+  proforma_description = '';
+
 
   //VARIABLES DE LOS PRODUCTOS
   PRODUCT_SELECTED:any;
@@ -71,7 +74,7 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
   TOTAL_PROFORMA = 0;
   DEBT_PROFORMA = 0;
   PAID_OUT_PROFORMA = 0;
-  DESCRIPCION_PROFORMA = '';
+  PROFORMA_TOTAL_DISCOUNT = 0;
 
   //VARIABLES DE DIRECCIÓN
   address = '';
@@ -125,6 +128,7 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
   @ViewChildren('clientNameInput') clientNameInputs!: QueryList<ElementRef>;
   @ViewChildren('clientPhoneInput') clientPhoneInputs!: QueryList<ElementRef>;
   @ViewChildren('productSearchInput') productSearchInputs!: QueryList<ElementRef>;
+  @ViewChild('productSearchInput') productSearchInput!: ElementRef;
 
   constructor(
     private modalService: NgbModal,
@@ -161,6 +165,15 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     //Add 'implements OnInit' to the class.
     this. isLoading$ = this.proformaService.isLoading$;
     this.user = this.proformaService.authservice.user;
+
+    // ✅ VERIFICAR QUE USER EXISTE Y TIENE ID
+    if (!this.user || !this.user.id)
+    {
+      console.error('❌ Usuario no autenticado o sin ID');
+      this.toast.error('Error', 'No se pudo obtener la información del usuario');
+      return;
+    }
+
     this.sucursale_asesor = Number(this.user.sucursale_id);
 
     // ✅ ESTABLECER FECHA ACTUAL PARA EL INPUT
@@ -796,18 +809,25 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     return Math.min(percentage, 100); // No superar el 100%
   }
 
-  //FUNCIÓN PARA OBTENER EL PRECIO UNITARIO
+  //FUNCIÓN PARA OBTENER EL PRECIO UNITARIO EN EUROS DESPUÉS DEL DESCUENTO
   getUnitPrice(): number
   {
     let precio = this.price - this.getDiscount();
     return precio;
   }
 
-  //FUNCIÓN PARA OBTENER EL DESCUENTO POR UNIDAD
+  //FUNCIÓN PARA OBTENER EL DESCUENTO  EN EUROS POR UNIDAD
   getDiscount(): number
   {
     let discount = this.price*(this.amount_discount/100);
     return discount;
+  }
+
+  //FUNCIÓN PARA OBTENER EL DESCUENTO TOTAL EN EUROS POR PRODUCTO
+  getDiscountProduct(): number
+  {
+    let productDiscount = this.getDiscount() * this.quantity_product;
+    return productDiscount;
   }
 
   getIvaPercentage(): number
@@ -1073,15 +1093,17 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     //SE AÑADEN LOS PRODUCTOS AL DETALLADO DE LA PROFORMA
     this.DETAIL_PROFORMAS.push({
       product: this.PRODUCT_SELECTED,
-      description: this.description_product,
+      description: this.description_product, //ESTA ES LA DESCRIPCIÓN DEL PRODUCTO
       unidad_product: this.unidad_product,
       unit: UNIDAD,
       quantity: this.quantity_product,
       price_unit: this.price,
-      discount: this.amount_discount, // ← Cambiar: guardar el porcentaje en lugar del valor en euros
-      discount_amount: this.getDiscount(), // ← Opcional: guardar el valor en euros si lo necesitas
+      discount: this.amount_discount, // DESCUENTO EN PORCENTAJE DEL PRODUCTO DENTRO DE LA PROFORMA
+      product_discount: this.getDiscountProduct(), // DESCUENTO TOTAL EN EUROS POR PRODUCTO EN LA PROFORMA
+      discount_amount: this.getDiscount(), // DESCUENTO EN EUROS POR UNIDAD
       almacen_product: this.almacen_product, // ✅ ID del almacén seleccionado
       warehouse: ALMACEN_SELECTED, // ✅ Objeto completo del almacén (opcional)
+      amount: this.amount_payment,
       subtotal: SUBTOTAL,
       impuesto: IMPUESTO, // EN PORCENTAJE
       canimpuesto: CANIMPUESTO, // EN MONEDA
@@ -1089,15 +1111,26 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     });
     this.resetProduct();
     this.sumTotalDetail(); // SE CALCULA CADA VEZ QUE SE AÑADE UN PRODUCTO AL DETALLADO
+
+    // ✅ ENFOCAR AL INPUT DE BÚSQUEDA DESPUÉS DE AGREGAR PRODUCTO
+    setTimeout(() => {
+      if (this.productSearchInput) {
+        this.productSearchInput.nativeElement.focus();
+        this.productSearchInput.nativeElement.select(); // Opcional: selecciona el texto
+      }
+    }, 100); // Pequeño delay para asegurar que el DOM se actualice
   }
 
   sumTotalDetail()
   {
     //LA FUNCIÓN reduce NOS PERMITE SUMARN EN BASE A UN CAMPO QUE TENGA EL ARRAY DE OBJETOS
-      //SE LE PASAN DOS PARÁMETROS, LA SUMA Y EL OBJETO ITERADOR
-    this.TOTAL_PROFORMA = Math.round(this.DETAIL_PROFORMAS.reduce((sum:number, current:any) => sum+current.total,0));
-    this.TOTAL_IMPUESTO_PROFORMA = Math.round(this.DETAIL_PROFORMAS.reduce((sum:number, current:any) => sum+current.canimpuesto,0));
+    //SE LE PASAN DOS PARÁMETROS, LA SUMA Y EL OBJETO ITERADOR
+    let totDisc = +this.getDiscountProduct();
+    this.TOTAL_PROFORMA = this.DETAIL_PROFORMAS.reduce((sum:number, current:any) => sum+current.total,0);
+    this.TOTAL_IMPUESTO_PROFORMA = this.DETAIL_PROFORMAS.reduce((sum:number, current:any) => sum+current.canimpuesto,0);
     this.DEBT_PROFORMA = this.TOTAL_PROFORMA - this.PAID_OUT_PROFORMA;
+    this.PROFORMA_TOTAL_DISCOUNT = this.DETAIL_PROFORMAS.reduce((sum:number, current:any) => sum+current.product_discount,0);
+
     //PAID_OUT_PROFORMA
 
     this.isLoadingProcess();
@@ -1126,9 +1159,6 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
 
     // ✅ Forzar actualización de la vista
     this.cdr.detectChanges();
-
-    // ✅ Mostrar mensaje de éxito
-    this.toast.success('Éxito', 'Producto reseteado correctamente');
   }
 
   editProduct(DETAIL_PROFOR:any, INDEX:number)
@@ -1232,6 +1262,7 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     console.log(distritos);
   }
 
+  //SI EXISTE LA VARIABLE DE SUCURSAL DE ENVÍO
   validationDeliverie()
   {
     if(this.sucursal_deliverie_id)
@@ -1254,15 +1285,149 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     this.full_name_encargado = '';
     this.documento_encargado = '';
     this.telefono_encargado = '';
+    this.address = '';
     this.region = '';
-    this.distrito = '';
     this.provincia = '';
+    this.distrito = '';
     this.ubigeo_region = '';
     this.ubigeo_provincia = '';
     this.ubigeo_distrito = '';
     this.sucursal_deliverie_id = 0;
-    this.address = '';
     this.delivery_date = null;
+  }
+
+  // ============================================
+  // MÉTODOS PARA VALIDAR EL TIPO DE SUCURSAL
+  // ============================================
+
+  /**
+   * Verifica si la sucursal seleccionada es la misma que la del usuario logueado
+   */
+  isSameSucursalAsUser(): boolean
+  {
+    if (!this.sucursal_deliverie_id || !this.user?.sucursale_id)
+    {
+      return false;
+    }
+    
+    // Buscar la sucursal seleccionada en el array de sucursales
+    const SUCURSAL_SELECTED = this.sucursal_deliverie.find(
+      (sd: any) => sd.id == this.sucursal_deliverie_id
+    );
+    
+    if (!SUCURSAL_SELECTED)
+    {
+      return false;
+    }
+    
+    // Comparar el nombre de la sucursal con el nombre de la sucursal del usuario
+    // O comparar por ID si tienes esa información disponible
+    const userSucursalId = Number(this.user.sucursale_id);
+    const userSucursalName = this.user.sucursale_name;
+    
+    // Opción 1: Comparar por ID si la sucursal tiene un ID de sucursal real
+    // return SUCURSAL_SELECTED.sucursale_id == userSucursalId;
+    
+    // Opción 2: Comparar por nombre (como lo hace validationDeliverie actualmente)
+    if (userSucursalName && SUCURSAL_SELECTED.name)
+    {
+      return SUCURSAL_SELECTED.name.indexOf(userSucursalName) != -1;
+    }
+    
+    return false;
+  }
+
+  /**
+   * Verifica si es otra sucursal (no la del usuario, ni domicilio, ni regiones)
+   */
+  isOtherSucursal(): boolean
+  {
+    // No debe ser la misma sucursal del usuario
+    if (this.isSameSucursalAsUser())
+    {
+      return false;
+    }
+    
+    // No debe ser envío a domicilio (5) ni envío a regiones (6)
+    if (this.sucursal_deliverie_id == 5 || this.sucursal_deliverie_id == 6)
+    {
+      return false;
+    }
+    
+    // Debe haber una sucursal seleccionada
+    if (!this.sucursal_deliverie_id || this.sucursal_deliverie_id == 0)
+    {
+      return false;
+    }
+    
+    return true;
+  }
+
+  /**
+   * Maneja el cambio de sucursal de entrega
+   */
+  onSucursalDeliverieChange(event: any): void
+  {
+    const NEW_VALUE = Number(event.target.value);
+    this.sucursal_deliverie_id = NEW_VALUE;
+    
+    // Resetear campos cuando cambia la sucursal
+    this.resetDeliveryFields();
+    
+    // Forzar detección de cambios
+    this.cdr.detectChanges();
+    this.isLoadingProcess();
+  }
+
+  /**
+   * Resetea los campos específicos de entrega
+   */
+
+  resetDeliveryFields(): void
+  {
+    this.agencia = '';
+    this.full_name_encargado = '';
+    this.documento_encargado = '';
+    this.telefono_encargado = '';
+    this.address = '';
+    this.region = '';
+    this.provincia = '';
+    this.distrito = '';
+    this.ubigeo_region = '';
+    this.ubigeo_provincia = '';
+    this.ubigeo_distrito = '';
+    this.PROVINCIA_SELECTEDS = [];
+    this.DISTRITOS_SELECTEDS = [];
+  }
+
+  resetMethodPayment()
+  {
+    this.method_payment_id = 0;
+    this.banco_id = 0;
+    this.amount_payment = 0;
+    this.payment_file = null;
+    this.imagenprevisualiza = null;
+  }
+
+  //MÉTODO PARA LIMPIAR EL DETALLE DE LA PROFORMA
+  clearProformaDetails()
+  {
+    // Opción 1: Vaciar completamente el array
+    this.DETAIL_PROFORMAS = [];
+    
+    // Opción 2: Si quieres mantener la referencia del array (por si hay suscripciones)
+    // this.DETAIL_PROFORMAS.length = 0;
+    
+    // Resetear los totales
+    this.TOTAL_PROFORMA = 0;
+    this.TOTAL_IMPUESTO_PROFORMA = 0;
+    this.DEBT_PROFORMA = 0;
+    this.PAID_OUT_PROFORMA = 0;
+    this.PROFORMA_TOTAL_DISCOUNT = 0;
+    this.proforma_description = '';
+    
+    // Forzar detección de cambios
+    this.cdr.detectChanges();
   }
 
   //FIN DE FUNCIONES PARA LOS LUGARES DE ENTREGA
@@ -1275,77 +1440,132 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
       this.toast.error('Error', 'Se necesita tener un cliente seleccionado para crear la proforma.');
       return;
     }
-    //
+    
+    //Si no hay productos en el detallado de la proforma, no se puede crear la proforma
     if(this.DETAIL_PROFORMAS.length == 0)
     {
       this.toast.error('Error', 'Se necesita tener al menos un producto en la proforma.');
       return;
     }
+    
     //Validación para la sucursal de entrega
     if(!this.sucursal_deliverie_id)
     {
       this.toast.error('Error', 'Se necesita tener una sucursal de entrega seleccionada para crear la proforma.');
       return;
     }
+    
     //Validación para la fecha de entrega
     if(!this.delivery_date)
     {
       this.toast.error('Error', 'Se necesita tener una fecha de entrega seleccionada para crear la proforma.');
       return;
     }
-    //Validación para los datos del encargado de recogida
-    if(this.validationDeliverie())
+
+    // ============================================
+    // CASO 2: OTRA SUCURSAL (NO DOMICILIO NI REGIONES)
+    // Validaciones para los datos del encargado de recogida
+    // ============================================
+    if(this.isOtherSucursal())
     {
+      //Si no existe el nombre de la agencia
       if(!this.agencia)
       {
         this.toast.error('Error', 'Se necesita tener una agencia de transporte seleccionada para crear la proforma.');
         return;
       }
+      //Si no existe el nombre del encargado de recogida
       if(!this.full_name_encargado)
       {
         this.toast.error('Error', 'Se necesita tener un nombre de encargado de recogida seleccionado para crear la proforma.');
         return;
       }
+      //Si no existe el documento del encargado de recogida
       if(!this.documento_encargado)
       {
         this.toast.error('Error', 'Se necesita tener un documento de encargado de recogida seleccionado para crear la proforma.');
         return;
       }
+      //Si no existe el teléfono del encargado de recogida
       if(!this.telefono_encargado)
       {
         this.toast.error('Error', 'Se necesita tener un teléfono de encargado de recogida seleccionado para crear la proforma.');
         return;
       }
     }
+
+    // ============================================
+    // CASO 3: ENVÍO A DOMICILIO (ID = 5)
+    // ============================================
+    if(this.sucursal_deliverie_id == 5)
+    {
+      //Si no existe la dirección de entrega
+      if(!this.address)
+      {
+        this.toast.error('Error', 'Se necesita una dirección de entrega para envío a domicilio.');
+        return;
+      }
+      //Si no existe la agencia de transporte
+      if(!this.agencia)
+      {
+        //this.toast.error('Error', 'Se necesita una agencia de transporte para envío a domicilio.');
+        this.toast.info('Advertencia', 'No se ha introducido una agencia de transporte para el envío a domicilio.');
+        //return;
+      }
+      else
+      {
+        this.toast.success('Éxito', 'Se ha introducido correctamente la agencia de transporte.');
+      }
+    }
+
+    // ============================================
+    // CASO 4: ENVÍO A REGIONES (ID = 6)
+    // Validación para los datos de la región, provincia y distrito
+    // ============================================
     if(this.sucursal_deliverie_id == 6)
     {
+      //Si no existe la dirección
+      if(!this.address)
+      {
+        this.toast.error('Error', 'Se necesita una dirección de entrega para envío a regiones.');
+        return;
+      }
+      //Si no existe la region
       if(!this.ubigeo_region)
       {
         this.toast.error('Error', 'Se necesita una región a la que poder hacer el envío.');
         return;
       }
+      //Si no existe la provincia
       if(!this.ubigeo_provincia)
       {
         this.toast.error('Error', 'Se necesita una provincia a la que poder hacer el envío.');
         return;
       }
+      //Si no existe el distrito
       if(!this.ubigeo_distrito)
       {
         this.toast.error('Error', 'Se necesita el distrito para hacer el envío.');
         return;
       }
+      //Si no existe la agencia de transporte
+      if(!this.agencia)
+      {
+        this.toast.error('Error', 'Se necesita una agencia de transporte para envío a regiones.');
+        return;
+      }
     }
-    //Validación para el método de pago, banco, monto de pago y comprobante de pago si el cliente no es del segmento 1
+
+    //Si el cliente no es del segmento 1 => Cliente final
     if(this.CLIENT_SELECTED.client_segment.id != 1)
     {
-      //Validación para el método de pago y banco
+      //Si no existe un método de pago seleccionado, no se puede crear la proforma
       if(!this.method_payment_id)
       {
         this.toast.error('Error', 'Se necesita tener un método de pago seleccionado para crear la proforma.');
         return;
       }
-
-      //Validación para el banco si el método de pago tiene bancos asociados
+      //Si el método de pago seleccionado tiene bancos asociados, se necesita tener un banco seleccionado para crear la proforma
       if(this.METHOD_PAYMENT_SELECTED.bancos.length > 0 )
       {
         if(!this.banco_id)
@@ -1354,65 +1574,90 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
           return;
         }
       }
+      //Si el método de pago seleccionado no tiene bancos asociados, se vuelve a cero el valor del banco seleccionado
       else
       {
         this.banco_id = null;
         console.log('Id de banco seleccionado: ' + this.banco_id);
       }
-      //Validación para el monto de pago
-      if(!this.amount_payment || this.amount_payment == 0)
+      //Sin una cantidad de pago no se puede crear la proforma
+      if(!this.amount_payment || this.amount_payment === 0)
       {
         this.toast.error('Error', 'Se necesita una cantidad de pago seleccionada para crear la proforma.');
         return;
       }
-      //Validación para la imagen del comprobante de pago
+      //Si no hay un archivo de pago seleccionado, no se puede crear la proforma
       if(!this.payment_file)
       {
         this.toast.error('Error', 'Se necesita tener una imagen del comprobante de pago seleccionada para crear la proforma.');
         return;
       }
     }
+
     let formData = new FormData();
 
+    formData.append('user_id', this.user.id);
     formData.append('client_id', this.CLIENT_SELECTED.id);
     formData.append('client_segment_id', this.CLIENT_SELECTED.client_segment.id);
     formData.append('subtotal', this.TOTAL_PROFORMA.toString());
     formData.append('total', this.TOTAL_PROFORMA.toString());
     formData.append('iva', this.TOTAL_IMPUESTO_PROFORMA.toString());
     formData.append('subtotal', this.TOTAL_PROFORMA.toString());
+    formData.append('discount', this.PROFORMA_TOTAL_DISCOUNT.toString());
 
     formData.append('debt', (this.DEBT_PROFORMA - (this.amount_payment ? this.amount_payment : 0)).toString());
     formData.append('paid_out', (this.PAID_OUT_PROFORMA + (this.amount_payment ? this.amount_payment : 0)).toString());
-    formData.append('description', this.PAID_OUT_PROFORMA.toString());
+    formData.append('description', this.proforma_description || '');
     
     formData.append('DETAIL_PROFORMAS', JSON.stringify(this.DETAIL_PROFORMAS));
     
     formData.append('sucursal_deliverie_id', this.sucursal_deliverie_id.toString());
     formData.append('delivery_date', this.delivery_date);
-    
-    if(this.address)
-    {
-      formData.append('address', this.address);
-    }
 
-    if(this.validationDeliverie())
+    // ============================================
+    // CASO 1: MISMA SUCURSAL DEL USUARIO
+    // No se agregan campos adicionales de entrega
+    // (solo descripción y fecha que ya están agregados)
+    // ============================================
+
+    // ============================================
+    // CASO 2: OTRA SUCURSAL (NO DOMICILIO NI REGIONES)
+    // ============================================
+    if(this.isOtherSucursal())
     {
       formData.append('agencia', this.agencia);
-      formData.append('full_name_encargado', this.full_name_encargado);
-      formData.append('documento_encargado', this.documento_encargado);
-      formData.append('telefono_encargado', this.telefono_encargado);
+      formData.append('full_name_encargado', this.full_name_encargado || '');
+      formData.append('documento_encargado', this.documento_encargado || '');
+      formData.append('telefono_encargado', this.telefono_encargado || '');
     }
 
+    // ============================================
+    // CASO 3: ENVÍO A DOMICILIO (ID = 5)
+    // ============================================
+    if(this.sucursal_deliverie_id == 5)
+    {
+      formData.append('address', this.address || '');
+      formData.append('agencia', this.agencia);
+    }
+
+    // ============================================
+    // CASO 4: ENVÍO A REGIONES (ID = 6)
+    // ============================================
     if(this.sucursal_deliverie_id == 6)
     {
-      formData.append('ubigeo_region', this.ubigeo_region);
-      formData.append('ubigeo_provincia', this.ubigeo_provincia);
-      formData.append('ubigeo_distrito', this.ubigeo_distrito);
-      formData.append('region', this.region);
-      formData.append('provincia', this.provincia);
-      formData.append('distrito', this.distrito);
+      formData.append('address', this.address || '');
+      formData.append('agencia', this.agencia);
+      formData.append('ubigeo_region', this.ubigeo_region || '');
+      formData.append('ubigeo_provincia', this.ubigeo_provincia || '');
+      formData.append('ubigeo_distrito', this.ubigeo_distrito || '');
+      formData.append('region', this.region || '');
+      formData.append('provincia', this.provincia || '');
+      formData.append('distrito', this.distrito || '');
     }
 
+    // ============================================
+    // DATOS DEL PAGO (solo si el cliente no es del segmento 1)
+    // ============================================
     if(this.CLIENT_SELECTED.client_segment.id != 1)
     {
       formData.append('method_payment_id', this.method_payment_id.toString());
@@ -1421,13 +1666,18 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
         formData.append('banco_id', this.banco_id.toString());
       }
       formData.append('amount_payment', this.amount_payment.toString());
-      formData.append('amount_payment', this.amount_payment.toString());
       formData.append('payment_file', this.payment_file);
-
     }
 
     this.proformaService.createProforma(formData).subscribe((resp:any)=>{
       console.log(resp);
+      this.toast.success('Éxito', 'La proforma se ha creado correctamente.');
+      this.resetClient();
+      this.resetProduct();
+      this.resetSucursalDelivery();
+      this.resetMethodPayment();
+      this.clearProformaDetails();
+      this.isLoadingProcess();
     },
     (error:any)=>
     {

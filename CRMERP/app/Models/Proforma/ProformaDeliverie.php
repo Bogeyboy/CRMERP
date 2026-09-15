@@ -23,7 +23,11 @@ class ProformaDeliverie extends Model
         'ubigeo_distrito',
         'region',
         'provincia',
-        'distrito'
+        'distrito',
+        'agencia',
+        'full_name_encargado',
+        'documento_encargado',
+        'telefono_encargado'
     ];
 
     public function setCreatedAtAttribute($value)

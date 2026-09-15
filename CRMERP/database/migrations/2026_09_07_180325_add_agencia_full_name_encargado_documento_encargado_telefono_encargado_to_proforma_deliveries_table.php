@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('proforma_deliveries', function (Blueprint $table) {
+            $table->string('full_name_encargado')->after('region')->nullable();
+            $table->string('documento_encargado')->after('full_name_encargado')->nullable();
+            $table->string('telefono_encargado')->after('documento_encargado')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('proforma_deliveries', function (Blueprint $table) {
+            $table->dropColumn(['full_name_encargado', 'documento_encargado', 'telefono_encargado']);
+        });
+    }
+};

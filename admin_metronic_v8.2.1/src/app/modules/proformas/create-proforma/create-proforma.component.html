@@ -114,12 +114,12 @@
                 }
                 <!-- FIN DE COMPROBANTE -->
                 <!-- COMIENZO DE BOTÓN DE AGREGAR PAGO -->
-                <div class="fv-row">
+                <!-- <div class="fv-row">
                   <button type="button"
                     class="btn btn-md btn-primary">
                     Agregar Pago
                   </button>
-                </div>
+                </div> -->
               </div>
             </div>
             <!-- FIN DETALLE LATERAL DE LA PROFORMA  -->
@@ -209,6 +209,7 @@
                 <!-- INICIO BUSQUEDA POR NUMERO DE DOCUMENTO -->
                 <div class="col-4">
                   <input type="text"
+                    autofocus
                     #clientDocumentInput
                     [(ngModel)]="n_document"
                     name="n_document"
@@ -294,18 +295,7 @@
                     </i>
                   </button>
                   <!-- FIN BOTÓN DE ACTUALIZAR PRODUCTO -->
-                  <!-- INICIO BOTÓN DE AGREGAR PRODUCTO -->
-                  <button
-                    class="btn btn-sm mx-1 btn-info"
-                    placement="top-start"
-                    (click)="addProduct()"
-                    ngbTooltip="Agregar Producto">
-                    <i class="ki-duotone ki-add-folder fs-2">
-                      <span class="path1"></span>
-                      <span class="path2"></span>
-                    </i>
-                  </button>
-                  <!-- FIN BOTÓN DE AGREGAR PRODUCTO -->
+                  
                 </div>
               </div>
             </div>
@@ -423,6 +413,20 @@
                       </textarea>
                     </div>
                     <!-- FIN NOTAS SOBRE LA PROFORMA -->
+                    <!-- INICIO BOTÓN DE AGREGAR PRODUCTO -->
+                    <div class="col-1">
+                      <button
+                        class="btn btn-sm mx-1 btn-info"
+                        placement="top-start"
+                        (click)="addProduct()"
+                        ngbTooltip="Agregar Producto">
+                        <i class="ki-duotone ki-add-folder fs-2">
+                          <span class="path1"></span>
+                          <span class="path2"></span>
+                        </i>
+                      </button>
+                    </div>
+                      <!-- FIN BOTÓN DE AGREGAR PRODUCTO -->
                     <!-- INICIO DE CÁLCULO DE PRECIOS DE PRODUCTO EN PROFORMA -->
                     <div class="col-6">
                       @if (unidad_product && warehouses_product.length === 0)
@@ -500,6 +504,10 @@
                     {
                       <span>
                         Descuento por unidad: {{ getDiscount() | formatNumber:2 }} €.
+                      </span>
+                      <br>
+                      <span>
+                        Total Descuento por producto: {{ getDiscountProduct() | formatNumber:2 }} €.
                       </span>
                       <br>
                       <span>
@@ -710,6 +718,10 @@
                           Ya pagado: {{ (PAID_OUT_PROFORMA + (amount_payment ? amount_payment : 0)) | formatNumber:2  }} €
                         </span>
                         <br>
+                        <span>
+                          Descuento total en la proforma:  {{ PROFORMA_TOTAL_DISCOUNT | formatNumber:2  }} €
+                        </span>
+                        <br>
                         <span id="kt_ecommerce_edit_order_total_price">
                           Coste total de la proforma: {{ TOTAL_PROFORMA | formatNumber:2  }} €
                         </span>
@@ -773,12 +785,14 @@
             <div class="card-body pt-0">
               <!-- COMIENZO DIRECCIÓN, LUGAR, FECHA DE ENTREGA Y DATOS DEL ENCARGADO DE RECOGIDA -->
               <div class="row">
-                <!-- COMIENZO SELECT LUGAR DE ENTREGA -->
+                
+                <!-- COMIENZO SELECT LUGAR DE ENTREGA (SIEMPRE VISIBLE) -->
                 <div class="col-3">
                   <select
                     class="form-control form-select-solid fw-bolder"
                     name="sucursal_deliverie_id"
                     [(ngModel)]="sucursal_deliverie_id"
+                    (change)="onSucursalDeliverieChange($event)"
                     placeholder="Selecciona lugar de entrega">
                     <option value="">Selecciona lugar de entrega</option>
                     @for (sd of sucursal_deliverie; track $index)
@@ -789,10 +803,121 @@
                   <small>Tipo de entrega</small>
                 </div>
                 <!-- FIN SELECT LUGAR DE ENTREGA -->
-                <!-- COMIENZO TEXT AREA DIRECCIÓN DE ENTREGA -->
-                @if ( sucursal_deliverie_id == 5 || sucursal_deliverie_id == 6)
+
+                <!-- ============================================ -->
+                <!-- CASO 1: MISMA SUCURSAL DEL USUARIO LOGUEADO -->
+                <!-- ============================================ -->
+                @if (isSameSucursalAsUser())
                 {
-                  <div class="col-5">
+                  <!-- Solo mostrar descripción y fecha de entrega -->
+                  <!-- COMIENZO TEXT AREA DESCRIPCIÓN DE LA PROFORMA -->
+                  <div class="col-4">
+                    <textarea
+                      class="form-control form-control-solid"
+                      rows="3"
+                      name="proforma_description"
+                      [(ngModel)]="proforma_description"
+                      placeholder="Descripción de la proforma">
+                    </textarea>
+                    <small>Descripción de la proforma</small>
+                  </div>
+                  <!-- FIN TEXT AREA DESCRIPCIÓN DE LA PROFORMA -->
+                  
+                  <!-- COMIENZO DE FECHA DE ENTREGA -->
+                  <div class="col-4">
+                    <input
+                      type="date"
+                      class="form-control form-control-solid"
+                      name="delivery_date"
+                      [(ngModel)]="delivery_date"
+                      placeholder="Fecha de entrega"/>
+                    <small>Fecha de entrega</small>
+                  </div>
+                  <!-- FIN DE FECHA DE ENTREGA -->
+                }
+
+                <!-- ============================================ -->
+                <!-- CASO 2: OTRA SUCURSAL (NO DOMICILIO NI REGIONES) -->
+                <!-- ============================================ -->
+                @if (isOtherSucursal())
+                {
+                  <!-- Agencia de transporte -->
+                  <div class="col-3">
+                    <input type="text"
+                      [(ngModel)]="agencia"
+                      name="agencia"
+                      class="form-control mb-2"
+                      placeholder="Agencia de transporte"
+                      value="" />
+                    <small>Agencia de transporte</small>
+                  </div>
+
+                  <!-- Nombre del encargado de recogida -->
+                  <div class="col-3">
+                    <input type="text"
+                      [(ngModel)]="full_name_encargado"
+                      name="full_name_encargado"
+                      class="form-control mb-2"
+                      placeholder="Nombre del encargado de recogida"
+                      value="" />
+                    <small>Encargado de recogida</small>
+                  </div>
+
+                  <!-- Documento del encargado de recogida -->
+                  <div class="col-3">
+                    <input type="text"
+                      [(ngModel)]="documento_encargado"
+                      name="documento_encargado"
+                      class="form-control mb-2"
+                      placeholder="Documento del encargado de recogida"
+                      value="" />
+                    <small>Documento encargado</small>
+                  </div>
+
+                  <!-- Teléfono del encargado de recogida -->
+                  <div class="col-3">
+                    <input type="text"
+                      [(ngModel)]="telefono_encargado"
+                      name="telefono_encargado"
+                      class="form-control mb-2"
+                      placeholder="Teléfono del encargado de recogida"
+                      value="" />
+                    <small>Teléfono encargado</small>
+                  </div>
+
+                  <!-- COMIENZO TEXT AREA DESCRIPCIÓN DE LA PROFORMA -->
+                  <div class="col-4">
+                    <textarea
+                      class="form-control form-control-solid"
+                      rows="3"
+                      name="proforma_description"
+                      [(ngModel)]="proforma_description"
+                      placeholder="Descripción de la proforma">
+                    </textarea>
+                    <small>Descripción de la proforma</small>
+                  </div>
+                  <!-- FIN TEXT AREA DESCRIPCIÓN DE LA PROFORMA -->
+                  
+                  <!-- COMIENZO DE FECHA DE ENTREGA -->
+                  <div class="col-4">
+                    <input
+                      type="date"
+                      class="form-control form-control-solid"
+                      name="delivery_date"
+                      [(ngModel)]="delivery_date"
+                      placeholder="Fecha de entrega"/>
+                    <small>Fecha de entrega</small>
+                  </div>
+                  <!-- FIN DE FECHA DE ENTREGA -->
+                }
+
+                <!-- ============================================ -->
+                <!-- CASO 3: ENVÍO A DOMICILIO (ID = 5) -->
+                <!-- ============================================ -->
+                @if (sucursal_deliverie_id == 5)
+                {
+                  <!-- Dirección de entrega -->
+                  <div class="col-4">
                     <textarea
                       class="form-control form-control-solid"
                       rows="3"
@@ -802,132 +927,146 @@
                     </textarea>
                     <small>Dirección completa de entrega</small>
                   </div>
-                }
-                <!-- FIN TEXT AREA DIRECCIÓN DE ENTREGA -->
-                <!-- COMIENZO DE FECHA DE ENTREGA -->
-                <div class="col-4">
-                  <input
-                    type="date"
-                    class="form-control form-control-solid"
-                    name="delivery_date"
-                    [(ngModel)]="delivery_date"
-                    placeholder="Fecha de entrega"/>
-                    <small>Fecha de entrega</small>
-                </div>
-                <!-- FIN DE FECHA DE ENTREGA -->
-                  <!-- COMIENZO SELECT UBIGEO REGION -->
-                  @if ( sucursal_deliverie_id == 6 )
-                  {
-                    <div class="col-3">
-                      <select
-                        class="form-control form-select-solid fw-bolder"
-                        name="ubigeo_region"
-                        [(ngModel)]="ubigeo_region"
-                        placeholder="Seleccione región"
-                        (change)="changeRegion($event)">
-                        <option value="">Seleccione región</option>
-                        @for (REGION of REGIONES; track REGION.id)
-                        {
-                          <option [value]=" REGION.id " > {{ REGION.name }}</option>
-                        }
-                      </select>
-                      <small>Región</small>
-                    </div>
-                  }
-                  <!-- FIN SELECT UBIGEO REGION -->
-                  <!-- COMIENZO SELECT UBIGEO PROVINCIA -->
-                  @if ( sucursal_deliverie_id == 6 )
-                  {
-                    <div class="col-3">
-                      <select
-                        class="form-control form-select-solid fw-bolder"
-                        name="ubigeo_provincia"
-                        [(ngModel)]="ubigeo_provincia"
-                        placeholder="Seleccione provincia"
-                        (change)="changeProvincia($event)">
-                        <option value="">Seleccione provincia</option>
-                        @for (PROVINCIA of PROVINCIA_SELECTEDS; track PROVINCIA.id) {
-                          <option [value]=" PROVINCIA.id " > {{ PROVINCIA.name }}</option>
-                        }
-                      </select>
-                      <small>Provincia</small>
-                    </div>
-                  }
-                  <!-- FIN SELECT UBIGEO PROVINCIA -->
-                  <!-- COMIENZO SELECT UBIGEO DISTRITO -->
-                  @if ( sucursal_deliverie_id == 6 )
-                  {
-                    <div class="col-3">
-                      <select
-                        class="form-control form-select-solid fw-bolder"
-                        name="ubigeo_distrito"
-                        [(ngModel)]="ubigeo_distrito"
-                        placeholder="Seleccione distrito">
-                        <option value="">Seleccione distrito</option>
-                        @for (DISTRITO of DISTRITOS_SELECTEDS; track DISTRITO.id) {
-                          <option [value]=" DISTRITO.id " > {{ DISTRITO.name }}</option>
-                        }
-                      </select>
-                      <small>Distrito</small>
-                    </div>
-                  }
-                  <!-- FIN SELECT UBIGEO DISTRITO -->
-                  <!-- COMIENZO INPUT AGENCIA DE TRANSPORTE -->
-                  @if ( sucursal_deliverie_id !=5 && validationDeliverie() )
-                  {
-                    <div class="col-3">
-                      <input type="text"
-                        [(ngModel)]="agencia"
-                        name="agencia"
-                        class="form-control mb-2"
-                        placeholder="Agencia de transporte"
+
+                  <!-- Agencia de transporte -->
+                  <div class="col-3">
+                    <input type="text"
+                      [(ngModel)]="agencia"
+                      name="agencia"
+                      class="form-control mb-2"
+                      placeholder="Agencia de transporte"
                       value="" />
-                      <small>Agencia de transporte</small>
-                    </div>
-                  }
-                  <!-- FIN INPUT AGENCIA DE TRANSPORTE -->
-                  <!-- COMIENZO INPUT NOMBRE DEL ENCARGADO DE RECOGIDA -->
-                  @if ( sucursal_deliverie_id !=5 && validationDeliverie())
-                  {
-                    <div class="col-3">
-                      <input type="text"
-                        [(ngModel)]="full_name_encargado"
-                        name="full_name_encargado"
-                        class="form-control mb-2"
-                        placeholder="Nombre del encargado de recogida"
-                        value="" />
-                        <small>Encargado de recogida</small>
-                    </div>
-                  }
-                  <!-- FIN INPUT NOMBRE DEL ENCARGADO DE RECOGIDA -->
-                  <!-- COMIENZO INPUT DOCUMENTO DEL ENCARGADO DE RECOGIDA -->
-                  @if ( sucursal_deliverie_id !=5 && validationDeliverie())
-                  {
-                    <div class="col-3">
-                      <input type="text"
-                        [(ngModel)]="documento_encargado"
-                        name="documento_encargado"
-                        class="form-control mb-2"
-                        placeholder="Documento del encargado de recogida"
-                        value="" />
-                        <small>Documento encargado</small>
-                    </div>
-                  }
-                  <!-- FIN INPUT DOCUMENTO DEL ENCARGADO DE RECOGIDA -->
-                  <!-- COMIENZO INPUT TELÉFONO DEL ENCARGADO DE RECOGIDA -->
-                  @if ( sucursal_deliverie_id !=5 && validationDeliverie())
-                  {
-                    <div class="col-3">
-                      <input type="text"
-                        [(ngModel)]="telefono_encargado"
-                        name="telefono_encargado"
-                        class="form-control mb-2"
-                        placeholder="Teléfono del encargado de recogida"
-                        value="" />
-                        <small>Telefono encargado</small>
-                    </div>
-                  }
-                  <!-- FIN INPUT TELÉFONO DEL ENCARGADO DE RECOGIDA -->
+                    <small>Agencia de transporte</small>
+                  </div>
+
+                  <!-- COMIENZO TEXT AREA DESCRIPCIÓN DE LA PROFORMA -->
+                  <div class="col-4">
+                    <textarea
+                      class="form-control form-control-solid"
+                      rows="3"
+                      name="proforma_description"
+                      [(ngModel)]="proforma_description"
+                      placeholder="Descripción de la proforma">
+                    </textarea>
+                    <small>Descripción de la proforma</small>
+                  </div>
+                  <!-- FIN TEXT AREA DESCRIPCIÓN DE LA PROFORMA -->
+                  
+                  <!-- COMIENZO DE FECHA DE ENTREGA -->
+                  <div class="col-4">
+                    <input
+                      type="date"
+                      class="form-control form-control-solid"
+                      name="delivery_date"
+                      [(ngModel)]="delivery_date"
+                      placeholder="Fecha de entrega"/>
+                    <small>Fecha de entrega</small>
+                  </div>
+                  <!-- FIN DE FECHA DE ENTREGA -->
+                }
+
+                <!-- ============================================ -->
+                <!-- CASO 4: ENVÍO A REGIONES (ID = 6) -->
+                <!-- ============================================ -->
+                @if (sucursal_deliverie_id == 6)
+                {
+                  <!-- Dirección de entrega -->
+                  <div class="col-4">
+                    <textarea
+                      class="form-control form-control-solid"
+                      rows="3"
+                      name="address"
+                      [(ngModel)]="address"
+                      placeholder="Dirección completa de entrega">
+                    </textarea>
+                    <small>Dirección completa de entrega</small>
+                  </div>
+
+                  <!-- Región -->
+                  <div class="col-3">
+                    <select
+                      class="form-control form-select-solid fw-bolder"
+                      name="ubigeo_region"
+                      [(ngModel)]="ubigeo_region"
+                      placeholder="Seleccione región"
+                      (change)="changeRegion($event)">
+                      <option value="">Seleccione región</option>
+                      @for (REGION of REGIONES; track REGION.id)
+                      {
+                        <option [value]="REGION.id">{{ REGION.name }}</option>
+                      }
+                    </select>
+                    <small>Región</small>
+                  </div>
+
+                  <!-- Provincia -->
+                  <div class="col-3">
+                    <select
+                      class="form-control form-select-solid fw-bolder"
+                      name="ubigeo_provincia"
+                      [(ngModel)]="ubigeo_provincia"
+                      placeholder="Seleccione provincia"
+                      (change)="changeProvincia($event)">
+                      <option value="">Seleccione provincia</option>
+                      @for (PROVINCIA of PROVINCIA_SELECTEDS; track PROVINCIA.id) {
+                        <option [value]="PROVINCIA.id">{{ PROVINCIA.name }}</option>
+                      }
+                    </select>
+                    <small>Provincia</small>
+                  </div>
+
+                  <!-- Distrito -->
+                  <div class="col-3">
+                    <select
+                      class="form-control form-select-solid fw-bolder"
+                      name="ubigeo_distrito"
+                      [(ngModel)]="ubigeo_distrito"
+                      placeholder="Seleccione distrito">
+                      <option value="">Seleccione distrito</option>
+                      @for (DISTRITO of DISTRITOS_SELECTEDS; track DISTRITO.id) {
+                        <option [value]="DISTRITO.id">{{ DISTRITO.name }}</option>
+                      }
+                    </select>
+                    <small>Distrito</small>
+                  </div>
+
+                  <!-- Agencia de transporte -->
+                  <div class="col-3">
+                    <input type="text"
+                      [(ngModel)]="agencia"
+                      name="agencia"
+                      class="form-control mb-2"
+                      placeholder="Agencia de transporte"
+                      value="" />
+                    <small>Agencia de transporte</small>
+                  </div>
+
+                  <!-- COMIENZO TEXT AREA DESCRIPCIÓN DE LA PROFORMA -->
+                  <div class="col-4">
+                    <textarea
+                      class="form-control form-control-solid"
+                      rows="3"
+                      name="proforma_description"
+                      [(ngModel)]="proforma_description"
+                      placeholder="Descripción de la proforma">
+                    </textarea>
+                    <small>Descripción de la proforma</small>
+                  </div>
+                  <!-- FIN TEXT AREA DESCRIPCIÓN DE LA PROFORMA -->
+                  
+                  <!-- COMIENZO DE FECHA DE ENTREGA -->
+                  <div class="col-4">
+                    <input
+                      type="date"
+                      class="form-control form-control-solid"
+                      name="delivery_date"
+                      [(ngModel)]="delivery_date"
+                      placeholder="Fecha de entrega"/>
+                    <small>Fecha de entrega</small>
+                  </div>
+                  <!-- FIN DE FECHA DE ENTREGA -->
+                }
+
               </div>
               <!-- FIN DIRECCIÓN, LUGAR, FECHA DE ENTREGA Y DATOS DEL ENCARGADO DE RECOGIDA -->
             </div>

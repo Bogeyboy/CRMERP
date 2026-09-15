@@ -20,7 +20,7 @@ return new class extends Migration
             $table->double('discount')->default(0)->comment('Descuento aplicado a la proforma');
             $table->double('total')->comment('Total de la proforma');
             $table->double('iva')->comment('IVA de la proforma');
-            $table->unsignedTinyInteger('state')->comment('Estado de la proforma: 1=cotización, 2=contrato');
+            $table->unsignedTinyInteger('state')->default(1)->comment('Estado de la proforma: 1=cotización, 2=contrato');
             $table->unsignedTinyInteger('state_payment')->comment('Estado del pago: 1=pendiente, 2=parcial, 3=completo');
             $table->double('debt')->unsigned()->default(0)->comment('Cantidad pendiente de la proforma');
             $table->double('paid_out')->unsigned()->default(0)->comment('Cantidad pagada de la proforma');

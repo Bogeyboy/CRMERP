@@ -17,7 +17,9 @@ class ProformaPayment extends Model
         'method_payment_id',
         'amount',
         'date_validation',
-        'n_transaction'
+        'n_transaction',
+        'comprobante',
+        'banco_id'
     ];
 
     public function setCreatedAtAttribute($value)

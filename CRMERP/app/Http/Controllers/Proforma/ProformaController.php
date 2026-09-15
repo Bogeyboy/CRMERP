@@ -10,10 +10,15 @@ use App\Models\configuration\MethodPayment;
 use App\Models\Configuration\Sucursal_deliverie;
 use App\Models\Product\Product;
 use App\Models\Proforma\Proforma;
+use App\Models\Proforma\ProformaDeliverie;
+use App\Models\Proforma\ProformaDetail;
+use App\Models\Proforma\ProformaPayment;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use NunoMaduro\Collision\Adapters\Phpunit\State;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProformaController extends Controller
 {
@@ -33,19 +38,22 @@ class ProformaController extends Controller
 
             return response()->json([
                 'client_segments' => $client_segment,
-                'asesores' => $asesores->map(function ($user) {
+                'asesores' => $asesores->map(function ($user)
+                {
                     return [
                         'id' => $user->id,
                         'full_name' => $user->name . ' ' . $user->surname,
                     ];
                 }),
-                'sucursal_deliverie' => $sucursal_deliverie->map(function ($sucursale_del){
+                'sucursal_deliverie' => $sucursal_deliverie->map(function ($sucursale_del)
+                {
                     return [
                         'id' => $sucursale_del->id,
                         'name' => $sucursale_del->name,
                     ];
                 }),
-                'method_payments' => $method_payments->map(function($method_payment) {
+                'method_payments' => $method_payments->map(function($method_payment)
+                {
                     return [
                         'id' => $method_payment->id,
                         'name' => $method_payment->name,
@@ -126,7 +134,94 @@ class ProformaController extends Controller
     //FUNCIÓN PARA CREAR UN NUEVO REGISTRO EN LA TABLA
     public function store(Request $request)
     {
-        $proforma = Proforma::create($request->all());
+        
+        try
+        {
+            DB::beginTransaction();
+            //VARIABLES PARA LA CREACIÓN DE LA PROFORMA
+            $proforma = Proforma::create([
+                'user_id' => $request->user_id,
+                'client_id' => $request->client_id,
+                'client_segment_id' => $request->client_segment_id,
+                'subtotal' => $request->subtotal,
+                'discount' => $request->discount, // DESCUENTO TOTAL EN EUROS DE LA PROFORMA viene de PROFORMA_TOTAL_DISCOUNT
+                'total' => $request->total,
+                'iva' => $request->iva,
+                'debt' => $request->debt,
+                'paid_out' => $request->paid_out,
+                'description' => $request->description,
+            ]);
+    
+            $DETAIL_PROFORMAS = json_decode($request->DETAIL_PROFORMAS, true);
+    
+            //VARIABLES PARA EL DETALLADO DE LA PROFORMA
+            foreach ($DETAIL_PROFORMAS as $DETAIL)
+            {
+                ProformaDetail::create([
+                    'proforma_id' => $proforma->id,
+                    'product_id' => $DETAIL['product']['id'],
+                    'product_categorie_id' => $DETAIL['product']['product_categorie_id'],
+                    'description' => $DETAIL['description'],
+                    'unit_id' => $DETAIL['unidad_product'],
+                    'quantity' => $DETAIL['quantity'],
+                    //'price_unit' => $DETAIL['price_unit'],
+                    'price' => $DETAIL['price_unit'],
+                    //'discount' => $DETAIL['discount'], // DESCUENTO DEL PRODUCTO EN EL DETALLE DE LA PROFORMA
+                    'discount' => $DETAIL['product_discount'], // DESCUENTO DEL PRODUCTO EN EL DETALLE DE LA PROFORMA
+                    'subtotal' => $DETAIL['subtotal'], // SUBTOTAL DEL PRODUCTO SIN IIMPUESTO EN LA PROFORMA
+                    'impuesto' => $DETAIL['impuesto'], // IMPUESTO DEL PRODUCTO EN LA PROFORMA
+                    'total' => $DETAIL['total'], // TOTAL DEL PRODUCTO CON IMPUESTO EN LA PROFORMA
+                    'amount' => $DETAIL['amount'], // CANTIDAD PAGADA DEL PRODUCTO EN LA PROFORMA
+                ]);
+            }
+    
+            //VARIABLES PARA EL ENVIO DE LA PROFORMA
+            ProformaDeliverie::create([
+                'proforma_id' => $proforma->id,
+                'sucursal_deliverie_id' => $request->sucursal_deliverie_id,
+                'date_entrega' => $request->date_entrega,
+                // 'date_envio' => Carbon::parse($request->date_entrega)->subDays(2)->format('Y-m-d'),
+                'date_envio' => Carbon::parse($request->date_entrega)->subDays(2),
+                'address' => $request->address,
+                'ubigeo_region' => $request->ubigeo_region,
+                'ubigeo_provincia' => $request->ubigeo_provincia,
+                'ubigeo_distrito' => $request->ubigeo_distrito,
+                'region' => $request->region,
+                'provincia' => $request->provincia,
+                'distrito' => $request->distrito,
+                'agencia' => $request->agencia,
+                'full_name_encargado' => $request->full_name_encargado,
+                'documento_encargado' => $request->documento_encargado,
+                'telefono_encargado' => $request->telefono_encargado,
+            ]);
+    
+            $comprobante = '';
+    
+            if ($request->hasFile('payment_file'))
+            {
+                $comprobante = $request->file('payment_file')->store('payments', 'public');
+                $request->merge(['imagen' => $comprobante]);
+            }
+    
+            if($request->method_payment_id)
+            {
+                ProformaPayment::create([
+                    'proforma_id' => $proforma->id,
+                    'method_payment_id' => $request->method_payment_id,
+                    'amount' => $request->amount_payment,
+                    'comprobante' => $comprobante,
+                    'banco_id' => $request->banco_id,
+                ]);
+            }
+
+            DB::commit();
+        }
+        catch (\Throwable $th)
+        {
+            DB::rollBack();
+            throw new HttpException(500,$th->getMessage());
+        }
+
         return response()->json([
             'message' => 200,
         ]);

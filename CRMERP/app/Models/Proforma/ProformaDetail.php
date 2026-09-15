@@ -13,6 +13,8 @@ class ProformaDetail extends Model
 {
     use HasFactory,SoftDeletes;
 
+    protected $table = 'proforma_detalle';
+
     protected $fillable = [
         'proforma_id',
         'product_id',
@@ -23,6 +25,9 @@ class ProformaDetail extends Model
         'subtotal',
         'total',
         'amount',
+        'description',
+        'unit_id',
+        'impuesto'
     ];
 
     public function setCreatedAtAttribute($value)
