@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ProformasComponent } from './proformas.component';
 import { CreateProformaComponent } from './create-proforma/create-proforma.component';
-import { ListProformaComponent } from './list-proforma/list-proforma.component';
+import { ListProformasComponent } from './list-proforma/list-proforma.component';
 import { EditProformaComponent } from './edit-proforma/edit-proforma.component';
 
 const routes: Routes = [
@@ -16,7 +16,7 @@ const routes: Routes = [
       },
       {
         path:'listado',
-        component: ListProformaComponent
+        component: ListProformasComponent
       },
       {
         path:'listado/edicion/:id',

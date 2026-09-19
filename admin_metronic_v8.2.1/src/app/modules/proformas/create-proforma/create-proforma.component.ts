@@ -119,10 +119,6 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
 
   isLoading$: any;
 
-  /* @ViewChild('clientDocumentInput') clientDocumentInput!: ElementRef;
-  @ViewChild('clientNameInput') clientNameInput!: ElementRef;
-  @ViewChild('clientPhoneInput') clientPhoneInput!: ElementRef;
-  @ViewChild('productSearchInput') productSearchInput!: ElementRef; */
   // ✅ CAMBIO: Usar ViewChildren en lugar de ViewChild para mayor flexibilidad
   @ViewChildren('clientDocumentInput') clientDocumentInputs!: QueryList<ElementRef>;
   @ViewChildren('clientNameInput') clientNameInputs!: QueryList<ElementRef>;
@@ -1309,31 +1305,31 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     {
       return false;
     }
-    
+
     // Buscar la sucursal seleccionada en el array de sucursales
     const SUCURSAL_SELECTED = this.sucursal_deliverie.find(
       (sd: any) => sd.id == this.sucursal_deliverie_id
     );
-    
+
     if (!SUCURSAL_SELECTED)
     {
       return false;
     }
-    
+
     // Comparar el nombre de la sucursal con el nombre de la sucursal del usuario
     // O comparar por ID si tienes esa información disponible
     const userSucursalId = Number(this.user.sucursale_id);
     const userSucursalName = this.user.sucursale_name;
-    
+
     // Opción 1: Comparar por ID si la sucursal tiene un ID de sucursal real
     // return SUCURSAL_SELECTED.sucursale_id == userSucursalId;
-    
+
     // Opción 2: Comparar por nombre (como lo hace validationDeliverie actualmente)
     if (userSucursalName && SUCURSAL_SELECTED.name)
     {
       return SUCURSAL_SELECTED.name.indexOf(userSucursalName) != -1;
     }
-    
+
     return false;
   }
 
@@ -1347,19 +1343,19 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     {
       return false;
     }
-    
+
     // No debe ser envío a domicilio (5) ni envío a regiones (6)
     if (this.sucursal_deliverie_id == 5 || this.sucursal_deliverie_id == 6)
     {
       return false;
     }
-    
+
     // Debe haber una sucursal seleccionada
     if (!this.sucursal_deliverie_id || this.sucursal_deliverie_id == 0)
     {
       return false;
     }
-    
+
     return true;
   }
 
@@ -1370,10 +1366,10 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
   {
     const NEW_VALUE = Number(event.target.value);
     this.sucursal_deliverie_id = NEW_VALUE;
-    
+
     // Resetear campos cuando cambia la sucursal
     this.resetDeliveryFields();
-    
+
     // Forzar detección de cambios
     this.cdr.detectChanges();
     this.isLoadingProcess();
@@ -1414,10 +1410,10 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
   {
     // Opción 1: Vaciar completamente el array
     this.DETAIL_PROFORMAS = [];
-    
+
     // Opción 2: Si quieres mantener la referencia del array (por si hay suscripciones)
     // this.DETAIL_PROFORMAS.length = 0;
-    
+
     // Resetear los totales
     this.TOTAL_PROFORMA = 0;
     this.TOTAL_IMPUESTO_PROFORMA = 0;
@@ -1425,7 +1421,7 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     this.PAID_OUT_PROFORMA = 0;
     this.PROFORMA_TOTAL_DISCOUNT = 0;
     this.proforma_description = '';
-    
+
     // Forzar detección de cambios
     this.cdr.detectChanges();
   }
@@ -1440,21 +1436,21 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
       this.toast.error('Error', 'Se necesita tener un cliente seleccionado para crear la proforma.');
       return;
     }
-    
+
     //Si no hay productos en el detallado de la proforma, no se puede crear la proforma
     if(this.DETAIL_PROFORMAS.length == 0)
     {
       this.toast.error('Error', 'Se necesita tener al menos un producto en la proforma.');
       return;
     }
-    
+
     //Validación para la sucursal de entrega
     if(!this.sucursal_deliverie_id)
     {
       this.toast.error('Error', 'Se necesita tener una sucursal de entrega seleccionada para crear la proforma.');
       return;
     }
-    
+
     //Validación para la fecha de entrega
     if(!this.delivery_date)
     {
@@ -1608,9 +1604,9 @@ export class CreateProformaComponent  implements OnInit, AfterViewInit
     formData.append('debt', (this.DEBT_PROFORMA - (this.amount_payment ? this.amount_payment : 0)).toString());
     formData.append('paid_out', (this.PAID_OUT_PROFORMA + (this.amount_payment ? this.amount_payment : 0)).toString());
     formData.append('description', this.proforma_description || '');
-    
+
     formData.append('DETAIL_PROFORMAS', JSON.stringify(this.DETAIL_PROFORMAS));
-    
+
     formData.append('sucursal_deliverie_id', this.sucursal_deliverie_id.toString());
     formData.append('delivery_date', this.delivery_date);
 

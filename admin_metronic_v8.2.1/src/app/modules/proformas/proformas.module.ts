@@ -6,7 +6,7 @@ import { ProformasComponent } from './proformas.component';
 import { CreateProformaComponent } from './create-proforma/create-proforma.component';
 import { EditProformaComponent } from './edit-proforma/edit-proforma.component';
 import { DeleteProformaComponent } from './delete-proforma/delete-proforma.component';
-import { ListProformaComponent } from './list-proforma/list-proforma.component';
+import { ListProformasComponent } from './list-proforma/list-proforma.component';
 import { SearchProductsComponent } from './components/search-products/search-products.component';
 import { AddPaymentsComponent } from './components/add-payments/add-payments.component';
 
@@ -15,6 +15,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SearchClientsComponent } from './components/search-clients/search-clients.component';
+import { FormatNumberPipe } from '../../pipes/format-number.pipe';
 
 
 @NgModule({
@@ -22,7 +23,7 @@ import { SearchClientsComponent } from './components/search-clients/search-clien
     ProformasComponent,
     EditProformaComponent,
     DeleteProformaComponent,
-    ListProformaComponent,
+    ListProformasComponent,
     AddPaymentsComponent,
   ],
   imports: [
@@ -36,7 +37,8 @@ import { SearchClientsComponent } from './components/search-clients/search-clien
     NgbModalModule,
     CreateProformaComponent,
     SearchProductsComponent,
-    SearchClientsComponent
-  ]
+    SearchClientsComponent,
+    FormatNumberPipe
+]
 })
 export class ProformasModule { }

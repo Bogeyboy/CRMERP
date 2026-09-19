@@ -90,4 +90,15 @@ export class ProformasService
       finalize(() => this.isLoadingSubject.next(false))
     );
   }
+
+  listProformas(page = 1,data:any = {})
+  {
+    this.isLoadingSubject.next(true);
+    const headers = new HttpHeaders({'Authorization': 'Bearer '+ this.authservice.token});
+
+    const URL = `${this.apiUrl}/proformas/index`;
+    return this.http.post(URL,data,{headers: headers}).pipe(
+      finalize(() => this.isLoadingSubject.next(false))
+    );
+  }
 }

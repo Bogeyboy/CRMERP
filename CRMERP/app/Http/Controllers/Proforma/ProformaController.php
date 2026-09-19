@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Proforma;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductCollection;
+use App\Http\Resources\Proforma\ProformaCollection;
 use App\Models\Client\Client;
 use App\Models\Configuration\client_segment;
 use App\Models\configuration\MethodPayment;
+use App\Models\Configuration\ProductCategorie;
 use App\Models\Configuration\Sucursal_deliverie;
 use App\Models\Product\Product;
 use App\Models\Proforma\Proforma;
@@ -31,13 +33,15 @@ class ProformaController extends Controller
             $asesores = User::whereHas('roles', function ($q) {
                 $q->where('name', 'like', '%Asesor%');
             })->get();
-            
+
             $sucursal_deliverie = Sucursal_deliverie::where('state',1)->get();
             $method_payments = MethodPayment::where('state',1)->whereNull('method_payment_id')->get();
+            $product_categories = ProductCategorie::where('state',1)->get();
             $today = now()->format('d/m/Y');
 
             return response()->json([
                 'client_segments' => $client_segment,
+                'product_categories' => $product_categories,
                 'asesores' => $asesores->map(function ($user)
                 {
                     return [
@@ -77,19 +81,33 @@ class ProformaController extends Controller
             ], 500);
         }
     }
-    
+
     public function index(Request $request)
     {
-        $search = $request->get('search');
+        //$search = $request->get('search');
+        $search = $request->search;
+        $client_segment_id = $request->client_segment_id;
+        $asesor_id = $request->asesor_id;
+        $product_categorie_id = $request->product_categorie_id;
+        $search_client = $request->search_client;
+        $search_product = $request->search_product;
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+        $state_proforma = $request->state_proforma;
 
-        $proformas = Proforma::orderBy('id', 'desc')->paginate(25);
+        //$proformas = Proforma::orderBy('id', 'desc')->paginate(25);
+
+        $proformas = Proforma::filterAdvance(
+            $search, $client_segment_id, $asesor_id, $product_categorie_id, $search_client,
+            $search_product, $start_date, $end_date, $state_proforma
+        )->orderBy('id', 'desc')->paginate(25);
 
         return response()->json([
             'total' => $proformas->total(),
-            'proformas' => $proformas,
+            'proformas' => ProformaCollection::make($proformas),
         ]);
     }
-    
+
     //FUNCIÓN PARA BUSCAR CLIENTES EN LA TABLA CLIENTS
     public function search_clients(Request $request)
     {
@@ -125,7 +143,7 @@ class ProformaController extends Controller
         $products = Product::where(DB::raw("CONCAT(products.title,' ',products.sku)"),"like","%".$search."%")
                     ->orderBy('id','desc')
                     ->get();
-        
+
         return response()->json([
             'products' => ProductCollection::make($products),
         ]);
@@ -134,7 +152,7 @@ class ProformaController extends Controller
     //FUNCIÓN PARA CREAR UN NUEVO REGISTRO EN LA TABLA
     public function store(Request $request)
     {
-        
+
         try
         {
             DB::beginTransaction();
@@ -151,9 +169,9 @@ class ProformaController extends Controller
                 'paid_out' => $request->paid_out,
                 'description' => $request->description,
             ]);
-    
+
             $DETAIL_PROFORMAS = json_decode($request->DETAIL_PROFORMAS, true);
-    
+
             //VARIABLES PARA EL DETALLADO DE LA PROFORMA
             foreach ($DETAIL_PROFORMAS as $DETAIL)
             {
@@ -174,7 +192,7 @@ class ProformaController extends Controller
                     'amount' => $DETAIL['amount'], // CANTIDAD PAGADA DEL PRODUCTO EN LA PROFORMA
                 ]);
             }
-    
+
             //VARIABLES PARA EL ENVIO DE LA PROFORMA
             ProformaDeliverie::create([
                 'proforma_id' => $proforma->id,
@@ -194,15 +212,15 @@ class ProformaController extends Controller
                 'documento_encargado' => $request->documento_encargado,
                 'telefono_encargado' => $request->telefono_encargado,
             ]);
-    
+
             $comprobante = '';
-    
+
             if ($request->hasFile('payment_file'))
             {
                 $comprobante = $request->file('payment_file')->store('payments', 'public');
                 $request->merge(['imagen' => $comprobante]);
             }
-    
+
             if($request->method_payment_id)
             {
                 ProformaPayment::create([

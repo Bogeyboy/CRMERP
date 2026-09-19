@@ -27,7 +27,7 @@ class ProformaDetail extends Model
         'amount',
         'description',
         'unit_id',
-        'impuesto'
+        'impuesto',
     ];
 
     public function setCreatedAtAttribute($value)

@@ -100,6 +100,8 @@ Route::middleware('auth:api')->group(function () {
     //RUTAS PARA LAS PROFORMA
     //CLIENTES
     
+    Route::post('proformas/index', [ProformaController::class, 'index']);
+
     Route::resource('proformas',ProformaController::class);
 
     Route::get('/proforma/search-clients', [ProformaController::class, 'search_clients'])
