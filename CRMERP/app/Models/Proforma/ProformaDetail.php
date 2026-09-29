@@ -3,6 +3,7 @@
 namespace App\Models\Proforma;
 
 use App\Models\Configuration\ProductCategorie;
+use App\Models\Configuration\Unit;
 use App\Models\Product\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -47,11 +48,16 @@ class ProformaDetail extends Model
         return $this->belongsTo(Proforma::class, 'proforma_id');
     }
 
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, 'unit_id');
+    }
+
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
     }
-    
+
     public function product_categorie()
     {
         return $this->belongsTo(ProductCategorie::class, 'product_categorie_id');

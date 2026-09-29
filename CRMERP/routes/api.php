@@ -99,14 +99,14 @@ Route::middleware('auth:api')->group(function () {
 
     //RUTAS PARA LAS PROFORMA
     //CLIENTES
-    
+
     Route::post('proformas/index', [ProformaController::class, 'index']);
 
     Route::resource('proformas',ProformaController::class);
 
     Route::get('/proforma/search-clients', [ProformaController::class, 'search_clients'])
         ->middleware('permission:list_proformas');
-    
+
     Route::get('/proforma/config', [ProformaController::class, 'config'])
         ->middleware('permission:list_proformas');
 
@@ -114,7 +114,36 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/proforma/search-products', [ProformaController::class, 'search_products'])
         ->middleware('permission:list_products');
 
+    //EXPORTACIÓN
+    //Route::get("excel/export-proforma-general", [ProformaController::class,"export_proforma_general"]);
+
+    /* Route::middleware('auth:api')->group(function() {
+        Route::get("excel/export-proforma-general", [ProformaController::class,"export_proforma_general"])
+            ->middleware('permission:list_proforma');
+    }); */
+
+    //Route::get("excel/export-proforma-detalle", [ProformaController::class,"export_proforma_detail"]);
+
+    /* Route::middleware('auth:api')->group(function() {
+        Route::get("excel/export-proforma-detalle", [ProformaController::class,"export_proforma_detail"])
+            ->middleware('permission:list_proforma');
+    }); */
+
 });
+
+    Route::get("excel/export-proforma-general", [ProformaController::class,"export_proforma_general"]);
+
+    /* Route::middleware('auth:api')->group(function() {
+        Route::get("excel/export-proforma-general", [ProformaController::class,"export_proforma_general"])
+            ->middleware('permission:list_proforma');
+    }); */
+
+    Route::get("excel/export-proforma-detalle", [ProformaController::class,"export_proforma_detail"]);
+
+    /* Route::middleware('auth:api')->group(function() {
+        Route::get("excel/export-proforma-detalle", [ProformaController::class,"export_proforma_detail"])
+            ->middleware('permission:list_proforma');
+    }); */
 
 // ---------- SOLO SUPER-ADMIN ----------
 Route::middleware(['auth:api', 'role:Super-Admin'])->group(function () {

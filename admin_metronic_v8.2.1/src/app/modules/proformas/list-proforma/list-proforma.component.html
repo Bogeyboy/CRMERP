@@ -138,9 +138,9 @@
         </div>
         <!-- FIN DE LA BÚSQUEDA POR ESTADO DE PROFORMA -->
         <!-- COMIENZO DE BOTONES DE ACCIÓN -->
-        <div class="col-3 d-flex">
+        <div class="col-4 d-flex align-items-center justify-content-center">
           <!-- INICIO DEL BOTÓN APLICAR FILTROS -->
-          <button class="btn btn-primary btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Aplicar filtros"
+          <button class="btn btn-primary rounded-pill btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Aplicar filtros"
             (click)="listProformas()">
               <i class="ki-duotone ki-magnifier fs-2">
                 <span class="path1"></span>
@@ -149,7 +149,7 @@
           </button>
           <!-- FIN DEL BOTÓN DE APLICAR FILTROS -->
           <!-- INICIO DEL BOTÓN RESETEAR FILTROS DE LAS PROFORMAS -->
-          <button class="btn btn-dark btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Resetear filtros"
+          <button class="btn btn-dark rounded-pill btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Resetear filtros"
             (click)="resetlistProformas()">
               <i class="ki-duotone ki-loading fs-2">
                 <span class="path1"></span>
@@ -157,16 +157,25 @@
               </i>
           </button>
           <!-- FIN DEL BOTÓN DE RESETEAR FILTROS DE LAS PROFORMAS -->
-          <!-- COMIENZO DEL BOTÓN DE EXPORTAR PROFORMAS -->
-          <button class="btn btn-success btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar Proformas"
-            (click)="exportProformas()">
+          <!-- COMIENZO DEL BOTÓN DE EXPORTACIÓN GENERAL DE PROFORMAS -->
+          <button class="btn btn-success rounded-pill btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar Proformas"
+            (click)="exportProformasGeneral()">
               <i class="ki-duotone ki-folder-down fs-2">
                 <span class="path1"></span>
                 <span class="path2"></span>
               </i>
           </button>
-          <!-- FIN DEL BOTÓN DE EXPORTAR PROFORMAS -->
-          <a routerLink="/proformas/crear" class="btn btn-sm btn-warning">
+          <!-- FIN DEL BOTÓN DE EXPORTACIÓN GENERAL DE PROFORMAS -->
+          <!-- COMIENZO DEL BOTÓN PARA EXPORTACIÓN DETALLADA DE PRODORMA -->
+          <button class="btn btn-secondary rounded-pill btn-sm mx-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar Detalle de proforma"
+            (click)="exportProformasDetails()">
+              <i class="ki-duotone ki-questionnaire-tablet fs-2">
+                <span class="path1"></span>
+                <span class="path2"></span>
+              </i>
+          </button>
+          <!-- FIN DEL BOTÓN PARA EXPORTACIÓN DETALLADA DE PRODORMA -->
+          <a routerLink="/proformas/crear" class="btn btn-warning rounded-pill btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Crear nueva proforma">
             + Crear Proforma
           </a>
         </div>
@@ -358,11 +367,11 @@
                 <!-- FIN DEL CAMPO PARA LA CANTIDAD YA ABONADA DE LA PROFORMA -->
                 <!-- INICIO DEL CAMPO PARA EL ASESOR DE LA PROFORMA -->
                 <td>
-                  {{ PROFORMA.asesor.full_name }}
+                  {{ PROFORMA.asesor?.full_name || 'Sin asesor' }}
                 </td>
                 <!-- FIN DEL CAMPO PARA EL ASESOR DE LA PROFORMA -->
                 <!-- INICIO DEL CAMPO PARA LA FECHA DE CREACIÓN DE LA PROFORMA -->
-                <td >
+                <td>
                   {{ PROFORMA.created_at }}
                 </td>
                 <!-- FIN DEL CAMPO PARA LA FECHA DE CREACIÓN DE LA PROFORMA -->

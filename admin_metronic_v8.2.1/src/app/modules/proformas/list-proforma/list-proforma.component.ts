@@ -115,10 +115,10 @@ export class ListProformasComponent
     });
   }
   //EXPORTACIÓN DE CLIENTES
-  exportProformas()
+  /*
   {
     let LINK ="";
-    /*
+
     if(this.search)
     {
       LINK += "&search="+this.search;
@@ -127,16 +127,132 @@ export class ListProformasComponent
     {
       LINK += "&client_segment_id="+this.client_segment_id;
     }
-    if(this.type)
+    if(this.product_categorie_id)
     {
-      LINK += "&type="+this.type;
+      LINK += "&product_categorie_id="+this.product_categorie_id;
+    }
+    if(this.search_client)
+    {
+      LINK += "&search_client="+this.search_client;
     }
     if(this.asesor_id)
     {
       LINK += "&asesor_id="+this.asesor_id;
     }
+    if(this.type)
+    {
+      LINK += "&state_proforma="+this.type;
+    }
+    if(this.search_product)
+    {
+      LINK += "&search_product="+this.search_product;
+    }
+    if(this.start_date && this.end_date)
+    {
+      LINK += "&start_date="+this.start_date;
+      LINK += "&end_date="+this.end_date;
+    }
+
     // Lógica para exportar clientes
-    window.open(URL_SERVICIOS+"/excel/export-clients?k=1"+LINK,"_blank"); */
+    window.open(URL_SERVICIOS+"/excel/export-proforma-general?k=1"+LINK,"_blank");
+  } */
+  exportProformasGeneral()
+  {
+    let LINK ="";
+
+    //SI EXISTE EL CAMPO DE BUSCAR
+    if(this.search)
+    {
+      LINK += "&search="+this.search;
+    }
+    //SI EXISTE EL CAMPO DE SEGMENTO DE CLIENTE
+    if(this.client_segment_id)
+    {
+      LINK += "&client_segment_id="+this.client_segment_id;
+    }
+    //SI EXISTE EL CAMPO DE CATEGORÍA DE PRODUCTO
+    if(this.product_categorie_id)
+    {
+      LINK += "&product_categorie_id="+this.product_categorie_id;
+    }
+    //SI EXISTE EL CAMPO DE BÚSQUEDA DE CLIENTE
+    if(this.search_client)
+    {
+      LINK += "&search_client="+this.search_client;
+    }
+    //SI EXISTE EL CAMBPO DE BUSQUEDA POR ASESOR
+    if(this.asesor_id)
+    {
+      LINK += "&asesor_id="+this.asesor_id;
+    }
+    //SI EXISTE EL CAMPO DE BUSQUEDA POR TIPO DE CLIENTE
+    if(this.type)
+    {
+      LINK += "&state_proforma="+this.type;
+    }
+    //SI EXISTE EL CAMPO DE BUSQUEDA POR PRODUCTO
+    if(this.search_product)
+    {
+      LINK += "&search_product="+this.search_product;
+    }
+    //SI EXISTEN LOS CAMPOS DE BUSQUEDA POR FECHA
+    if(this.start_date && this.end_date)
+    {
+      LINK += "&start_date="+this.start_date;
+      LINK += "&end_date="+this.end_date;
+    }
+
+    // Lógica para exportar clientes
+    window.open(URL_SERVICIOS+"/excel/export-proforma-general?k=1"+LINK,"_blank");
+  }
+  exportProformasDetails()
+  {
+    let LINK ="";
+
+    //SI EXISTE EL CAMPO DE BUSCAR
+    if(this.search)
+    {
+      LINK += "&search="+this.search;
+    }
+    //SI EXISTE EL CAMPO DE SEGMENTO DE CLIENTE
+    if(this.client_segment_id)
+    {
+      LINK += "&client_segment_id="+this.client_segment_id;
+    }
+    //SI EXISTE EL CAMPO DE CATEGORÍA DE PRODUCTO
+    if(this.product_categorie_id)
+    {
+      LINK += "&product_categorie_id="+this.product_categorie_id;
+    }
+    //SI EXISTE EL CAMPO DE BÚSQUEDA DE CLIENTE
+    if(this.search_client)
+    {
+      LINK += "&search_client="+this.search_client;
+    }
+    //SI EXISTE EL CAMBPO DE BUSQUEDA POR ASESOR
+    if(this.asesor_id)
+    {
+      LINK += "&asesor_id="+this.asesor_id;
+    }
+    //SI EXISTE EL CAMPO DE BUSQUEDA POR TIPO DE CLIENTE
+    if(this.type)
+    {
+      LINK += "&state_proforma="+this.type;
+    }
+    //SI EXISTE EL CAMPO DE BUSQUEDA POR PRODUCTO
+    if(this.search_product)
+    {
+      LINK += "&search_product="+this.search_product;
+    }
+    //SI EXISTEN LOS CAMPOS DE BUSQUEDA POR FECHA
+    if(this.start_date && this.end_date)
+    {
+      LINK += "&start_date="+this.start_date;
+      LINK += "&end_date="+this.end_date;
+    }
+
+    // Lógica para exportar clientes
+    window.open(URL_SERVICIOS+"/excel/export-proforma-detalle?k=1"+LINK,"_blank");
   }
 
   //Función para las acciones tras el cambio de pagina en la paginación

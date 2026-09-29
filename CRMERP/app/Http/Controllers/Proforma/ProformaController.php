@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Proforma;
 
+use App\Exports\Proforma\ProformaDetailExport;
+use App\Exports\Proforma\ProformaGeneralExport;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Product\ProductCollection;
 use App\Http\Resources\Proforma\ProformaCollection;
@@ -19,6 +21,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use NunoMaduro\Collision\Adapters\Phpunit\State;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -97,10 +100,17 @@ class ProformaController extends Controller
 
         //$proformas = Proforma::orderBy('id', 'desc')->paginate(25);
 
-        $proformas = Proforma::filterAdvance(
+        /* $proformas = Proforma::filterAdvance(
             $search, $client_segment_id, $asesor_id, $product_categorie_id, $search_client,
             $search_product, $start_date, $end_date, $state_proforma
-        )->orderBy('id', 'desc')->paginate(25);
+        )->orderBy('id', 'desc')->paginate(25); */
+        $proformas = Proforma::with(['client', 'client_segment', 'asesor'])
+            ->filterAdvance(
+                $search, $client_segment_id, $asesor_id, $product_categorie_id, $search_client,
+                $search_product, $start_date, $end_date, $state_proforma
+            )
+            ->orderBy('id', 'desc')
+            ->paginate(25);
 
         return response()->json([
             'total' => $proformas->total(),
@@ -274,4 +284,16 @@ class ProformaController extends Controller
             'message_text' => 'Proforma eliminada correctamente.',
         ]);
     }
+
+    public function export_proforma_general(Request $request)
+    {
+        return Excel::download(new ProformaGeneralExport($request),'Proformas'.uniqid().'.xlsx');
+        //return Excel::download(new ProformaGeneralExport($request),'Proformas'.uniqid().'.ods');
+    }
+
+    public function export_proforma_detail(Request $request)
+    {
+        return Excel::download(new ProformaDetailExport($request),'ProformasDetail'.uniqid().'.xlsx');
+    }
+
 }

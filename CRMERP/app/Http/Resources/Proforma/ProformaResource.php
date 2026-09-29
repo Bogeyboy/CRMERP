@@ -19,6 +19,12 @@ class ProformaResource extends JsonResource
         [
             'id' => $this->resource->id,
             'user_id' => $this->resource->user_id,
+            
+            /* 'asesor' => $this->resource->asesor ?
+            [
+                'id' => $this->resource->user->id,
+                'full_name' => $this->resource->user->name.' '.$this->resource->user->surname,
+            ] : null, */
             'asesor' => $this->resource->asesor ?
             [
                 'id' => $this->resource->asesor->id,
@@ -38,7 +44,6 @@ class ProformaResource extends JsonResource
             ] : null,
 
             'client_segment_id' => $this->resource->client_segment_id,
-
 
             'subtotal' => $this->resource->subtotal,
             'discount' => $this->resource->discount,
@@ -85,6 +90,7 @@ class ProformaResource extends JsonResource
                     'impuesto' => $detail->impuesto,
                 ];
             }),
+
             'proforma_deliverie' => $this->resource->proforma_deliverie ?
             [
                 'id' => $this->resource->proforma_deliverie->id,
