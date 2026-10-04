@@ -19,7 +19,7 @@ class ProformaResource extends JsonResource
         [
             'id' => $this->resource->id,
             'user_id' => $this->resource->user_id,
-            
+
             /* 'asesor' => $this->resource->asesor ?
             [
                 'id' => $this->resource->user->id,
@@ -32,6 +32,7 @@ class ProformaResource extends JsonResource
             ] : null,
 
             'client_id' => $this->resource->client_id,
+            //CLIENTE
             'client' => $this->resource->client ?
             [
                 'id' => $this->resource->client->id,
@@ -44,6 +45,18 @@ class ProformaResource extends JsonResource
             ] : null,
 
             'client_segment_id' => $this->resource->client_segment_id,
+            'client_segment' => $this->resource->client_segment ?
+                [
+                    'id' => $this->resource->client_segment->id,
+                    'name' => $this->resource->client_segment->name,
+                ] : null,
+
+            'sucursale_id' => $this->resource->sucursale_id,
+            'sucursale' => $this->resource->sucursale ?
+            [
+                'id' => $this->resource->sucursale->id,
+                'name' => $this->resource->sucursale->name,
+            ] : null,
 
             'subtotal' => $this->resource->subtotal,
             'discount' => $this->resource->discount,
@@ -58,6 +71,7 @@ class ProformaResource extends JsonResource
             'description' => $this->resource->description,
             'created_at' => $this->resource->created_at->format('Y-m-d h:i:A'),
 
+            //DETALLES DE LA PROFORMA
             'details' => $this->resource->details->map(function($detail)
             {
                 return
@@ -68,7 +82,8 @@ class ProformaResource extends JsonResource
                     [
                         'id' => $detail->product->id,
                         'title' => $detail->product->title,
-                        'imagen' => env('APP_URL').'storage/'.$detail->product->imagen, //RUTA COMPLETA DE LA IMAGEN DENTRO DE LA APLICACIÓN
+                        //'imagen' => env('APP_URL').'storage/'.$detail->product->imagen, //RUTA COMPLETA DE LA IMAGEN DENTRO DE LA APLICACIÓN
+                        'imagen' => $detail->product->imagen, //RUTA COMPLETA DE LA IMAGEN DENTRO DE LA APLICACIÓN
                     ] : null,
 
                     'product_categorie_id' =>$detail->product_categorie_id,
@@ -87,14 +102,28 @@ class ProformaResource extends JsonResource
                     'amount' => $detail->amount,
                     'description' => $detail->description,
                     'unit_id' => $detail->unit_id,
+                    'unit' => $detail->unit ?
+                    [
+                        'id' => $detail->unit->id,
+                        'name' => $detail->unit->name,
+                    ] : null,
+
                     'impuesto' => $detail->impuesto,
                 ];
             }),
 
+            //ENTREGA DE LA PROFORMA
             'proforma_deliverie' => $this->resource->proforma_deliverie ?
             [
                 'id' => $this->resource->proforma_deliverie->id,
+                
                 'sucursal_deliverie_id' => $this->resource->proforma_deliverie->sucursal_deliverie_id,
+                'sucursal_deliverie' => $this->resource->proforma_deliverie->sucursal_deliverie ?
+                [
+                    'id' => $this->resource->proforma_deliverie->sucursal_deliverie->id,
+                    'name' => $this->resource->proforma_deliverie->sucursal_deliverie->name,
+                ] : null,   
+                
                 'date_envio' => Carbon::parse($this->resource->proforma_deliverie->date_envio)->format('d/m/Y'),
                 'date_entrega' => Carbon::parse($this->resource->proforma_deliverie->date_entrega)->format('d/m/Y'),
                 'address' => $this->resource->proforma_deliverie->address,
@@ -110,6 +139,7 @@ class ProformaResource extends JsonResource
                 'telefono_encargado' => $this->resource->proforma_deliverie->telefono_encargado,
             ] : null,
 
+            //PAGOS DE LA PROFORMA
             'payments' => $this->resource->proforma_payments->map(function($payments)
             {
                 return

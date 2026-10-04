@@ -1,0 +1,172 @@
+<!--begin::Modal content CREATE-->
+<div class="modal-content">
+  <!-- COMIENZO DE CABECERA DEL MODAL -->
+  <div class="modal-header d-flex justify-content-between align-items-center" id="kt_modal_add_user_header">
+    <!-- COMIENZO DEL TÍTULO DEL MODAL -->
+    <h2 class="fw-bolder">Proforma # {{ PROFORMA.id }}</h2>
+    <!-- FIN DEL TÍTULO DEL MODAL -->
+    <!-- COMIENZO DEL BOTÓN DE CIERRE DEL MODAL -->
+    <div class="btn btn-icon btn-sm btn-active-icon-primary" data-kt-users-modal-action="close" (click)="modal.dismiss()">
+      <!-- COMIENZO DE ICONO DE CIERRE | path: icons/duotune/arrows/arr061.svg-->
+      <span class="svg-icon svg-icon-1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor" />
+          <rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor" />
+        </svg>
+      </span>
+      <!-- FIN DE ICONO DE CIERRE -->
+    </div>
+    <!-- FIN DEL BOTÓN DE CIERRE DEL MODAL -->
+  </div>
+  <!-- FIN DE CABECERA DEL MODAL -->
+  <!--begin::Modal body-->
+  <div class="modal-body scroll-y mx-5 my-7">
+    <!--begin::Form-->
+    <form id="kt_modal_add_user_form" class="form" action="#">
+      <div class="row">
+        <div class="col-12">
+          <div class="table-responsive">
+            <!-- INICIO DE LA TABLA DE RESULTADOS -->
+            <table class="table table-row-bordered table-row-gray-100 align-middle gs-0 gy-3">
+              <!-- INICIO DE CABECERA DE LA TABLA -->
+              <thead>
+                <tr class="fw-bold text-muted">
+                  <th class="min-w-150px">Producto</th>
+                  <th class="min-w-120px">Categoría</th>
+                  <th class="min-w-140px">Unidad</th>
+                  <th class="min-w-120px">Precio unitario (€)</th>
+                  <th class="min-w-120px">Descuento (€)</th>
+                  <th class="min-w-120px">Subtotal (€)</th>
+                  <th class="min-w-120px">Impuesto (%)</th>
+                  <th class="min-w-120px">Cantidad</th>
+                  <th class="min-w-120px">Total (€)</th>
+                </tr>
+              </thead>
+              <!-- FIN DE CABECERA DE LA TABLA -->
+              <!-- INICIO DE CUERPO DE LA TABLA -->
+              <tbody>
+                @for (DETAIL_PROFORMA of PROFORMA.details; track $index)
+                {
+                  <tr>
+                    <!-- INICIO DE IMAGEN Y NOMBRE DEL PRODUCTO-->
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <!-- COMIENZO DE IMAGEN DEL PRODUCTO -->
+                        <div class="symbol symbol-50px me-5">
+                          <img [src]="DETAIL_PROFORMA.product.imagen" class="" alt="">
+                        </div>
+                        <!-- FIN DE IMAGEN DEL PRODUCTO -->
+                        <!-- COMIENZO DE NOMBRE DEL PRODUCTO -->
+                        <div class="d-flex justify-content-start flex-column">
+                          <a href="#" class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6" [routerLink]="'/productos/list/edit/' + DETAIL_PROFORMA.id ">
+                            {{ DETAIL_PROFORMA.product.title }}
+                          </a>
+                        </div>
+                        <!-- FIN DE NOMBRE DEL PRODUCTO -->
+                      </div>
+                    </td>
+                    <!-- FIN DE IMAGEN Y NOMBRE DEL PRODUCTO-->
+                    <!-- INICIO DE CATEGORIA DE PRODUCTO -->
+                    <td>
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;">
+                          {{  DETAIL_PROFORMA.product_categorie.name }}
+                      </a>
+                    </td>
+                    <!-- FIN DE CATEGORIA DE PRODUCTO -->
+                    <!-- INICIO DE TIPO UNIDAD DE PRODUCTO -->
+                    <td>
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;">
+                          {{  DETAIL_PROFORMA.unit.name }}
+                      </a>
+                    </td>
+                    <!-- FIN DE TIPO UNIDAD DE PRODUCTO -->
+                    <!-- INICIO DE PRECIO UNITARIO -->
+                    <td>
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;">
+                          {{ DETAIL_PROFORMA.price | currency:'EUR':'symbol':'1.2-2'  }}
+                      </a>
+                    </td>
+                    <!-- FIN DE PRECIO UNITARIO -->
+                    <!-- INICIO DE DESCUENTO -->
+                    <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;">
+                          {{ DETAIL_PROFORMA.discount | currency:'EUR':'symbol':'1.2-2' }}
+                      </a>
+                    </td>
+                    <!-- FIN DE DESCUENTO -->
+                    <!-- INICIO DE SUBTOTAL -->
+                    <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;">
+                          {{ DETAIL_PROFORMA.subtotal | currency:'EUR':'symbol':'1.2-2' }}
+                      </a>
+                    </td>
+                    <!-- FIN DE SUBTOTAL -->
+                    <!-- INICIO DE IMPUESTO -->
+                    <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;">
+                          {{ DETAIL_PROFORMA.impuesto * 100 | number:'1.2-2' }}%
+                      </a>
+                    </td>
+                    <!-- FIN DE IMPUESTO -->
+                    <!-- INICIO DE CANTIDAD -->
+                    <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;">
+                          {{ DETAIL_PROFORMA.quantity }}
+                      </a>
+                    </td>
+                    <!-- FIN DE CANTIDAD -->
+                    <!-- INICIO DE TOTAL -->
+                    <td class="text-gray-900 fw-bold text-hover-primary fs-6">
+                      <a href="#"
+                        class="text-gray-900 fw-bold text-hover-primary fs-6"
+                        onclick="return false;">
+                          {{ (DETAIL_PROFORMA.subtotal * DETAIL_PROFORMA.quantity) | currency:'EUR':'symbol':'1.2-2' }}
+                      </a>
+                    </td>
+                    <!-- FIN DE TOTAL -->
+                  </tr>
+                }
+                <tr>
+                  <td></td>
+                  <td>Sede de origen:</td>
+                  <td>{{ PROFORMA.sucursale.name }}</td>
+                  <td></td>
+                  <td>Sede de description</td>
+                  <td>{{ PROFORMA.proforma_deliverie.sucursal_deliverie.name }}</td>
+                  <td></td>
+                  <td>Total de la proforma:</td>
+                  <td>{{ PROFORMA.total | currency:'EUR':'symbol':'1.2-2' }}</td>
+                </tr>
+              </tbody>
+              <!-- FIN DE CUERPO DE LA TABLA -->
+            </table>
+            <!-- FIN DE LA TABLA DE RESULTADOS -->
+          </div>
+
+        </div>
+      </div>
+      <!--begin::Actions-->
+      <div class="text-center pt-15">
+        <button type="reset" class="btn btn-light me-3" (click)="modal.dismiss()">Cerrar</button>
+      </div>
+      <!--end::Actions-->
+    </form>
+    <!--end::Form-->
+  </div>
+  <!--end::Modal body-->
+</div>
+<!--end::Modal content CREATE-->

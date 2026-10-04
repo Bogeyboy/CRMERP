@@ -162,7 +162,6 @@ class ProformaController extends Controller
     //FUNCIÓN PARA CREAR UN NUEVO REGISTRO EN LA TABLA
     public function store(Request $request)
     {
-
         try
         {
             DB::beginTransaction();
@@ -171,6 +170,7 @@ class ProformaController extends Controller
                 'user_id' => $request->user_id,
                 'client_id' => $request->client_id,
                 'client_segment_id' => $request->client_segment_id,
+                'sucursale_id' => auth('api')->user()->sucursale_id,
                 'subtotal' => $request->subtotal,
                 'discount' => $request->discount, // DESCUENTO TOTAL EN EUROS DE LA PROFORMA viene de PROFORMA_TOTAL_DISCOUNT
                 'total' => $request->total,

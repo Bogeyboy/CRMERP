@@ -5,6 +5,7 @@ namespace App\Models\Proforma;
 use App\Models\Client\Client;
 use App\Models\Configuration\client_segment;
 use App\Models\Configuration\Sucursal_deliverie;
+use App\Models\Configuration\Sucursale;
 use App\Models\Product\Product;
 use App\Models\User;
 use Carbon\Carbon;
@@ -20,6 +21,7 @@ class Proforma extends Model
         'user_id',
         'client_id',
         'client_segment_id',
+        'sucursale_id',
         'subtotal',
         'discount',
         'total',
@@ -55,7 +57,10 @@ class Proforma extends Model
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
-
+    public function sucursale()
+    {
+        return $this->belongsTo(Sucursale::class, 'sucursale_id');
+    }
     public function client_segment()
     {
         return $this->belongsTo(client_segment::class, 'client_segment_id');

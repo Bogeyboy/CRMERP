@@ -1,8 +1,11 @@
 import { Component, inject } from '@angular/core';
 import { DeleteProformaComponent } from '../delete-proforma/delete-proforma.component';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ProformasService } from '../service/proformas.service';
 import { URL_SERVICIOS } from '../../../config/config';
+import { map } from 'rxjs/operators';
+import { OpenDetailProformaComponent } from '../components/open-detail-proforma/open-detail-proforma.component';
+import lg from '@angular/common/locales/lg';
 
 
 @Component({
@@ -115,47 +118,11 @@ export class ListProformasComponent
     });
   }
   //EXPORTACIÓN DE CLIENTES
-  /*
+  openProforma(PROFORMA:any)
   {
-    let LINK ="";
-
-    if(this.search)
-    {
-      LINK += "&search="+this.search;
-    }
-    if(this.client_segment_id)
-    {
-      LINK += "&client_segment_id="+this.client_segment_id;
-    }
-    if(this.product_categorie_id)
-    {
-      LINK += "&product_categorie_id="+this.product_categorie_id;
-    }
-    if(this.search_client)
-    {
-      LINK += "&search_client="+this.search_client;
-    }
-    if(this.asesor_id)
-    {
-      LINK += "&asesor_id="+this.asesor_id;
-    }
-    if(this.type)
-    {
-      LINK += "&state_proforma="+this.type;
-    }
-    if(this.search_product)
-    {
-      LINK += "&search_product="+this.search_product;
-    }
-    if(this.start_date && this.end_date)
-    {
-      LINK += "&start_date="+this.start_date;
-      LINK += "&end_date="+this.end_date;
-    }
-
-    // Lógica para exportar clientes
-    window.open(URL_SERVICIOS+"/excel/export-proforma-general?k=1"+LINK,"_blank");
-  } */
+    const modalRef = this.modalService.open(OpenDetailProformaComponent,{centered:true, size: 'xl'});
+    modalRef.componentInstance.PROFORMA = PROFORMA;
+  }
   exportProformasGeneral()
   {
     let LINK ="";
@@ -254,7 +221,6 @@ export class ListProformasComponent
     // Lógica para exportar clientes
     window.open(URL_SERVICIOS+"/excel/export-proforma-detalle?k=1"+LINK,"_blank");
   }
-
   //Función para las acciones tras el cambio de pagina en la paginación
   loadPage($event:any)
   {

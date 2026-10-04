@@ -16,11 +16,13 @@ import { NgbModalModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SearchClientsComponent } from './components/search-clients/search-clients.component';
 import { FormatNumberPipe } from '../../pipes/format-number.pipe';
+import { OpenDetailProformaComponent } from './components/open-detail-proforma/open-detail-proforma.component';
 
 
 @NgModule({
   declarations: [
     ProformasComponent,
+    OpenDetailProformaComponent,
     EditProformaComponent,
     DeleteProformaComponent,
     ListProformasComponent,
